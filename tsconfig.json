@@ -1,0 +1,25 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "lib": ["ES2022"],
+    "module": "commonjs",
+    "moduleResolution": "node",
+    "resolveJsonModule": true,
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+    "strict": true,
+    "skipLibCheck": true,
+    "declaration": true,
+    "declarationMap": true,
+    "sourceMap": true,
+    "incremental": true,
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["src/*"],
+      "@silentsiren/config": ["packages/config/src"],
+      "@silentsiren/logger": ["packages/logger/src"],
+      "@silentsiren/shared-types": ["packages/shared-types/src"]
+    }
+  },
+  "exclude": ["node_modules", "dist", ".next"]
+}

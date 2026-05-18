@@ -1,0 +1,9 @@
+# Antigravity Trace System Logs
+# These files contain sensitive emergency trace data
+
+# Ignore all trace files
+*.json
+*.md
+
+# But keep the directory structure
+!.gitkeep

@@ -1,0 +1,58 @@
+FROM node:20-alpine AS base
+
+# ==================== Deps Stage ====================
+FROM base AS deps
+RUN apk add --no-cache libc6-compat
+WORKDIR /app
+
+COPY package*.json ./
+COPY apps/backend/package*.json ./apps/backend/
+COPY packages/*/package*.json ./packages/
+
+RUN npm ci --omit=dev --ignore-scripts
+
+# ==================== Builder Stage ====================
+FROM base AS builder
+RUN apk add --no-cache libc6-compat
+WORKDIR /app
+
+COPY package*.json ./
+COPY apps/backend/package*.json ./apps/backend/
+COPY packages/*/package*.json ./packages/
+
+RUN npm ci --ignore-scripts
+
+COPY . .
+
+# Sab packages + backend build (root se)
+RUN npm run build
+
+# ==================== Runner Stage ====================
+FROM base AS runner
+WORKDIR /app
+
+ENV NODE_ENV=production
+ENV PORT=3001
+
+RUN addgroup --system --gid 1001 nodejs && \
+    adduser --system --uid 1001 backend
+
+# Production dependencies
+COPY --from=deps --chown=backend:nodejs /app/node_modules ./node_modules
+
+# Built files
+COPY --from=builder --chown=backend:nodejs /app/apps/backend/dist ./apps/backend/dist
+COPY --from=builder --chown=backend:nodejs /app/packages/config/dist ./packages/config/dist
+COPY --from=builder --chown=backend:nodejs /app/packages/logger/dist ./packages/logger/dist
+COPY --from=builder --chown=backend:nodejs /app/packages/shared-types/dist ./packages/shared-types/dist
+
+COPY --from=builder --chown=backend:nodejs /app/package*.json ./
+
+USER backend
+
+EXPOSE 3001
+
+HEALTHCHECK --interval=30s --timeout=10s --start-period=40s --retries=3 \
+    CMD node -e "require('http').get('http://localhost:3001/health', (r) => {process.exit(r.statusCode === 200 ? 0 : 1)})"
+
+CMD ["node", "apps/backend/dist/index.js"]

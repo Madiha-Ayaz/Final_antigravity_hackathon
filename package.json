@@ -1,0 +1,46 @@
+{
+  "name": "silentsiren-ai",
+  "version": "1.0.0",
+  "private": true,
+  "description": "SilentSiren AI - Emergency Response Platform with Multimodal AI",
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "dev": "concurrently \"npm run dev:frontend\" \"npm run dev:backend\"",
+    "dev:frontend": "npm run dev --workspace=apps/frontend",
+    "dev:backend": "npm run dev --workspace=apps/backend",
+    "build": "npm run build --workspaces",
+    "build:frontend": "npm run build --workspace=apps/frontend",
+    "build:backend": "npm run build --workspace=apps/backend",
+    "lint": "npm run lint --workspaces",
+    "format": "prettier --write \"**/*.{ts,tsx,js,jsx,json,md}\"",
+    "format:check": "prettier --check \"**/*.{ts,tsx,js,jsx,json,md}\"",
+    "type-check": "npm run type-check --workspaces",
+    "test": "npm run test --workspaces",
+    "prepare": "husky || true",
+    "docker:build": "docker-compose build",
+    "docker:up": "docker-compose up -d",
+    "docker:down": "docker-compose down",
+    "clean": "npm run clean --workspaces && rm -rf node_modules"
+  },
+  "devDependencies": {
+    "@next/swc-win32-x64-msvc": "^16.2.6",
+    "@types/node": "^20.11.0",
+    "@typescript-eslint/eslint-plugin": "^7.0.0",
+    "@typescript-eslint/parser": "^7.0.0",
+    "concurrently": "^8.2.2",
+    "eslint": "^8.56.0",
+    "eslint-config-prettier": "^9.1.0",
+    "eslint-plugin-import": "^2.29.1",
+    "husky": "^9.0.10",
+    "lint-staged": "^15.2.0",
+    "prettier": "^3.2.4",
+    "typescript": "^5.3.3"
+  },
+  "engines": {
+    "node": ">=20.0.0",
+    "npm": ">=10.0.0"
+  }
+}

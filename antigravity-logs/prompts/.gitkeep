@@ -1,0 +1,2 @@
+# This file ensures the prompts directory is tracked by git
+# Actual prompt files are ignored via .gitignore
