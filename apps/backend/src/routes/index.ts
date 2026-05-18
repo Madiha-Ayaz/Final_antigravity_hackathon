@@ -16,6 +16,7 @@ import whatsappRoutes from './whatsapp';
 import auditRoutes from './audit';
 import abuseRoutes from './abuse';
 import voiceThreatRoutes from './voiceThreat';
+import emergencySMSRoutes from './emergencySMS';
 
 const router = Router();
 
@@ -36,6 +37,7 @@ router.use('/whatsapp', whatsappRoutes);
 router.use('/audit', auditRoutes);
 router.use('/abuse', abuseRoutes);
 router.use('/voice-threat', voiceThreatRoutes);
+router.use('/emergency-sms', emergencySMSRoutes);
 
 
 export default router;
