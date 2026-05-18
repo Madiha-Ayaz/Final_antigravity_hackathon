@@ -7,6 +7,7 @@ export { EmergencyAlert } from './EmergencyAlert';
 export { EmergencyAudioPlayer } from './EmergencyAudioPlayer';
 export { FreeEmergencySystem } from './FreeEmergencySystem';
 export { CarrierSelector } from './CarrierSelector';
+export { VoiceVisualizer } from './VoiceVisualizer';
 
 // Layout Components
 export { DashboardLayout, Navbar, Sidebar } from './layout';
