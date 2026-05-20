@@ -2,6 +2,7 @@ import { GoogleGenerativeAI } from '@google/generative-ai';
 import { config } from '@silentsiren/config';
 import { createLogger } from '@silentsiren/logger';
 import { AIAnalysisResult, ThreatLevel } from '@silentsiren/shared-types';
+import { AUDIO_ANALYSIS_PROMPT } from './antigravity/prompts';
 
 const logger = createLogger('gemini-service');
 
@@ -53,45 +54,7 @@ class GeminiService {
   }
 
   private buildAnalysisPrompt(): string {
-    return `You are an emergency audio analysis AI. Analyze the provided audio clip for signs of distress or emergency situations.
-
-ANALYZE FOR:
-- Screams or cries for help
-- Panic in voice tone
-- Impact sounds (crashes, breaking glass, etc.)
-- Emotional stress indicators
-- Rapid or distressed breathing patterns
-- Words indicating danger or emergency
-
-IGNORE:
-- TV shows, movies, or entertainment audio
-- Music or songs
-- Jokes or casual conversation
-- Background noise without distress signals
-
-RESPOND ONLY with valid JSON in this exact format:
-{
-  "confidence": <number 0-1>,
-  "threatLevel": "<LOW|MEDIUM|HIGH|CRITICAL>",
-  "reasoning": "<brief explanation>",
-  "dispatchRecommended": <boolean>,
-  "detectedPatterns": ["<pattern1>", "<pattern2>"],
-  "emotionalStress": <number 0-1>,
-  "audioFeatures": {
-    "hasScream": <boolean>,
-    "hasPanic": <boolean>,
-    "hasImpactSound": <boolean>,
-    "breathingPattern": "<normal|rapid|distressed>",
-    "backgroundNoise": "<low|medium|high>"
-  }
-}
-
-IMPORTANT:
-- Be conservative with false positives
-- Only recommend dispatch for genuine emergencies
-- Confidence must reflect certainty of emergency
-- Do not include any text outside the JSON object
-- Ensure all JSON is properly formatted`;
+    return AUDIO_ANALYSIS_PROMPT;
   }
 
   private parseResponse(text: string): AIAnalysisResult {

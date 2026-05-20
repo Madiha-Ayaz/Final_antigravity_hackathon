@@ -2,9 +2,9 @@
   "name": "SilentSiren AI - Emergency Response",
   "short_name": "SilentSiren",
   "description": "AI-powered emergency detection and response system with voice monitoring",
-  "start_url": "/",
+  "start_url": "/dashboard",
   "display": "standalone",
-  "background_color": "#ffffff",
+  "background_color": "#0f172a",
   "theme_color": "#dc2626",
   "orientation": "portrait",
   "scope": "/",
@@ -14,18 +14,54 @@
       "sizes": "any",
       "type": "image/svg+xml",
       "purpose": "any maskable"
+    },
+    {
+      "src": "/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
     }
   ],
   "categories": ["safety", "emergency", "utilities", "health"],
-  "screenshots": [],
   "shortcuts": [
     {
       "name": "Emergency Alert",
       "short_name": "Alert",
       "description": "Trigger emergency alert",
-      "url": "/emergency",
+      "url": "/alert",
+      "icons": [{ "src": "/icon.svg", "sizes": "any", "type": "image/svg+xml" }]
+    },
+    {
+      "name": "Voice Monitor",
+      "short_name": "Monitor",
+      "description": "Start voice monitoring",
+      "url": "/monitor",
+      "icons": [{ "src": "/icon.svg", "sizes": "any", "type": "image/svg+xml" }]
+    },
+    {
+      "name": "Crisis Dashboard",
+      "short_name": "Crisis",
+      "description": "View crisis management",
+      "url": "/crisis",
       "icons": [{ "src": "/icon.svg", "sizes": "any", "type": "image/svg+xml" }]
     }
   ],
-  "prefer_related_applications": false
+  "prefer_related_applications": false,
+  "related_applications": [],
+  "permissions": [
+    "geolocation",
+    "notifications",
+    "microphone"
+  ],
+  "lang": "en",
+  "dir": "ltr",
+  "iarc_rating_id": "",
+  "screenshots": [],
+  "handle_links": "preferred"
 }

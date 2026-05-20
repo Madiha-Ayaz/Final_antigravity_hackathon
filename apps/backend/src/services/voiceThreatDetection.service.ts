@@ -8,6 +8,8 @@ import type { AIAnalysisResult } from '@silentsiren/shared-types';
 
 const logger = createLogger('voice-threat-detection');
 
+export type EmergencyCategory = 'fire' | 'flood' | 'accident' | 'abuse' | 'medical' | 'general';
+
 export interface ThreatDetectionResult {
   isThreat: boolean;
   threatLevel: 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL';
@@ -15,8 +17,10 @@ export interface ThreatDetectionResult {
   transcript: string;
   reasoning: string;
   emergencyType?: string;
+  emergencyCategory: EmergencyCategory;
   shouldTriggerSiren: boolean;
   shouldCallAmbulance: boolean;
+  shouldCallFireBrigade: boolean;
 }
 
 export interface EmergencyContact {
@@ -60,6 +64,12 @@ class VoiceThreatDetectionService {
                                    classification.emergencyType === 'ACCIDENT' ||
                                    analysis.threatLevel === 'CRITICAL';
 
+      // Map emergency type to category for frontend routing
+      const emergencyCategory = this.mapToCategory(classification.emergencyType, analysis.reasoning);
+
+      // Fire brigade for fire emergencies
+      const shouldCallFireBrigade = emergencyCategory === 'fire' || classification.emergencyType === 'FIRE';
+
       const result: ThreatDetectionResult = {
         isThreat,
         threatLevel: analysis.threatLevel,
@@ -67,8 +77,10 @@ class VoiceThreatDetectionService {
         transcript: analysis.reasoning,
         reasoning: classification.reasoning,
         emergencyType: classification.emergencyType,
+        emergencyCategory,
         shouldTriggerSiren,
         shouldCallAmbulance,
+        shouldCallFireBrigade,
       };
 
       logger.info({ userId, result }, 'Voice threat analysis complete');
@@ -78,6 +90,28 @@ class VoiceThreatDetectionService {
       logger.error({ error, userId }, 'Voice threat analysis failed');
       throw error;
     }
+  }
+
+  /**
+   * Map emergency type to category for frontend routing
+   */
+  private mapToCategory(emergencyType: string, transcript: string): EmergencyCategory {
+    const t = transcript.toLowerCase();
+
+    if (emergencyType === 'FIRE' || t.includes('fire') || t.includes('burning') || t.includes('smoke')) {
+      return 'fire';
+    }
+    if (emergencyType === 'NATURAL_DISASTER' || t.includes('flood') || t.includes('water rising') || t.includes('tsunami')) {
+      return 'flood';
+    }
+    if (emergencyType === 'ACCIDENT' || t.includes('accident') || t.includes('crash') || t.includes('collision')) {
+      return 'accident';
+    }
+    if (emergencyType === 'ASSAULT' || emergencyType === 'HARASSMENT' || t.includes('abuse') || t.includes('hitting') || t.includes('violence')) {
+      return 'abuse';
+    }
+
+    return 'general';
   }
 
   /**
@@ -314,6 +348,45 @@ class VoiceThreatDetectionService {
       logger.info({ userId }, 'Ambulance call message sent successfully');
     } catch (error) {
       logger.error({ error, userId }, 'Failed to call ambulance');
+      throw error;
+    }
+  }
+
+  /**
+   * Call fire brigade/emergency services
+   */
+  async callFireBrigade(userId: string, location?: LocationData): Promise<void> {
+    logger.info({ userId, location }, 'Calling fire brigade');
+
+    const fireBrigadeNumber = process.env.FIRE_BRIGADE_NUMBER || process.env.EMERGENCY_CONTACT_NUMBER || '+923452508043';
+
+    try {
+      let message = `🚒 *EMERGENCY - FIRE BRIGADE NEEDED* 🚒\n\n`;
+      message += `*Automated Emergency Call from SilentSiren AI*\n\n`;
+      message += `*User ID:* ${userId}\n`;
+      message += `*Time:* ${new Date().toLocaleString()}\n\n`;
+
+      if (location) {
+        message += `📍 *LOCATION:*\n`;
+        message += `Latitude: ${location.latitude.toFixed(6)}\n`;
+        message += `Longitude: ${location.longitude.toFixed(6)}\n`;
+        if (location.address) {
+          message += `Address: ${location.address}\n`;
+        }
+        message += `Google Maps: https://maps.google.com/?q=${location.latitude},${location.longitude}\n\n`;
+      }
+
+      message += `⚠️ *IMMEDIATE FIRE RESPONSE REQUIRED*\n`;
+      message += `Please dispatch fire brigade to the location above.`;
+
+      await whatsAppService.sendMessage({
+        to: fireBrigadeNumber,
+        message,
+      });
+
+      logger.info({ userId }, 'Fire brigade call message sent successfully');
+    } catch (error) {
+      logger.error({ error, userId }, 'Failed to call fire brigade');
       throw error;
     }
   }

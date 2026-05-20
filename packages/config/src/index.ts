@@ -26,6 +26,13 @@ const envSchema = z.object({
   FIREBASE_CLIENT_EMAIL: z.string().optional(),
   FIREBASE_PRIVATE_KEY: z.string().optional(),
   FIREBASE_WEB_VAPID_KEY: z.string().optional(),
+  EMERGENCY_AMBULANCE_NUMBER: z.string().default('911'),
+  EMERGENCY_POLICE_NUMBER: z.string().default('911'),
+  EMERGENCY_FIRE_NUMBER: z.string().default('911'),
+  EMERGENCY_AMBULANCE_LAT: z.string().optional(),
+  EMERGENCY_AMBULANCE_LNG: z.string().optional(),
+  EMERGENCY_POLICE_LAT: z.string().optional(),
+  EMERGENCY_POLICE_LNG: z.string().optional(),
 });
 
 export type Env = z.infer<typeof envSchema>;

@@ -73,14 +73,15 @@ class AntigravityTraceLogger {
   constructor() {
     // Resolve project root dynamically for maximum robustness
     let projectRoot = process.cwd();
-    if (existsSync(join(projectRoot, '..', '..', 'prompts'))) {
-      projectRoot = join(projectRoot, '..', '..');
-    } else if (existsSync(join(__dirname, '..', '..', '..', '..', '..', 'prompts'))) {
+    if (existsSync(join(projectRoot, 'apps', 'backend'))) {
+      // Already at project root
+    } else if (existsSync(join(__dirname, '..', '..', '..', '..', '..'))) {
       projectRoot = join(__dirname, '..', '..', '..', '..', '..');
     }
 
+    // All output goes under antigravity-logs
     this.logDir = join(projectRoot, 'antigravity-logs');
-    this.promptsDir = join(projectRoot, 'prompts');
+    this.promptsDir = join(this.logDir, 'prompts');
     this.tracesDir = join(this.logDir, 'traces');
 
     this.ensureDirectories();

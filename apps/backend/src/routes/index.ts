@@ -18,6 +18,9 @@ import auditRoutes from './audit';
 import abuseRoutes from './abuse';
 import voiceThreatRoutes from './voiceThreat';
 import emergencySMSRoutes from './emergencySMS';
+import agentLogsRoutes from './agentLogs';
+import neonDBRoutes from './neonDB';
+import contactsNeonRoutes from './contactsNeon';
 
 const router = Router();
 
@@ -40,6 +43,9 @@ router.use('/audit', auditRoutes);
 router.use('/abuse', abuseRoutes);
 router.use('/voice-threat', voiceThreatRoutes);
 router.use('/emergency-sms', emergencySMSRoutes);
+router.use('/agent-logs', agentLogsRoutes);
+router.use('/neon', neonDBRoutes);
+router.use('/contacts-neon', contactsNeonRoutes);
 
 
 export default router;

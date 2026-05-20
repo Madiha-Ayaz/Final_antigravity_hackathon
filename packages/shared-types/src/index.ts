@@ -122,7 +122,7 @@ export interface WakePhrase {
   timestamp: Date;
 }
 
-export const WAKE_PHRASES = ['help me', 'save me', 'emergency', 'stop'] as const;
+export const WAKE_PHRASES = ['help me', 'save me', 'emergency', 'call police', 'someone help', 'i need help'] as const;
 
 export const EMERGENCY_COUNTDOWN_SECONDS = 10;
 

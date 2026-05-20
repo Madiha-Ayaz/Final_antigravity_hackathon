@@ -9,6 +9,7 @@ export { confidenceScorer } from './confidenceScorer';
 export { emergencyClassifier } from './emergencyClassifier';
 export { alertRetryManager } from './alertRetry';
 export { EventPipeline, createEmergencyPipeline, executeEmergencyPipeline } from './eventPipeline';
+export { AUDIO_ANALYSIS_PROMPT } from './prompts';
 
 export type {
   TraceEvent,

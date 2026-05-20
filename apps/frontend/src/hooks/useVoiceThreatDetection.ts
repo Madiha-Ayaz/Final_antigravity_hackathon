@@ -107,6 +107,9 @@ export function useVoiceThreatDetection() {
             formData.append('audio', audioBlob, 'voice-recording.webm');
             formData.append('data', JSON.stringify({ contacts, location }));
 
+            // Get auth token
+            const token = localStorage.getItem('token') || localStorage.getItem('auth_token');
+
             // Send to backend for analysis
             const response = await axios.post(
               `${process.env.NEXT_PUBLIC_API_URL}/api/voice-threat/analyze`,
@@ -114,24 +117,36 @@ export function useVoiceThreatDetection() {
               {
                 headers: {
                   'Content-Type': 'multipart/form-data',
+                  ...(token ? { 'Authorization': `Bearer ${token}` } : {}),
                 },
-                withCredentials: true,
               }
             );
 
             if (response.data.success) {
+              const threat: ThreatResult = {
+                isThreat: response.data.isThreat,
+                threatLevel: response.data.threatLevel,
+                confidence: response.data.confidence,
+                transcript: response.data.transcript,
+                reasoning: response.data.reasoning,
+                emergencyType: response.data.emergencyType,
+                shouldTriggerSiren: response.data.shouldTriggerSiren,
+                shouldCallAmbulance: response.data.shouldCallAmbulance,
+              };
+
+              console.log('🤖 Voice analysis result:', threat);
+
               setState(prev => ({
                 ...prev,
                 isAnalyzing: false,
-                threat: response.data.data.threat,
-                countdown: response.data.data.countdown,
-                sirenActive: response.data.data.sirenActive,
+                threat,
+                sirenActive: threat.shouldTriggerSiren,
               }));
             } else {
               setState(prev => ({
                 ...prev,
                 isAnalyzing: false,
-                error: 'Analysis failed',
+                error: response.data.error || 'Analysis failed',
               }));
             }
           } catch (error) {

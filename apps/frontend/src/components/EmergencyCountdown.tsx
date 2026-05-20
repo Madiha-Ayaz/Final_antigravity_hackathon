@@ -76,16 +76,16 @@ export function EmergencyCountdown({
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
-        className="fixed inset-0 z-50 flex items-center justify-center bg-gradient-to-br from-red-950 via-black to-red-950"
+        className="fixed inset-0 z-50 flex items-center justify-center bg-gradient-to-br from-red-950 via-black to-red-950 overflow-auto"
         role="alertdialog"
         aria-labelledby="emergency-title"
         aria-describedby="emergency-description"
       >
-        <div className="w-full h-full flex flex-col items-center justify-center p-6 relative overflow-hidden">
+        <div className="w-full min-h-screen flex flex-col items-center justify-center p-4 sm:p-6 relative overflow-auto">
           {/* Animated background effects */}
-          <div className="absolute inset-0 opacity-30">
-            <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-red-500 rounded-full blur-3xl animate-pulse"></div>
-            <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-orange-500 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }}></div>
+          <div className="absolute inset-0 opacity-30 pointer-events-none">
+            <div className="absolute top-1/4 left-1/4 w-48 sm:w-96 h-48 sm:h-96 bg-red-500 rounded-full blur-3xl animate-pulse"></div>
+            <div className="absolute bottom-1/4 right-1/4 w-48 sm:w-96 h-48 sm:h-96 bg-orange-500 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }}></div>
           </div>
 
           <motion.div
@@ -96,13 +96,13 @@ export function EmergencyCountdown({
               duration: 0.5,
               repeat: timeLeft <= 3 ? Infinity : 0,
             }}
-            className="text-center space-y-8 relative z-10"
+            className="text-center space-y-4 sm:space-y-8 relative z-10 w-full max-w-2xl"
           >
-            <div className="space-y-6">
+            <div className="space-y-3 sm:space-y-6">
               <motion.div
                 animate={{ rotate: 360 }}
                 transition={{ duration: 2, repeat: Infinity, ease: 'linear' }}
-                className="w-32 h-32 mx-auto"
+                className="w-20 h-20 sm:w-32 sm:h-32 mx-auto"
               >
                 <svg
                   className="w-full h-full text-red-500 drop-shadow-2xl"
@@ -119,11 +119,11 @@ export function EmergencyCountdown({
                 </svg>
               </motion.div>
 
-              <h1 id="emergency-title" className="text-5xl md:text-7xl font-black text-transparent bg-clip-text bg-gradient-to-r from-red-400 via-orange-400 to-red-400 drop-shadow-2xl">
+              <h1 id="emergency-title" className="text-3xl sm:text-5xl md:text-7xl font-black text-transparent bg-clip-text bg-gradient-to-r from-red-400 via-orange-400 to-red-400 drop-shadow-2xl">
                 EMERGENCY DETECTED
               </h1>
 
-              <p id="emergency-description" className="text-2xl md:text-3xl text-red-200 font-bold">
+              <p id="emergency-description" className="text-lg sm:text-2xl md:text-3xl text-red-200 font-bold">
                 Dispatching alerts in
               </p>
             </div>
@@ -132,38 +132,38 @@ export function EmergencyCountdown({
               key={timeLeft}
               initial={{ scale: 0.8, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
-              className={`text-[10rem] md:text-[16rem] font-black bg-gradient-to-br ${getThreatColor()} bg-clip-text text-transparent drop-shadow-2xl`}
+              className={`text-[6rem] sm:text-[10rem] md:text-[16rem] font-black bg-gradient-to-br ${getThreatColor()} bg-clip-text text-transparent drop-shadow-2xl leading-none`}
             >
               {timeLeft}
             </motion.div>
 
-            <div className="space-y-6">
-              <div className="flex items-center justify-center gap-6 text-white">
-                <div className="text-center bg-red-950/50 backdrop-blur-sm px-6 py-4 rounded-2xl border-2 border-red-500/30">
-                  <div className="text-sm text-red-300 mb-1 font-semibold uppercase tracking-wider">Threat Level</div>
-                  <div className="text-3xl font-black text-red-400">{threatLevel}</div>
+            <div className="space-y-4 sm:space-y-6">
+              <div className="flex items-center justify-center gap-3 sm:gap-6 text-white">
+                <div className="text-center bg-red-950/50 backdrop-blur-sm px-3 sm:px-6 py-2 sm:py-4 rounded-xl sm:rounded-2xl border-2 border-red-500/30">
+                  <div className="text-xs sm:text-sm text-red-300 mb-1 font-semibold uppercase tracking-wider">Threat Level</div>
+                  <div className="text-xl sm:text-3xl font-black text-red-400">{threatLevel}</div>
                 </div>
-                <div className="w-px h-16 bg-red-500/30" />
-                <div className="text-center bg-red-950/50 backdrop-blur-sm px-6 py-4 rounded-2xl border-2 border-red-500/30">
-                  <div className="text-sm text-red-300 mb-1 font-semibold uppercase tracking-wider">Confidence</div>
-                  <div className="text-3xl font-black text-red-400">{(confidence * 100).toFixed(0)}%</div>
+                <div className="w-px h-10 sm:h-16 bg-red-500/30" />
+                <div className="text-center bg-red-950/50 backdrop-blur-sm px-3 sm:px-6 py-2 sm:py-4 rounded-xl sm:rounded-2xl border-2 border-red-500/30">
+                  <div className="text-xs sm:text-sm text-red-300 mb-1 font-semibold uppercase tracking-wider">Confidence</div>
+                  <div className="text-xl sm:text-3xl font-black text-red-400">{(confidence * 100).toFixed(0)}%</div>
                 </div>
               </div>
 
               <motion.button
-                whileHover={{ scale: 1.05 }}
+                whileHover={{ scale: 1.03 }}
                 whileTap={{ scale: 0.95 }}
                 onClick={handleCancel}
                 disabled={isCancelling}
-                className="w-full max-w-2xl px-10 py-8 bg-gradient-to-r from-white to-gray-100 text-gray-900 text-3xl font-black rounded-3xl hover:from-gray-100 hover:to-white transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-2xl border-4 border-white/20"
+                className="w-full max-w-2xl px-4 sm:px-10 py-4 sm:py-8 bg-gradient-to-r from-white to-gray-100 text-gray-900 text-xl sm:text-2xl md:text-3xl font-black rounded-2xl sm:rounded-3xl hover:from-gray-100 hover:to-white transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-2xl border-4 border-white/20"
                 aria-label="Cancel emergency alert"
               >
                 {isCancelling ? '🔐 VERIFYING...' : "✋ I'M SAFE - CANCEL ALERT"}
               </motion.button>
 
-              <div className="bg-red-950/30 backdrop-blur-sm border border-red-500/30 rounded-2xl p-4 max-w-2xl mx-auto">
-                <p className="text-sm text-red-200 font-semibold">
-                  🔒 Biometric verification required to cancel • SMS, WhatsApp & Voice calls will be sent to emergency contacts
+              <div className="bg-red-950/30 backdrop-blur-sm border border-red-500/30 rounded-xl sm:rounded-2xl p-3 sm:p-4 max-w-2xl mx-auto">
+                <p className="text-xs sm:text-sm text-red-200 font-semibold">
+                  🔒 Biometric verification required to cancel • SMS, WhatsApp & Voice calls will be sent
                 </p>
               </div>
             </div>

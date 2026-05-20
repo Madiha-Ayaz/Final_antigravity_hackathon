@@ -117,16 +117,15 @@ export default function VoiceWhatsAppAlert({ onSend }: VoiceWhatsAppProps) {
 
       // Get emergency contacts
       const token = localStorage.getItem('token');
-      const contactsResponse = await fetch('/api/contacts/emergency', {
+      const contactsResponse = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/emergency-contacts/list`, {
         headers: token ? { 'Authorization': `Bearer ${token}` } : {},
       });
 
       let recipients: string[] = [];
       if (contactsResponse.ok) {
         const contactsData = await contactsResponse.json();
-        recipients = contactsData.data?.contacts
-          ?.filter((c: any) => c.notify_whatsapp)
-          ?.map((c: any) => c.phone_number) || [];
+        recipients = contactsData.contacts
+          ?.map((c: any) => c.phoneNumber || c.phone_number) || [];
       }
 
       // Fallback to default number if no contacts

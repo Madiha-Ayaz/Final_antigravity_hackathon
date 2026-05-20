@@ -67,7 +67,7 @@ class Server {
     this.app.use(helmet());
     this.app.use(
       cors({
-        origin: process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000',
+        origin: true, // Allow all origins in development
         credentials: true,
       })
     );
