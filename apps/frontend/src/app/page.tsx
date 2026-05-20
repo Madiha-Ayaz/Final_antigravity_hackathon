@@ -40,11 +40,11 @@ export default function Home() {
             </p>
 
             <div className="flex flex-col sm:flex-row gap-3">
-              <Link href="/dashboard" className="btn-primary text-center flex items-center justify-center gap-2">
+              <Link href="/signup" className="btn-primary text-center flex items-center justify-center gap-2">
                 Get Started {Icons.arrow}
               </Link>
-              <Link href="/monitor" className="btn-outline text-center flex items-center justify-center gap-2">
-                Start Monitoring {Icons.mic}
+              <Link href="/login" className="btn-outline text-center flex items-center justify-center gap-2">
+                Sign In {Icons.mic}
               </Link>
             </div>
 
@@ -168,11 +168,11 @@ export default function Home() {
               Join thousands who trust SilentSiren AI to protect them in critical moments
             </p>
             <div className="flex flex-col sm:flex-row gap-3 justify-center pt-2">
-              <Link href="/dashboard" className="btn bg-white text-red-600 hover:bg-red-50 font-bold text-center">
-                Start Free Trial
+              <Link href="/signup" className="btn bg-white text-red-600 hover:bg-red-50 font-bold text-center">
+                Sign Up Free
               </Link>
-              <Link href="/contacts" className="btn border-2 border-white text-white hover:bg-white/10 text-center">
-                Add Contacts
+              <Link href="/login" className="btn border-2 border-white text-white hover:bg-white/10 text-center">
+                Sign In
               </Link>
             </div>
           </div>

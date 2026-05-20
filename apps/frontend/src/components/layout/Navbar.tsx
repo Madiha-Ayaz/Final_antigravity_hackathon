@@ -173,17 +173,29 @@ export function Navbar({ isAuthenticated = false, userName }: NavbarProps) {
             ))}
           </div>
 
-          {/* Mobile Menu Button */}
-          <button
-            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="lg:hidden p-2 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800/50 transition-colors"
-          >
+          {/* Auth Buttons / Mobile Menu */}
+          <div className="flex items-center gap-3">
+            {!isAuthenticated && (
+              <>
+                <Link href="/login" className="hidden sm:block px-4 py-2 text-sm font-medium text-slate-300 hover:text-white transition-colors">
+                  Log In
+                </Link>
+                <Link href="/signup" className="hidden sm:block px-4 py-2 text-sm font-bold text-white rounded-lg transition-all" style={{ background: '#dc2626' }}>
+                  Sign Up
+                </Link>
+              </>
+            )}
+            <button
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              className="lg:hidden p-2 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800/50 transition-colors"
+            >
             <motion.div
               animate={mobileMenuOpen ? { rotate: 90 } : { rotate: 0 }}
             >
               {mobileMenuOpen ? NavIcons.close : NavIcons.menu}
             </motion.div>
           </button>
+          </div>
         </div>
       </div>
 
@@ -197,6 +209,16 @@ export function Navbar({ isAuthenticated = false, userName }: NavbarProps) {
             className="lg:hidden overflow-hidden bg-slate-900/95 backdrop-blur-xl border-t border-slate-800/50"
           >
             <div className="px-4 py-3 space-y-1">
+              {!isAuthenticated && (
+                <div className="flex gap-3 pb-3 mb-2 border-b border-slate-800">
+                  <Link href="/login" onClick={() => setMobileMenuOpen(false)} className="flex-1 text-center px-4 py-2.5 text-sm font-medium text-slate-300 border border-slate-700 rounded-lg hover:text-white hover:border-slate-600 transition-colors">
+                    Log In
+                  </Link>
+                  <Link href="/signup" onClick={() => setMobileMenuOpen(false)} className="flex-1 text-center px-4 py-2.5 text-sm font-bold text-white rounded-lg" style={{ background: '#dc2626' }}>
+                    Sign Up
+                  </Link>
+                </div>
+              )}
               {links.map((link, index) => (
                 <motion.div
                   key={link.href}
