@@ -15,8 +15,14 @@ class FCMService {
   private initialize(): void {
     try {
       // Check if Firebase credentials are configured
-      if (!config.FIREBASE_PROJECT_ID || !config.FIREBASE_CLIENT_EMAIL || !config.FIREBASE_PRIVATE_KEY) {
-        logger.warn('Firebase credentials not configured. FCM will not be available. This is optional.');
+      if (
+        !config.FIREBASE_PROJECT_ID ||
+        !config.FIREBASE_CLIENT_EMAIL ||
+        !config.FIREBASE_PRIVATE_KEY
+      ) {
+        logger.warn(
+          'Firebase credentials not configured. FCM will not be available. This is optional.'
+        );
         return;
       }
 

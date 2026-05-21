@@ -41,12 +41,15 @@ class TwilioService {
   /**
    * Send emergency SMS alert via Textbelt (completely free 1 SMS/day, no credentials)
    */
-  private async sendEmergencySMSTextbelt(alert: EmergencyAlert): Promise<{ success: boolean; messageId?: string; error?: string }> {
+  private async sendEmergencySMSTextbelt(
+    alert: EmergencyAlert
+  ): Promise<{ success: boolean; messageId?: string; error?: string }> {
     try {
-      const locationText = alert.latitude && alert.longitude
-        ? `\n📍 Location: https://maps.google.com/?q=${alert.latitude},${alert.longitude}`
-        : '';
-      
+      const locationText =
+        alert.latitude && alert.longitude
+          ? `\n📍 Location: https://maps.google.com/?q=${alert.latitude},${alert.longitude}`
+          : '';
+
       const messageText = `🚨 EMERGENCY ALERT 🚨\n\n${alert.recipientName}, your contact needs immediate help!\n\nThreat Level: ${alert.threatLevel}\n${alert.transcript ? `Context: ${alert.transcript}\n` : ''}${locationText}\n\nThis is an automated alert from SilentSiren AI.`;
 
       const response = await axios.post('https://textbelt.com/text', {
@@ -56,13 +59,19 @@ class TwilioService {
       });
 
       if (response.data.success) {
-        logger.info({ recipient: alert.recipientPhone, messageId: response.data.textId }, 'SMS sent successfully via Textbelt');
+        logger.info(
+          { recipient: alert.recipientPhone, messageId: response.data.textId },
+          'SMS sent successfully via Textbelt'
+        );
         return { success: true, messageId: response.data.textId };
       } else {
         throw new Error(response.data.error || 'Textbelt quota exceeded or failed');
       }
     } catch (error: any) {
-      logger.warn({ error: error.message, recipient: alert.recipientPhone }, 'Failed to send SMS via Textbelt, falling back to simulated.');
+      logger.warn(
+        { error: error.message, recipient: alert.recipientPhone },
+        'Failed to send SMS via Textbelt, falling back to simulated.'
+      );
       return { success: true, messageId: 'demo-sms-' + Date.now(), error: error.message };
     }
   }
@@ -70,11 +79,14 @@ class TwilioService {
   /**
    * Send WhatsApp message via TextMeBot API
    */
-  private async sendEmergencyWhatsAppTextMeBot(alert: EmergencyAlert): Promise<{ success: boolean; messageId?: string; error?: string }> {
+  private async sendEmergencyWhatsAppTextMeBot(
+    alert: EmergencyAlert
+  ): Promise<{ success: boolean; messageId?: string; error?: string }> {
     try {
-      const locationText = alert.latitude && alert.longitude
-        ? `\n📍 Location: https://maps.google.com/?q=${alert.latitude},${alert.longitude}`
-        : '';
+      const locationText =
+        alert.latitude && alert.longitude
+          ? `\n📍 Location: https://maps.google.com/?q=${alert.latitude},${alert.longitude}`
+          : '';
 
       const messageText = `🚨 *EMERGENCY ALERT* 🚨\n\n${alert.recipientName}, your contact needs help!\n\n*Threat Level:* ${alert.threatLevel}\n${alert.transcript ? `*Context:* ${alert.transcript}\n` : ''}${locationText}\n\n_SilentSiren AI_`;
 
@@ -93,7 +105,10 @@ class TwilioService {
         throw new Error(response.data?.error || 'TextMeBot failed');
       }
     } catch (error: any) {
-      logger.warn({ error: error.message, recipient: alert.recipientPhone }, 'TextMeBot WhatsApp failed');
+      logger.warn(
+        { error: error.message, recipient: alert.recipientPhone },
+        'TextMeBot WhatsApp failed'
+      );
       return { success: false, error: error.message };
     }
   }
@@ -101,11 +116,14 @@ class TwilioService {
   /**
    * Send SMS via TextMeBot API
    */
-  private async sendEmergencySMSTextMeBot(alert: EmergencyAlert): Promise<{ success: boolean; messageId?: string; error?: string }> {
+  private async sendEmergencySMSTextMeBot(
+    alert: EmergencyAlert
+  ): Promise<{ success: boolean; messageId?: string; error?: string }> {
     try {
-      const locationText = alert.latitude && alert.longitude
-        ? `\n📍 Location: https://maps.google.com/?q=${alert.latitude},${alert.longitude}`
-        : '';
+      const locationText =
+        alert.latitude && alert.longitude
+          ? `\n📍 Location: https://maps.google.com/?q=${alert.latitude},${alert.longitude}`
+          : '';
 
       const messageText = `🚨 EMERGENCY ALERT 🚨\n\n${alert.recipientName}, your contact needs help!\n\nThreat Level: ${alert.threatLevel}\n${alert.transcript ? `Context: ${alert.transcript}\n` : ''}${locationText}\n\nSilentSiren AI`;
 
@@ -124,7 +142,10 @@ class TwilioService {
         throw new Error(response.data?.error || 'TextMeBot SMS failed');
       }
     } catch (error: any) {
-      logger.warn({ error: error.message, recipient: alert.recipientPhone }, 'TextMeBot SMS failed');
+      logger.warn(
+        { error: error.message, recipient: alert.recipientPhone },
+        'TextMeBot SMS failed'
+      );
       return { success: false, error: error.message };
     }
   }
@@ -132,24 +153,33 @@ class TwilioService {
   /**
    * Trigger Voice Call Alert via CallMeBot Voice API (completely free voice alert)
    */
-  private async makeEmergencyCallCallMeBot(alert: EmergencyAlert): Promise<{ success: boolean; callId?: string; error?: string }> {
+  private async makeEmergencyCallCallMeBot(
+    alert: EmergencyAlert
+  ): Promise<{ success: boolean; callId?: string; error?: string }> {
     try {
-      const locationText = alert.latitude && alert.longitude
-        ? `Location is latitude ${alert.latitude}, longitude ${alert.longitude}.`
-        : '';
+      const locationText =
+        alert.latitude && alert.longitude
+          ? `Location is latitude ${alert.latitude}, longitude ${alert.longitude}.`
+          : '';
 
       const messageText = `Emergency Alert. This is an automated message from Silent Siren. ${alert.recipientName}, your contact needs immediate help. Threat level is ${alert.threatLevel}. ${alert.transcript ? `Context: ${alert.transcript}.` : ''} ${locationText}`;
 
       const apikey = process.env.CALLMEBOT_VOICE_API_KEY || '459203';
       const phone = alert.recipientPhone.replace('+', '').replace(/\s+/g, '');
-      
+
       const url = `https://api.callmebot.com/start.php?phone=${phone}&text=${encodeURIComponent(messageText)}&apikey=${apikey}`;
-      
+
       await axios.get(url);
-      logger.info({ recipient: alert.recipientPhone }, 'Voice call alert triggered successfully via CallMeBot');
+      logger.info(
+        { recipient: alert.recipientPhone },
+        'Voice call alert triggered successfully via CallMeBot'
+      );
       return { success: true, callId: 'callmebot-call-' + Date.now() };
     } catch (error: any) {
-      logger.warn({ error: error.message, recipient: alert.recipientPhone }, 'Failed to trigger CallMeBot voice alert, falling back to simulated.');
+      logger.warn(
+        { error: error.message, recipient: alert.recipientPhone },
+        'Failed to trigger CallMeBot voice alert, falling back to simulated.'
+      );
       return { success: true, callId: 'demo-call-' + Date.now(), error: error.message };
     }
   }
@@ -157,7 +187,9 @@ class TwilioService {
   /**
    * Send emergency SMS alert - Uses TextMeBot (primary), Textbelt (fallback), Twilio (last resort)
    */
-  async sendEmergencySMS(alert: EmergencyAlert): Promise<{ success: boolean; messageId?: string; error?: string }> {
+  async sendEmergencySMS(
+    alert: EmergencyAlert
+  ): Promise<{ success: boolean; messageId?: string; error?: string }> {
     // Try TextMeBot SMS first
     logger.info({ recipient: alert.recipientPhone }, 'Sending SMS via TextMeBot');
     const textmebotResult = await this.sendEmergencySMSTextMeBot(alert);
@@ -175,9 +207,10 @@ class TwilioService {
     // Last resort: Twilio SMS (trial account - may fail for unverified numbers)
     if (this.isConfigured && this.client && process.env.USE_TWILIO !== 'false') {
       try {
-        const locationText = alert.latitude && alert.longitude
-          ? `\n📍 Location: https://maps.google.com/?q=${alert.latitude},${alert.longitude}`
-          : '';
+        const locationText =
+          alert.latitude && alert.longitude
+            ? `\n📍 Location: https://maps.google.com/?q=${alert.latitude},${alert.longitude}`
+            : '';
 
         const message = await this.client.messages.create({
           body: `🚨 EMERGENCY ALERT 🚨\n\n${alert.recipientName}, your contact needs immediate help!\n\nThreat Level: ${alert.threatLevel}\n${alert.transcript ? `Context: ${alert.transcript}\n` : ''}${locationText}\n\nSilentSiren AI`,
@@ -185,7 +218,10 @@ class TwilioService {
           to: alert.recipientPhone,
         });
 
-        logger.info({ messageId: message.sid, recipient: alert.recipientPhone }, 'SMS sent via Twilio');
+        logger.info(
+          { messageId: message.sid, recipient: alert.recipientPhone },
+          'SMS sent via Twilio'
+        );
         return { success: true, messageId: message.sid };
       } catch (error: any) {
         logger.warn({ error: error.message }, 'Twilio SMS also failed');
@@ -198,7 +234,9 @@ class TwilioService {
   /**
    * Send emergency WhatsApp message - Uses TextMeBot (primary), Twilio WhatsApp (fallback)
    */
-  async sendEmergencyWhatsApp(alert: EmergencyAlert): Promise<{ success: boolean; messageId?: string; error?: string }> {
+  async sendEmergencyWhatsApp(
+    alert: EmergencyAlert
+  ): Promise<{ success: boolean; messageId?: string; error?: string }> {
     // Always try TextMeBot first for WhatsApp
     logger.info({ recipient: alert.recipientPhone }, 'Sending WhatsApp via TextMeBot');
     const textmebotResult = await this.sendEmergencyWhatsAppTextMeBot(alert);
@@ -209,9 +247,10 @@ class TwilioService {
     // Fallback to Twilio WhatsApp if configured
     if (this.isConfigured && this.client && process.env.USE_TWILIO !== 'false') {
       try {
-        const locationText = alert.latitude && alert.longitude
-          ? `\n📍 Location: https://maps.google.com/?q=${alert.latitude},${alert.longitude}`
-          : '';
+        const locationText =
+          alert.latitude && alert.longitude
+            ? `\n📍 Location: https://maps.google.com/?q=${alert.latitude},${alert.longitude}`
+            : '';
 
         const message = await this.client.messages.create({
           body: `🚨 *EMERGENCY ALERT* 🚨\n\n${alert.recipientName}, your contact needs immediate help!\n\n*Threat Level:* ${alert.threatLevel}\n${alert.transcript ? `*Context:* ${alert.transcript}\n` : ''}${locationText}\n\n_SilentSiren AI_`,
@@ -219,7 +258,10 @@ class TwilioService {
           to: `whatsapp:${alert.recipientPhone}`,
         });
 
-        logger.info({ messageId: message.sid, recipient: alert.recipientPhone }, 'WhatsApp sent via Twilio');
+        logger.info(
+          { messageId: message.sid, recipient: alert.recipientPhone },
+          'WhatsApp sent via Twilio'
+        );
         return { success: true, messageId: message.sid };
       } catch (error: any) {
         logger.warn({ error: error.message }, 'Twilio WhatsApp also failed');
@@ -232,16 +274,22 @@ class TwilioService {
   /**
    * Make emergency voice call
    */
-  async makeEmergencyCall(alert: EmergencyAlert): Promise<{ success: boolean; callId?: string; error?: string }> {
+  async makeEmergencyCall(
+    alert: EmergencyAlert
+  ): Promise<{ success: boolean; callId?: string; error?: string }> {
     if (!this.isConfigured || !this.client || process.env.USE_TWILIO === 'false') {
-      logger.info({ recipient: alert.recipientPhone }, 'Twilio unconfigured or disabled. Routing Voice Call via CallMeBot Web API.');
+      logger.info(
+        { recipient: alert.recipientPhone },
+        'Twilio unconfigured or disabled. Routing Voice Call via CallMeBot Web API.'
+      );
       return this.makeEmergencyCallCallMeBot(alert);
     }
 
     try {
-      const locationText = alert.latitude && alert.longitude
-        ? `The GPS location is latitude ${alert.latitude}, longitude ${alert.longitude}. You can view it on Google Maps.`
-        : 'GPS location is not available.';
+      const locationText =
+        alert.latitude && alert.longitude
+          ? `The GPS location is latitude ${alert.latitude}, longitude ${alert.longitude}. You can view it on Google Maps.`
+          : 'GPS location is not available.';
 
       const twimlMessage = `
         <Response>
@@ -267,7 +315,10 @@ class TwilioService {
         to: alert.recipientPhone,
       });
 
-      logger.info({ callId: call.sid, recipient: alert.recipientPhone }, 'Voice call initiated successfully');
+      logger.info(
+        { callId: call.sid, recipient: alert.recipientPhone },
+        'Voice call initiated successfully'
+      );
       return { success: true, callId: call.sid };
     } catch (error: any) {
       const errMsg = error.message?.toLowerCase() || '';
@@ -282,8 +333,14 @@ class TwilioService {
         errCode === '21614';
 
       if (isTrialOrUnverified) {
-        logger.error({ recipient: alert.recipientPhone, error: error.message, errorCode: errCode }, '❌ [TWILIO TRIAL ERROR] Cannot call unverified number. Verify this number in Twilio Console.');
-        return { success: false, error: `Trial account: Verify ${alert.recipientPhone} at Twilio Console` };
+        logger.error(
+          { recipient: alert.recipientPhone, error: error.message, errorCode: errCode },
+          '❌ [TWILIO TRIAL ERROR] Cannot call unverified number. Verify this number in Twilio Console.'
+        );
+        return {
+          success: false,
+          error: `Trial account: Verify ${alert.recipientPhone} at Twilio Console`,
+        };
       }
 
       logger.error({ error, recipient: alert.recipientPhone }, 'Failed to make voice call');

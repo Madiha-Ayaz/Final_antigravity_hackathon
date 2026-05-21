@@ -59,11 +59,9 @@ router.post('/register', async (req: Request, res: Response) => {
     });
 
     // Generate JWT token
-    const token = jwt.sign(
-      { userId: user.id, phoneNumber: user.phone_number },
-      config.JWT_SECRET,
-      { expiresIn: '7d' }
-    );
+    const token = jwt.sign({ userId: user.id, phoneNumber: user.phone_number }, config.JWT_SECRET, {
+      expiresIn: '7d',
+    });
 
     logger.info({ userId: user.id }, 'User registered successfully');
 
@@ -126,11 +124,9 @@ router.post('/login', async (req: Request, res: Response) => {
     await userRepository.updateLastLogin(user.id);
 
     // Generate JWT token
-    const token = jwt.sign(
-      { userId: user.id, phoneNumber: user.phone_number },
-      config.JWT_SECRET,
-      { expiresIn: '7d' }
-    );
+    const token = jwt.sign({ userId: user.id, phoneNumber: user.phone_number }, config.JWT_SECRET, {
+      expiresIn: '7d',
+    });
 
     logger.info({ userId: user.id }, 'User logged in successfully');
 

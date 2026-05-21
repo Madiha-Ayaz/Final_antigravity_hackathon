@@ -44,7 +44,10 @@ class Server {
         await initializeDatabase();
         logger.info('Database schema verified');
       } catch (schemaError) {
-        logger.warn('Database schema initialization failed - tables may already exist or need manual setup', { error: schemaError });
+        logger.warn(
+          'Database schema initialization failed - tables may already exist or need manual setup',
+          { error: schemaError }
+        );
         logger.info('Server will continue - database connection is working');
       }
     } catch (error) {
@@ -79,7 +82,11 @@ class Server {
     this.app.use(rateLimiter);
 
     // Antigravity trace middleware
-    const { traceMiddleware, emergencyTraceMiddleware, traceErrorMiddleware } = require('./middleware/traceMiddleware');
+    const {
+      traceMiddleware,
+      emergencyTraceMiddleware,
+      traceErrorMiddleware,
+    } = require('./middleware/traceMiddleware');
     this.app.use(traceMiddleware);
     this.app.use(emergencyTraceMiddleware);
   }

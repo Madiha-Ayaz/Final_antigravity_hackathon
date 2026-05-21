@@ -19,7 +19,7 @@ const locationSchema = z.object({
 router.post('/sync', authenticate, async (req: AuthRequest, res: Response) => {
   try {
     const validation = locationSchema.safeParse(req.body);
-    
+
     if (!validation.success) {
       return res.status(400).json({
         success: false,
@@ -31,10 +31,10 @@ router.post('/sync', authenticate, async (req: AuthRequest, res: Response) => {
     }
 
     const { latitude, longitude, accuracy, heading, speed, eventId } = validation.data;
-    
+
     if (admin.apps.length > 0) {
       const db = admin.firestore();
-      
+
       await db.collection('location_history').add({
         userId: req.userId,
         latitude,
@@ -45,7 +45,7 @@ router.post('/sync', authenticate, async (req: AuthRequest, res: Response) => {
         eventId: eventId || null,
         timestamp: admin.firestore.FieldValue.serverTimestamp(),
       });
-      
+
       logger.debug({ userId: req.userId, latitude, longitude }, 'Location synced to Firestore');
     } else {
       logger.warn('Firebase Admin not initialized, skipping location sync');

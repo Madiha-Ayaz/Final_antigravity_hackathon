@@ -15,7 +15,7 @@ class NeonDBService {
       connectionTimeoutMillis: 5000,
     });
 
-    this.initTables().catch(err => {
+    this.initTables().catch((err) => {
       logger.error({ error: err }, 'Failed to initialize Neon DB tables');
     });
   }
@@ -192,7 +192,11 @@ class NeonDBService {
         params.push(userId);
       }
 
-      query += ' ORDER BY created_at DESC LIMIT $' + (params.length + 1) + ' OFFSET $' + (params.length + 2);
+      query +=
+        ' ORDER BY created_at DESC LIMIT $' +
+        (params.length + 1) +
+        ' OFFSET $' +
+        (params.length + 2);
       params.push(limit, offset);
 
       const result = await this.pool.query(query, params);
@@ -391,7 +395,11 @@ class NeonDBService {
         params.push(userId);
       }
 
-      query += ' ORDER BY created_at DESC LIMIT $' + (params.length + 1) + ' OFFSET $' + (params.length + 2);
+      query +=
+        ' ORDER BY created_at DESC LIMIT $' +
+        (params.length + 1) +
+        ' OFFSET $' +
+        (params.length + 2);
       params.push(limit, offset);
 
       const result = await this.pool.query(query, params);
@@ -408,7 +416,7 @@ class NeonDBService {
   async updateEventStatus(eventId: number, status: string): Promise<void> {
     try {
       await this.pool.query(
-        'UPDATE emergency_events SET status = $1, resolved_at = CASE WHEN $1 = \'resolved\' THEN NOW() ELSE resolved_at END WHERE id = $2',
+        "UPDATE emergency_events SET status = $1, resolved_at = CASE WHEN $1 = 'resolved' THEN NOW() ELSE resolved_at END WHERE id = $2",
         [status, eventId]
       );
     } catch (error) {
@@ -423,10 +431,16 @@ class NeonDBService {
   async getStatistics(): Promise<any> {
     try {
       const [events, audits, dispatches, validations] = await Promise.all([
-        this.pool.query('SELECT COUNT(*) as total, COUNT(CASE WHEN status = \'active\' THEN 1 END) as active FROM emergency_events'),
+        this.pool.query(
+          "SELECT COUNT(*) as total, COUNT(CASE WHEN status = 'active' THEN 1 END) as active FROM emergency_events"
+        ),
         this.pool.query('SELECT COUNT(*) as total FROM audit_logs'),
-        this.pool.query('SELECT COUNT(*) as total, COUNT(CASE WHEN status = \'sent\' THEN 1 END) as sent FROM dispatch_logs'),
-        this.pool.query('SELECT COUNT(*) as total, COUNT(CASE WHEN is_valid = true THEN 1 END) as valid FROM community_validations'),
+        this.pool.query(
+          "SELECT COUNT(*) as total, COUNT(CASE WHEN status = 'sent' THEN 1 END) as sent FROM dispatch_logs"
+        ),
+        this.pool.query(
+          'SELECT COUNT(*) as total, COUNT(CASE WHEN is_valid = true THEN 1 END) as valid FROM community_validations'
+        ),
       ]);
 
       return {

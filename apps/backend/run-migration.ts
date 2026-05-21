@@ -2,7 +2,9 @@ import { Pool } from 'pg';
 import { readFileSync } from 'fs';
 import { join } from 'path';
 
-const DATABASE_URL = process.env.DATABASE_URL || 'postgresql://neondb_owner:npg_bdflQ1gx7qYz@ep-dry-smoke-aqh2syx4-pooler.c-8.us-east-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require';
+const DATABASE_URL =
+  process.env.DATABASE_URL ||
+  'postgresql://neondb_owner:npg_bdflQ1gx7qYz@ep-dry-smoke-aqh2syx4-pooler.c-8.us-east-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require';
 
 async function runMigration() {
   const pool = new Pool({
@@ -14,7 +16,13 @@ async function runMigration() {
     const client = await pool.connect();
 
     console.log('Reading migration file...');
-    const migrationPath = join(__dirname, 'src', 'db', 'migrations', '003_update_emergency_contacts.sql');
+    const migrationPath = join(
+      __dirname,
+      'src',
+      'db',
+      'migrations',
+      '003_update_emergency_contacts.sql'
+    );
     const sql = readFileSync(migrationPath, 'utf-8');
 
     console.log('Running migration...');

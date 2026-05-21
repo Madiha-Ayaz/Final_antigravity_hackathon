@@ -1,4 +1,9 @@
-import { antigravityTrace, EmergencyContext, AIAnalysisResult, SignalFusionResult } from './antigravityTrace';
+import {
+  antigravityTrace,
+  EmergencyContext,
+  AIAnalysisResult,
+  SignalFusionResult,
+} from './antigravityTrace';
 import { emergencyClassifier } from './emergencyClassifier';
 import { createLogger } from '@silentsiren/logger';
 
@@ -159,12 +164,9 @@ export function createEmergencyPipeline(context: EmergencyContext): EventPipelin
   pipeline.addStage({
     name: 'initial_detection',
     execute: async (ctx) => {
-      antigravityTrace.logEmergencyResponse(
-        traceId,
-        'DETECTION',
-        'STARTED',
-        { eventType: context.eventType }
-      );
+      antigravityTrace.logEmergencyResponse(traceId, 'DETECTION', 'STARTED', {
+        eventType: context.eventType,
+      });
 
       return {
         traceId,
@@ -174,12 +176,7 @@ export function createEmergencyPipeline(context: EmergencyContext): EventPipelin
       };
     },
     onSuccess: () => {
-      antigravityTrace.logEmergencyResponse(
-        traceId,
-        'DETECTION',
-        'COMPLETED',
-        { detected: true }
-      );
+      antigravityTrace.logEmergencyResponse(traceId, 'DETECTION', 'COMPLETED', { detected: true });
     },
   });
 
@@ -187,12 +184,9 @@ export function createEmergencyPipeline(context: EmergencyContext): EventPipelin
   pipeline.addStage({
     name: 'ai_analysis',
     execute: async (ctx) => {
-      antigravityTrace.logEmergencyResponse(
-        traceId,
-        'ANALYSIS',
-        'STARTED',
-        { hasTranscript: !!context.transcript }
-      );
+      antigravityTrace.logEmergencyResponse(traceId, 'ANALYSIS', 'STARTED', {
+        hasTranscript: !!context.transcript,
+      });
 
       // Classify emergency type
       const classification = emergencyClassifier.classifyEmergency(
@@ -223,12 +217,9 @@ export function createEmergencyPipeline(context: EmergencyContext): EventPipelin
       return analysisResult;
     },
     onSuccess: () => {
-      antigravityTrace.logEmergencyResponse(
-        traceId,
-        'ANALYSIS',
-        'COMPLETED',
-        { aiAnalysisComplete: true }
-      );
+      antigravityTrace.logEmergencyResponse(traceId, 'ANALYSIS', 'COMPLETED', {
+        aiAnalysisComplete: true,
+      });
     },
     timeout: 10000,
   });
@@ -257,7 +248,7 @@ export function createEmergencyPipeline(context: EmergencyContext): EventPipelin
             source: 'location_accuracy',
             value: context.location ? 0.9 : 0.5,
             weight: 0.1,
-            confidence: context.location?.accuracy ? 1 - (context.location.accuracy / 100) : 0.5,
+            confidence: context.location?.accuracy ? 1 - context.location.accuracy / 100 : 0.5,
           },
         ],
         fusedConfidence: 0.87,
@@ -275,12 +266,7 @@ export function createEmergencyPipeline(context: EmergencyContext): EventPipelin
   pipeline.addStage({
     name: 'classification',
     execute: async (ctx) => {
-      antigravityTrace.logEmergencyResponse(
-        traceId,
-        'CLASSIFICATION',
-        'STARTED',
-        {}
-      );
+      antigravityTrace.logEmergencyResponse(traceId, 'CLASSIFICATION', 'STARTED', {});
 
       const fusion = ctx.signal_fusion as SignalFusionResult;
 
@@ -288,15 +274,11 @@ export function createEmergencyPipeline(context: EmergencyContext): EventPipelin
         type: 'EMERGENCY',
         threatLevel: fusion.fusedThreatLevel,
         confidence: fusion.fusedConfidence,
-        requiresDispatch: fusion.fusedThreatLevel === 'HIGH' || fusion.fusedThreatLevel === 'CRITICAL',
+        requiresDispatch:
+          fusion.fusedThreatLevel === 'HIGH' || fusion.fusedThreatLevel === 'CRITICAL',
       };
 
-      antigravityTrace.logEmergencyResponse(
-        traceId,
-        'CLASSIFICATION',
-        'COMPLETED',
-        classification
-      );
+      antigravityTrace.logEmergencyResponse(traceId, 'CLASSIFICATION', 'COMPLETED', classification);
 
       return classification;
     },
@@ -306,12 +288,7 @@ export function createEmergencyPipeline(context: EmergencyContext): EventPipelin
   pipeline.addStage({
     name: 'alert_execution',
     execute: async (ctx) => {
-      antigravityTrace.logEmergencyResponse(
-        traceId,
-        'ALERT',
-        'STARTED',
-        {}
-      );
+      antigravityTrace.logEmergencyResponse(traceId, 'ALERT', 'STARTED', {});
 
       const classification = ctx.classification;
       const alerts: any[] = [];
@@ -346,12 +323,9 @@ export function createEmergencyPipeline(context: EmergencyContext): EventPipelin
         alerts.push(whatsappResult);
       }
 
-      antigravityTrace.logEmergencyResponse(
-        traceId,
-        'ALERT',
-        'COMPLETED',
-        { alertsSent: alerts.length }
-      );
+      antigravityTrace.logEmergencyResponse(traceId, 'ALERT', 'COMPLETED', {
+        alertsSent: alerts.length,
+      });
 
       return { alerts, totalSent: alerts.length };
     },
@@ -365,12 +339,7 @@ export function createEmergencyPipeline(context: EmergencyContext): EventPipelin
       const classification = ctx.classification;
 
       if (classification.requiresDispatch) {
-        antigravityTrace.logEmergencyResponse(
-          traceId,
-          'DISPATCH',
-          'STARTED',
-          {}
-        );
+        antigravityTrace.logEmergencyResponse(traceId, 'DISPATCH', 'STARTED', {});
 
         // Simulate dispatch
         const dispatchResult = {
@@ -379,12 +348,7 @@ export function createEmergencyPipeline(context: EmergencyContext): EventPipelin
           estimatedArrival: '5-10 minutes',
         };
 
-        antigravityTrace.logEmergencyResponse(
-          traceId,
-          'DISPATCH',
-          'COMPLETED',
-          dispatchResult
-        );
+        antigravityTrace.logEmergencyResponse(traceId, 'DISPATCH', 'COMPLETED', dispatchResult);
 
         return dispatchResult;
       }

@@ -9,10 +9,12 @@ async function testTextMeBot() {
   console.log('');
 
   const cleanPhone = RECIPIENT_PHONE.replace('+', '').replace(/\s+/g, '');
-  const testMessage = '🚨 TEST ALERT from SilentSiren AI\n\nThis is a test message to verify WhatsApp integration is working.\n\nTime: ' + new Date().toLocaleString();
-  
+  const testMessage =
+    '🚨 TEST ALERT from SilentSiren AI\n\nThis is a test message to verify WhatsApp integration is working.\n\nTime: ' +
+    new Date().toLocaleString();
+
   const url = `https://api.textmebot.com/send.php?recipient=${cleanPhone}&apikey=${TEXTMEBOT_API_KEY}&text=${encodeURIComponent(testMessage)}`;
-  
+
   console.log('Sending test message...');
   console.log('Clean Phone:', cleanPhone);
   console.log('');
@@ -20,11 +22,11 @@ async function testTextMeBot() {
   try {
     const response = await fetch(url);
     const text = await response.text();
-    
+
     console.log('Response Status:', response.status);
     console.log('Response:', text);
     console.log('');
-    
+
     if (response.ok) {
       console.log('✅ SUCCESS! Check WhatsApp on', RECIPIENT_PHONE);
     } else {

@@ -97,7 +97,10 @@ export function PWAInstaller() {
   };
 
   // Don't show if already installed or dismissed
-  if (isInstalled || (typeof window !== 'undefined' && sessionStorage.getItem('pwa-install-dismissed'))) {
+  if (
+    isInstalled ||
+    (typeof window !== 'undefined' && sessionStorage.getItem('pwa-install-dismissed'))
+  ) {
     return null;
   }
 

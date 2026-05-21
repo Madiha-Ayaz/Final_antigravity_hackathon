@@ -8,7 +8,12 @@ import { useWakePhraseDetection } from '../../hooks';
 import { useRollingAudioBuffer } from '../../hooks';
 import { useGeolocation } from '../../hooks/useGeolocation';
 import { useSiren } from '../../hooks/useSiren';
-import { AudioVisualizer, CompatibilityBanner, WakePhraseIndicator, EmergencyCountdown } from '../../components';
+import {
+  AudioVisualizer,
+  CompatibilityBanner,
+  WakePhraseIndicator,
+  EmergencyCountdown,
+} from '../../components';
 import { Navbar } from '../../components/layout/Navbar';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
@@ -26,7 +31,10 @@ export default function AudioMonitorPage() {
   const [stream, setStream] = useState<MediaStream | null>(null);
   const [agentLogs, setAgentLogs] = useState<AgentLog[]>([]);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
-  const [lastAnalysis, setLastAnalysis] = useState<{ confidence: string; keywords: string[] } | null>(null);
+  const [lastAnalysis, setLastAnalysis] = useState<{
+    confidence: string;
+    keywords: string[];
+  } | null>(null);
   const [analysisError, setAnalysisError] = useState('');
   const [autoStarted, setAutoStarted] = useState(false);
   const [emergencyCategory, setEmergencyCategory] = useState<string | null>(null);
@@ -39,9 +47,23 @@ export default function AudioMonitorPage() {
   const [emergencyStartTime, setEmergencyStartTime] = useState<number | null>(null);
   const [sirenTimeRemaining, setSirenTimeRemaining] = useState(180); // 3 minutes = 180 seconds
 
-  const { isListening, isSupported, error: audioError, audioLevel, startListening, stopListening } = useAudioMonitor();
-  const { isDetecting, lastDetection, detectionCount, startDetection, stopDetection } = useWakePhraseDetection();
-  const { startRecording, stopRecording, getBufferDuration, clearBuffer, getBufferedAudioAsArrayBuffer } = useRollingAudioBuffer();
+  const {
+    isListening,
+    isSupported,
+    error: audioError,
+    audioLevel,
+    startListening,
+    stopListening,
+  } = useAudioMonitor();
+  const { isDetecting, lastDetection, detectionCount, startDetection, stopDetection } =
+    useWakePhraseDetection();
+  const {
+    startRecording,
+    stopRecording,
+    getBufferDuration,
+    clearBuffer,
+    getBufferedAudioAsArrayBuffer,
+  } = useRollingAudioBuffer();
   const { position: gpsPosition, requestPosition } = useGeolocation(true);
   const { startSiren, stopSiren } = useSiren();
 
@@ -73,14 +95,16 @@ export default function AudioMonitorPage() {
       const token = localStorage.getItem('token') || localStorage.getItem('auth_token');
       const payload = {
         alertId: `auto_alert_${Date.now()}`,
-        location: gpsPosition ? { latitude: gpsPosition.latitude, longitude: gpsPosition.longitude } : undefined,
+        location: gpsPosition
+          ? { latitude: gpsPosition.latitude, longitude: gpsPosition.longitude }
+          : undefined,
       };
 
       const res = await fetch(`${API_URL}/api/voice-threat/emergency/send-alerts`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          ...(token ? { 'Authorization': `Bearer ${token}` } : {}),
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
         },
         body: JSON.stringify(payload),
       });
@@ -141,22 +165,28 @@ export default function AudioMonitorPage() {
       if (category === 'fire' || category === 'flood' || category === 'abuse') {
         // Fire/Flood/Abuse → Crisis page with auto-trigger
         console.log(`🔀 Routing to crisis page with scenario: ${category}`);
-        localStorage.setItem('emergencyData', JSON.stringify({
-          category,
-          phrase: lastDetection.phrase,
-          timestamp: Date.now(),
-          location: gpsPosition,
-        }));
+        localStorage.setItem(
+          'emergencyData',
+          JSON.stringify({
+            category,
+            phrase: lastDetection.phrase,
+            timestamp: Date.now(),
+            location: gpsPosition,
+          })
+        );
         router.push(`/crisis?scenario=${category}&auto=true`);
       } else if (category === 'accident') {
         // Accident → Alert page (SAVE ME)
         console.log('🔀 Routing to alert page for accident');
-        localStorage.setItem('emergencyData', JSON.stringify({
-          category,
-          phrase: lastDetection.phrase,
-          timestamp: Date.now(),
-          location: gpsPosition,
-        }));
+        localStorage.setItem(
+          'emergencyData',
+          JSON.stringify({
+            category,
+            phrase: lastDetection.phrase,
+            timestamp: Date.now(),
+            location: gpsPosition,
+          })
+        );
         router.push('/alert?auto=true');
       } else {
         // General → Show countdown as before
@@ -179,7 +209,9 @@ export default function AudioMonitorPage() {
       const token = localStorage.getItem('token') || localStorage.getItem('auth_token');
       const payload = {
         alertId: `alert_${Date.now()}`,
-        location: gpsPosition ? { latitude: gpsPosition.latitude, longitude: gpsPosition.longitude } : undefined,
+        location: gpsPosition
+          ? { latitude: gpsPosition.latitude, longitude: gpsPosition.longitude }
+          : undefined,
       };
 
       console.log('📤 Sending Twilio emergency alerts to all contacts...', payload);
@@ -188,7 +220,7 @@ export default function AudioMonitorPage() {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          ...(token ? { 'Authorization': `Bearer ${token}` } : {}),
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
         },
         body: JSON.stringify(payload),
       });
@@ -227,7 +259,8 @@ export default function AudioMonitorPage() {
 
     // Send "I am safe" message to all emergency contacts
     try {
-      const safeMessage = `✅ *I AM SAFE* ✅\n\n` +
+      const safeMessage =
+        `✅ *I AM SAFE* ✅\n\n` +
         `The emergency alert has been cancelled.\n` +
         `The person is safe and does not need assistance.\n\n` +
         `📍 *Current Location:*\n` +
@@ -267,84 +300,87 @@ export default function AudioMonitorPage() {
     setSirenTimeRemaining(180);
   };
 
-  const triggerAgentWorkflow = useCallback(async (transcript: string) => {
-    if (isAnalyzing) return;
-    console.log('🔍 Starting AI analysis for transcript:', transcript);
-    setIsAnalyzing(true);
-    setAnalysisError('');
-    setAgentLogs([]);
+  const triggerAgentWorkflow = useCallback(
+    async (transcript: string) => {
+      if (isAnalyzing) return;
+      console.log('🔍 Starting AI analysis for transcript:', transcript);
+      setIsAnalyzing(true);
+      setAnalysisError('');
+      setAgentLogs([]);
 
-    try {
-      const payload = {
-        userId: 'monitor-user-001',
-        transcript,
-        location: gpsPosition
-          ? { latitude: gpsPosition.latitude, longitude: gpsPosition.longitude }
-          : undefined,
-      };
+      try {
+        const payload = {
+          userId: 'monitor-user-001',
+          transcript,
+          location: gpsPosition
+            ? { latitude: gpsPosition.latitude, longitude: gpsPosition.longitude }
+            : undefined,
+        };
 
-      console.log('📤 Sending to AI workflow:', payload);
+        console.log('📤 Sending to AI workflow:', payload);
 
-      const res = await fetch(`${API_URL}/api/workflow/trigger`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload),
-      });
-
-      const data = await res.json();
-      console.log('📥 AI workflow response:', data);
-
-      if (data.success && data.logs) {
-        setAgentLogs(data.logs);
-        // Extract confidence from AudioAnalysisAgent log
-        const audioLog = data.logs.find((l: AgentLog) => l.agent === 'AudioAnalysisAgent' && l.result);
-        if (audioLog?.result) {
-          console.log('✅ Analysis result:', audioLog.result);
-          setLastAnalysis({
-            confidence: audioLog.result.confidence,
-            keywords: audioLog.result.keywords || [],
-          });
-        } else {
-          // Fallback: assume high confidence for emergency keywords
-          const emergencyKeywords = ['help', 'emergency', 'danger', 'police'];
-          const hasEmergency = emergencyKeywords.some(kw =>
-            transcript.toLowerCase().includes(kw)
-          );
-
-          if (hasEmergency) {
-            console.log('⚠️ Emergency keywords detected, setting High confidence');
-            setLastAnalysis({
-              confidence: 'High',
-              keywords: emergencyKeywords.filter(kw => transcript.toLowerCase().includes(kw)),
-            });
-          }
-        }
-      } else {
-        setAnalysisError(data.message || 'Analysis failed');
-        console.error('❌ Analysis failed:', data.message);
-      }
-    } catch (err: any) {
-      const errorMsg = `Connection error: ${err.message}. Is backend running on port 3001?`;
-      setAnalysisError(errorMsg);
-      console.error('❌ Analysis error:', err);
-
-      // Fallback: Check for emergency keywords locally
-      const emergencyKeywords = ['help', 'emergency', 'danger', 'police'];
-      const hasEmergency = emergencyKeywords.some(kw =>
-        transcript.toLowerCase().includes(kw)
-      );
-
-      if (hasEmergency) {
-        console.log('⚠️ Backend unavailable but emergency detected locally');
-        setLastAnalysis({
-          confidence: 'High',
-          keywords: emergencyKeywords.filter(kw => transcript.toLowerCase().includes(kw)),
+        const res = await fetch(`${API_URL}/api/workflow/trigger`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload),
         });
+
+        const data = await res.json();
+        console.log('📥 AI workflow response:', data);
+
+        if (data.success && data.logs) {
+          setAgentLogs(data.logs);
+          // Extract confidence from AudioAnalysisAgent log
+          const audioLog = data.logs.find(
+            (l: AgentLog) => l.agent === 'AudioAnalysisAgent' && l.result
+          );
+          if (audioLog?.result) {
+            console.log('✅ Analysis result:', audioLog.result);
+            setLastAnalysis({
+              confidence: audioLog.result.confidence,
+              keywords: audioLog.result.keywords || [],
+            });
+          } else {
+            // Fallback: assume high confidence for emergency keywords
+            const emergencyKeywords = ['help', 'emergency', 'danger', 'police'];
+            const hasEmergency = emergencyKeywords.some((kw) =>
+              transcript.toLowerCase().includes(kw)
+            );
+
+            if (hasEmergency) {
+              console.log('⚠️ Emergency keywords detected, setting High confidence');
+              setLastAnalysis({
+                confidence: 'High',
+                keywords: emergencyKeywords.filter((kw) => transcript.toLowerCase().includes(kw)),
+              });
+            }
+          }
+        } else {
+          setAnalysisError(data.message || 'Analysis failed');
+          console.error('❌ Analysis failed:', data.message);
+        }
+      } catch (err: any) {
+        const errorMsg = `Connection error: ${err.message}. Is backend running on port 3001?`;
+        setAnalysisError(errorMsg);
+        console.error('❌ Analysis error:', err);
+
+        // Fallback: Check for emergency keywords locally
+        const emergencyKeywords = ['help', 'emergency', 'danger', 'police'];
+        const hasEmergency = emergencyKeywords.some((kw) => transcript.toLowerCase().includes(kw));
+
+        if (hasEmergency) {
+          console.log('⚠️ Backend unavailable but emergency detected locally');
+          setLastAnalysis({
+            confidence: 'High',
+            keywords: emergencyKeywords.filter((kw) => transcript.toLowerCase().includes(kw)),
+          });
+        }
+      } finally {
+        setIsAnalyzing(false);
       }
-    } finally {
-      setIsAnalyzing(false);
-    }
-  }, [isAnalyzing, gpsPosition]);
+    },
+    [isAnalyzing, gpsPosition]
+  );
 
   const handleStart = async () => {
     try {
@@ -376,20 +412,35 @@ export default function AudioMonitorPage() {
       <div className="min-h-screen flex items-center justify-center bg-gray-50">
         <div className="bg-white p-8 rounded-lg shadow-lg max-w-md text-center">
           <div className="text-red-600 mb-4">
-            <svg className="w-12 h-12 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg>
+            <svg
+              className="w-12 h-12 mx-auto"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
+              />
+            </svg>
           </div>
           <h2 className="text-xl font-bold mb-2">Not Supported</h2>
-          <p className="text-gray-600">Audio monitoring is not supported in your browser. Please use Chrome, Firefox, or Edge.</p>
+          <p className="text-gray-600">
+            Audio monitoring is not supported in your browser. Please use Chrome, Firefox, or Edge.
+          </p>
         </div>
       </div>
     );
   }
 
-  const confidenceColor = lastAnalysis?.confidence === 'High'
-    ? 'bg-red-100 text-red-800 border-red-300'
-    : lastAnalysis?.confidence === 'Medium'
-    ? 'bg-yellow-100 text-yellow-800 border-yellow-300'
-    : 'bg-green-100 text-green-800 border-green-300';
+  const confidenceColor =
+    lastAnalysis?.confidence === 'High'
+      ? 'bg-red-100 text-red-800 border-red-300'
+      : lastAnalysis?.confidence === 'Medium'
+        ? 'bg-yellow-100 text-yellow-800 border-yellow-300'
+        : 'bg-green-100 text-green-800 border-green-300';
 
   return (
     <>
@@ -402,7 +453,7 @@ export default function AudioMonitorPage() {
           timestamp={lastDetection.timestamp}
         />
       )}
-      
+
       {/* 3-Second Countdown Overlay */}
       {showCountdown && (
         <EmergencyCountdown
@@ -420,23 +471,33 @@ export default function AudioMonitorPage() {
           {/* Animated background effects */}
           <div className="absolute inset-0 opacity-20">
             <div className="absolute top-1/3 left-1/3 w-64 h-64 sm:w-80 sm:h-80 lg:w-96 lg:h-96 bg-red-600 rounded-full blur-3xl animate-pulse"></div>
-            <div className="absolute bottom-1/3 right-1/3 w-64 h-64 sm:w-80 sm:h-80 lg:w-96 lg:h-96 bg-orange-600 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '0.5s' }}></div>
+            <div
+              className="absolute bottom-1/3 right-1/3 w-64 h-64 sm:w-80 sm:h-80 lg:w-96 lg:h-96 bg-orange-600 rounded-full blur-3xl animate-pulse"
+              style={{ animationDelay: '0.5s' }}
+            ></div>
           </div>
 
           <div className="text-center space-y-4 sm:space-y-6 lg:space-y-8 max-w-2xl w-full relative z-10">
             <motion.div
               animate={{
                 scale: [1, 1.2, 1],
-                rotate: [0, 10, -10, 0]
+                rotate: [0, 10, -10, 0],
               }}
               transition={{
                 duration: 1,
                 repeat: Infinity,
-                ease: "easeInOut"
+                ease: 'easeInOut',
               }}
               className="text-6xl sm:text-7xl md:text-8xl lg:text-9xl"
             >
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" /></svg>
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"
+                />
+              </svg>
             </motion.div>
 
             <div className="space-y-3 sm:space-y-4">
@@ -461,9 +522,12 @@ export default function AudioMonitorPage() {
                 {/* 3-Minute Countdown Display */}
                 <div className="bg-yellow-950/50 backdrop-blur-sm border-2 border-yellow-500/50 rounded-xl sm:rounded-2xl p-3 sm:p-4">
                   <div className="text-center">
-                    <div className="text-xs sm:text-sm text-yellow-300 mb-1 sm:mb-2 font-semibold">Auto-Ambulance Call In:</div>
+                    <div className="text-xs sm:text-sm text-yellow-300 mb-1 sm:mb-2 font-semibold">
+                      Auto-Ambulance Call In:
+                    </div>
                     <div className="text-4xl sm:text-5xl lg:text-5xl font-black text-yellow-400 font-mono">
-                      {Math.floor(sirenTimeRemaining / 60)}:{(sirenTimeRemaining % 60).toString().padStart(2, '0')}
+                      {Math.floor(sirenTimeRemaining / 60)}:
+                      {(sirenTimeRemaining % 60).toString().padStart(2, '0')}
                     </div>
                     <div className="text-xs text-yellow-300 mt-1 sm:mt-2">
                       Click "I'M SAFE" below to cancel
@@ -474,9 +538,13 @@ export default function AudioMonitorPage() {
             </div>
 
             <div className="bg-slate-900/80 backdrop-blur-sm border-2 border-purple-500/30 rounded-2xl sm:rounded-3xl p-4 sm:p-5 lg:p-6">
-              <div className="text-xs sm:text-sm text-purple-300 mb-1 sm:mb-2 font-semibold uppercase tracking-wider">Live GPS Coordinates</div>
+              <div className="text-xs sm:text-sm text-purple-300 mb-1 sm:mb-2 font-semibold uppercase tracking-wider">
+                Live GPS Coordinates
+              </div>
               <div className="font-mono text-lg sm:text-xl lg:text-2xl font-black text-purple-400 break-all">
-                {gpsPosition ? `${gpsPosition.latitude.toFixed(6)}, ${gpsPosition.longitude.toFixed(6)}` : 'Acquiring GPS signal...'}
+                {gpsPosition
+                  ? `${gpsPosition.latitude.toFixed(6)}, ${gpsPosition.longitude.toFixed(6)}`
+                  : 'Acquiring GPS signal...'}
               </div>
             </div>
 
@@ -491,7 +559,8 @@ export default function AudioMonitorPage() {
 
             <div className="bg-yellow-950/30 backdrop-blur-sm border border-yellow-500/30 rounded-xl sm:rounded-2xl p-3 sm:p-4">
               <p className="text-xs sm:text-sm text-yellow-200 font-semibold">
-                ⚠️ Your emergency contacts have been notified and can track your location in real-time
+                ⚠️ Your emergency contacts have been notified and can track your location in
+                real-time
               </p>
             </div>
           </div>
@@ -500,7 +569,6 @@ export default function AudioMonitorPage() {
 
       <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 p-3 sm:p-4 md:p-6 lg:p-8 overflow-x-hidden">
         <div className="max-w-7xl mx-auto space-y-3 sm:space-y-4 md:space-y-6">
-
           {/* Header */}
           <div className="bg-gradient-to-br from-slate-800 to-slate-900 rounded-xl sm:rounded-2xl lg:rounded-3xl shadow-2xl p-3 sm:p-4 md:p-6 lg:p-8 border border-purple-500/20">
             <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-3 sm:gap-4 mb-3 sm:mb-4 md:mb-6">
@@ -514,8 +582,12 @@ export default function AudioMonitorPage() {
                     SilentSiren AI
                   </h1>
                 </div>
-                <p className="text-purple-300 text-xs sm:text-sm md:text-base lg:text-lg font-medium">Autonomous Emergency Detection</p>
-                <p className="text-slate-400 text-xs sm:text-sm mt-1">Powered by Gemini AI • Real-time Voice Analysis</p>
+                <p className="text-purple-300 text-xs sm:text-sm md:text-base lg:text-lg font-medium">
+                  Autonomous Emergency Detection
+                </p>
+                <p className="text-slate-400 text-xs sm:text-sm mt-1">
+                  Powered by Gemini AI • Real-time Voice Analysis
+                </p>
               </div>
               <div className="w-full lg:w-auto flex flex-col sm:flex-row gap-2 sm:gap-3 flex-shrink-0">
                 <button
@@ -528,29 +600,48 @@ export default function AudioMonitorPage() {
                 >
                   {isActive ? '⏹ Stop Protection' : '▶️ Start Protection'}
                 </button>
-
               </div>
             </div>
 
             {/* Status Row */}
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-3 md:gap-4">
-              <div className={`p-2.5 sm:p-3 md:p-4 lg:p-5 rounded-lg sm:rounded-xl lg:rounded-2xl border-2 backdrop-blur-sm ${isActive ? 'border-green-500/50 bg-green-500/10' : 'border-slate-600/50 bg-slate-800/50'}`}>
-                <div className="text-xs text-slate-400 mb-1 sm:mb-2 font-semibold uppercase tracking-wider">Status</div>
-                <div className={`font-black text-sm sm:text-base md:text-lg lg:text-xl flex items-center gap-1.5 sm:gap-2 ${isActive ? 'text-green-400' : 'text-slate-500'}`}>
-                  <div className={`w-2 h-2 sm:w-3 sm:h-3 rounded-full flex-shrink-0 ${isActive ? 'bg-green-400 animate-pulse' : 'bg-slate-600'}`}></div>
-                  <span className="text-xs sm:text-sm md:text-base truncate">{isActive ? 'ACTIVE' : 'STANDBY'}</span>
+              <div
+                className={`p-2.5 sm:p-3 md:p-4 lg:p-5 rounded-lg sm:rounded-xl lg:rounded-2xl border-2 backdrop-blur-sm ${isActive ? 'border-green-500/50 bg-green-500/10' : 'border-slate-600/50 bg-slate-800/50'}`}
+              >
+                <div className="text-xs text-slate-400 mb-1 sm:mb-2 font-semibold uppercase tracking-wider">
+                  Status
+                </div>
+                <div
+                  className={`font-black text-sm sm:text-base md:text-lg lg:text-xl flex items-center gap-1.5 sm:gap-2 ${isActive ? 'text-green-400' : 'text-slate-500'}`}
+                >
+                  <div
+                    className={`w-2 h-2 sm:w-3 sm:h-3 rounded-full flex-shrink-0 ${isActive ? 'bg-green-400 animate-pulse' : 'bg-slate-600'}`}
+                  ></div>
+                  <span className="text-xs sm:text-sm md:text-base truncate">
+                    {isActive ? 'ACTIVE' : 'STANDBY'}
+                  </span>
                 </div>
               </div>
               <div className="p-2.5 sm:p-3 md:p-4 lg:p-5 rounded-lg sm:rounded-xl lg:rounded-2xl border-2 border-blue-500/50 bg-blue-500/10 backdrop-blur-sm">
-                <div className="text-xs text-slate-400 mb-1 sm:mb-2 font-semibold uppercase tracking-wider">Detections</div>
-                <div className="font-black text-blue-400 text-lg sm:text-xl md:text-2xl lg:text-3xl">{detectionCount}</div>
+                <div className="text-xs text-slate-400 mb-1 sm:mb-2 font-semibold uppercase tracking-wider">
+                  Detections
+                </div>
+                <div className="font-black text-blue-400 text-lg sm:text-xl md:text-2xl lg:text-3xl">
+                  {detectionCount}
+                </div>
               </div>
               <div className="p-2.5 sm:p-3 md:p-4 lg:p-5 rounded-lg sm:rounded-xl lg:rounded-2xl border-2 border-purple-500/50 bg-purple-500/10 backdrop-blur-sm">
-                <div className="text-xs text-slate-400 mb-1 sm:mb-2 font-semibold uppercase tracking-wider">Buffer</div>
-                <div className="font-black text-purple-400 text-base sm:text-lg md:text-xl lg:text-2xl">{getBufferDuration()}s</div>
+                <div className="text-xs text-slate-400 mb-1 sm:mb-2 font-semibold uppercase tracking-wider">
+                  Buffer
+                </div>
+                <div className="font-black text-purple-400 text-base sm:text-lg md:text-xl lg:text-2xl">
+                  {getBufferDuration()}s
+                </div>
               </div>
               <div className="p-2.5 sm:p-3 md:p-4 lg:p-5 rounded-lg sm:rounded-xl lg:rounded-2xl border-2 border-orange-500/50 bg-orange-500/10 backdrop-blur-sm">
-                <div className="text-xs text-slate-400 mb-1 sm:mb-2 font-semibold uppercase tracking-wider">GPS</div>
+                <div className="text-xs text-slate-400 mb-1 sm:mb-2 font-semibold uppercase tracking-wider">
+                  GPS
+                </div>
                 <div className="font-bold text-orange-400 text-xs sm:text-sm break-all">
                   {gpsPosition
                     ? `${gpsPosition.latitude.toFixed(4)}, ${gpsPosition.longitude.toFixed(4)}`
@@ -561,7 +652,9 @@ export default function AudioMonitorPage() {
 
             {audioError && (
               <div className="mt-3 sm:mt-4 p-3 sm:p-4 bg-red-500/20 border-2 border-red-500/50 rounded-xl sm:rounded-2xl backdrop-blur-sm">
-                <p className="text-red-300 font-semibold text-xs sm:text-sm">⚠️ Audio Error: {audioError}</p>
+                <p className="text-red-300 font-semibold text-xs sm:text-sm">
+                  ⚠️ Audio Error: {audioError}
+                </p>
               </div>
             )}
           </div>
@@ -579,7 +672,9 @@ export default function AudioMonitorPage() {
               <div className="mt-4 sm:mt-6">
                 <div className="flex items-center justify-between text-xs sm:text-sm text-slate-400 mb-2">
                   <span className="font-semibold">VOLUME LEVEL</span>
-                  <span className="font-black text-purple-400 text-base sm:text-lg">{audioLevel}%</span>
+                  <span className="font-black text-purple-400 text-base sm:text-lg">
+                    {audioLevel}%
+                  </span>
                 </div>
                 <div className="w-full bg-slate-700/50 rounded-full h-2.5 sm:h-3 overflow-hidden backdrop-blur-sm border border-slate-600/50">
                   <div
@@ -604,7 +699,9 @@ export default function AudioMonitorPage() {
               {isAnalyzing && (
                 <div className="flex items-center gap-3 sm:gap-4 text-purple-300 bg-purple-500/20 p-3 sm:p-4 lg:p-5 rounded-xl sm:rounded-2xl border border-purple-500/30 backdrop-blur-sm">
                   <div className="w-5 h-5 sm:w-6 sm:h-6 border-3 border-purple-400 border-t-transparent rounded-full animate-spin flex-shrink-0" />
-                  <span className="font-semibold text-sm sm:text-base lg:text-lg">Analyzing voice patterns with Gemini AI...</span>
+                  <span className="font-semibold text-sm sm:text-base lg:text-lg">
+                    Analyzing voice patterns with Gemini AI...
+                  </span>
                 </div>
               )}
 
@@ -616,28 +713,73 @@ export default function AudioMonitorPage() {
 
               {lastAnalysis && !isAnalyzing && (
                 <div className="space-y-4 sm:space-y-6">
-                  <div className={`inline-flex items-center gap-2 sm:gap-3 px-4 sm:px-6 py-3 sm:py-4 rounded-xl sm:rounded-2xl border-2 font-black text-base sm:text-lg lg:text-xl backdrop-blur-sm ${
-                    lastAnalysis.confidence === 'High'
-                      ? 'border-red-500/50 bg-red-500/20 text-red-300'
-                      : lastAnalysis.confidence === 'Medium'
-                      ? 'border-yellow-500/50 bg-yellow-500/20 text-yellow-300'
-                      : 'border-green-500/50 bg-green-500/20 text-green-300'
-                  }`}>
+                  <div
+                    className={`inline-flex items-center gap-2 sm:gap-3 px-4 sm:px-6 py-3 sm:py-4 rounded-xl sm:rounded-2xl border-2 font-black text-base sm:text-lg lg:text-xl backdrop-blur-sm ${
+                      lastAnalysis.confidence === 'High'
+                        ? 'border-red-500/50 bg-red-500/20 text-red-300'
+                        : lastAnalysis.confidence === 'Medium'
+                          ? 'border-yellow-500/50 bg-yellow-500/20 text-yellow-300'
+                          : 'border-green-500/50 bg-green-500/20 text-green-300'
+                    }`}
+                  >
                     {lastAnalysis.confidence === 'High' ? (
-                      <svg className="w-4 h-4 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg>
+                      <svg
+                        className="w-4 h-4 text-red-400"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
+                        />
+                      </svg>
                     ) : lastAnalysis.confidence === 'Medium' ? (
-                      <svg className="w-4 h-4 text-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg>
+                      <svg
+                        className="w-4 h-4 text-yellow-400"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
+                        />
+                      </svg>
                     ) : (
-                      <svg className="w-4 h-4 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
+                      <svg
+                        className="w-4 h-4 text-green-400"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M5 13l4 4L19 7"
+                        />
+                      </svg>
                     )}
-                    <span className="truncate">THREAT LEVEL: {lastAnalysis.confidence.toUpperCase()}</span>
+                    <span className="truncate">
+                      THREAT LEVEL: {lastAnalysis.confidence.toUpperCase()}
+                    </span>
                   </div>
                   {lastAnalysis.keywords.length > 0 && (
                     <div>
-                      <div className="text-xs sm:text-sm text-slate-400 mb-2 sm:mb-3 font-semibold uppercase tracking-wider">Detected Keywords</div>
+                      <div className="text-xs sm:text-sm text-slate-400 mb-2 sm:mb-3 font-semibold uppercase tracking-wider">
+                        Detected Keywords
+                      </div>
                       <div className="flex flex-wrap gap-2">
                         {lastAnalysis.keywords.map((kw, i) => (
-                          <span key={i} className="px-3 sm:px-4 py-1.5 sm:py-2 bg-red-500/20 text-red-300 border border-red-500/30 rounded-lg sm:rounded-xl text-xs sm:text-sm font-bold backdrop-blur-sm">
+                          <span
+                            key={i}
+                            className="px-3 sm:px-4 py-1.5 sm:py-2 bg-red-500/20 text-red-300 border border-red-500/30 rounded-lg sm:rounded-xl text-xs sm:text-sm font-bold backdrop-blur-sm"
+                          >
                             {kw}
                           </span>
                         ))}
@@ -660,19 +802,31 @@ export default function AudioMonitorPage() {
               </div>
               <div className="space-y-2 sm:space-y-3">
                 {agentLogs.map((log, i) => (
-                  <div key={i} className="flex items-start gap-2 sm:gap-3 lg:gap-4 p-2.5 sm:p-3 lg:p-4 bg-slate-800/50 rounded-lg sm:rounded-xl lg:rounded-2xl border border-slate-700/50 backdrop-blur-sm hover:border-purple-500/30 transition-all">
-                    <div className={`w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-full mt-1 sm:mt-1.5 flex-shrink-0 ${
-                      log.action === 'Error' ? 'bg-red-500 animate-pulse'
-                      : log.action === 'Completion' ? 'bg-green-500'
-                      : log.action === 'Termination' ? 'bg-yellow-500'
-                      : 'bg-blue-500'
-                    }`} />
+                  <div
+                    key={i}
+                    className="flex items-start gap-2 sm:gap-3 lg:gap-4 p-2.5 sm:p-3 lg:p-4 bg-slate-800/50 rounded-lg sm:rounded-xl lg:rounded-2xl border border-slate-700/50 backdrop-blur-sm hover:border-purple-500/30 transition-all"
+                  >
+                    <div
+                      className={`w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-full mt-1 sm:mt-1.5 flex-shrink-0 ${
+                        log.action === 'Error'
+                          ? 'bg-red-500 animate-pulse'
+                          : log.action === 'Completion'
+                            ? 'bg-green-500'
+                            : log.action === 'Termination'
+                              ? 'bg-yellow-500'
+                              : 'bg-blue-500'
+                      }`}
+                    />
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-1.5 sm:gap-2 flex-wrap mb-1.5 sm:mb-2">
-                        <span className="font-bold text-xs text-blue-300 bg-blue-500/20 px-2 sm:px-3 py-0.5 sm:py-1 rounded-md sm:rounded-lg border border-blue-500/30">{log.agent}</span>
+                        <span className="font-bold text-xs text-blue-300 bg-blue-500/20 px-2 sm:px-3 py-0.5 sm:py-1 rounded-md sm:rounded-lg border border-blue-500/30">
+                          {log.agent}
+                        </span>
                         <span className="text-xs text-slate-400 font-semibold">{log.action}</span>
                       </div>
-                      <p className="text-xs sm:text-sm text-slate-300 leading-relaxed break-words">{log.reasoning}</p>
+                      <p className="text-xs sm:text-sm text-slate-300 leading-relaxed break-words">
+                        {log.reasoning}
+                      </p>
                     </div>
                     <div className="text-xs text-slate-500 flex-shrink-0 font-mono hidden sm:block">
                       {new Date(log.timestamp).toLocaleTimeString()}
@@ -696,8 +850,18 @@ export default function AudioMonitorPage() {
             <div className="mb-4">
               <p className="text-xs text-slate-400 mb-2 font-medium">General Emergency:</p>
               <div className="flex flex-wrap gap-2">
-                {['help me', 'save me', 'emergency', 'call police', 'someone help', 'I need help'].map((phrase) => (
-                  <span key={phrase} className="px-3 py-1.5 bg-cyan-500/20 text-cyan-300 border border-cyan-500/30 rounded-lg text-xs font-bold">
+                {[
+                  'help me',
+                  'save me',
+                  'emergency',
+                  'call police',
+                  'someone help',
+                  'I need help',
+                ].map((phrase) => (
+                  <span
+                    key={phrase}
+                    className="px-3 py-1.5 bg-cyan-500/20 text-cyan-300 border border-cyan-500/30 rounded-lg text-xs font-bold"
+                  >
                     &quot;{phrase}&quot;
                   </span>
                 ))}
@@ -709,7 +873,10 @@ export default function AudioMonitorPage() {
               <p className="text-xs text-red-400 mb-2 font-medium">Fire Detection → Crisis Page:</p>
               <div className="flex flex-wrap gap-2">
                 {['fire', 'there is a fire', 'building is on fire'].map((phrase) => (
-                  <span key={phrase} className="px-3 py-1.5 bg-red-500/20 text-red-300 border border-red-500/30 rounded-lg text-xs font-bold">
+                  <span
+                    key={phrase}
+                    className="px-3 py-1.5 bg-red-500/20 text-red-300 border border-red-500/30 rounded-lg text-xs font-bold"
+                  >
                     &quot;{phrase}&quot;
                   </span>
                 ))}
@@ -718,10 +885,15 @@ export default function AudioMonitorPage() {
 
             {/* Flood Detection */}
             <div className="mb-4">
-              <p className="text-xs text-blue-400 mb-2 font-medium">Flood Detection → Crisis Page:</p>
+              <p className="text-xs text-blue-400 mb-2 font-medium">
+                Flood Detection → Crisis Page:
+              </p>
               <div className="flex flex-wrap gap-2">
                 {['flood', 'there is a flood', 'water is rising'].map((phrase) => (
-                  <span key={phrase} className="px-3 py-1.5 bg-blue-500/20 text-blue-300 border border-blue-500/30 rounded-lg text-xs font-bold">
+                  <span
+                    key={phrase}
+                    className="px-3 py-1.5 bg-blue-500/20 text-blue-300 border border-blue-500/30 rounded-lg text-xs font-bold"
+                  >
                     &quot;{phrase}&quot;
                   </span>
                 ))}
@@ -730,10 +902,15 @@ export default function AudioMonitorPage() {
 
             {/* Accident Detection */}
             <div className="mb-4">
-              <p className="text-xs text-yellow-400 mb-2 font-medium">Accident Detection → Alert Page:</p>
+              <p className="text-xs text-yellow-400 mb-2 font-medium">
+                Accident Detection → Alert Page:
+              </p>
               <div className="flex flex-wrap gap-2">
                 {['accident', 'car accident', 'road accident'].map((phrase) => (
-                  <span key={phrase} className="px-3 py-1.5 bg-yellow-500/20 text-yellow-300 border border-yellow-500/30 rounded-lg text-xs font-bold">
+                  <span
+                    key={phrase}
+                    className="px-3 py-1.5 bg-yellow-500/20 text-yellow-300 border border-yellow-500/30 rounded-lg text-xs font-bold"
+                  >
                     &quot;{phrase}&quot;
                   </span>
                 ))}
@@ -742,10 +919,15 @@ export default function AudioMonitorPage() {
 
             {/* Abuse Detection */}
             <div className="mb-4">
-              <p className="text-xs text-purple-400 mb-2 font-medium">Abuse/Violence Detection → Crisis Page:</p>
+              <p className="text-xs text-purple-400 mb-2 font-medium">
+                Abuse/Violence Detection → Crisis Page:
+              </p>
               <div className="flex flex-wrap gap-2">
                 {['abuse', 'someone is hitting me', 'domestic violence'].map((phrase) => (
-                  <span key={phrase} className="px-3 py-1.5 bg-purple-500/20 text-purple-300 border border-purple-500/30 rounded-lg text-xs font-bold">
+                  <span
+                    key={phrase}
+                    className="px-3 py-1.5 bg-purple-500/20 text-purple-300 border border-purple-500/30 rounded-lg text-xs font-bold"
+                  >
                     &quot;{phrase}&quot;
                   </span>
                 ))}
@@ -754,11 +936,11 @@ export default function AudioMonitorPage() {
 
             <div className="p-3 sm:p-4 bg-purple-500/10 border border-purple-500/30 rounded-xl sm:rounded-2xl backdrop-blur-sm">
               <p className="text-xs sm:text-sm text-purple-300 font-semibold leading-relaxed">
-                🤖 Auto Mode: Say any phrase → AI analyzes → Routes to Crisis/Alert page → Auto-calls emergency services (ambulance, fire brigade, police)
+                🤖 Auto Mode: Say any phrase → AI analyzes → Routes to Crisis/Alert page →
+                Auto-calls emergency services (ambulance, fire brigade, police)
               </p>
             </div>
           </div>
-
         </div>
       </div>
     </>

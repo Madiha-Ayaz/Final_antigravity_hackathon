@@ -17,9 +17,9 @@ async function finalTest() {
   const { Pool } = require('pg');
   const pool = new Pool({
     connectionString: process.env.DATABASE_URL,
-    ssl: { rejectUnauthorized: false }
+    ssl: { rejectUnauthorized: false },
   });
-  
+
   try {
     const client = await pool.connect();
     await client.query('SELECT 1');
@@ -29,7 +29,7 @@ async function finalTest() {
   } catch (err) {
     console.log('   ❌ Database failed:', err.message);
   }
-  
+
   // Test 3: Gemini API with correct model
   console.log('');
   console.log('3. Testing Gemini API (Voice Monitoring)...');
@@ -40,25 +40,30 @@ async function finalTest() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          contents: [{
-            parts: [{ text: 'Analyze this: A person screaming "Help me!"' }]
-          }]
-        })
+          contents: [
+            {
+              parts: [{ text: 'Analyze this: A person screaming "Help me!"' }],
+            },
+          ],
+        }),
       }
     );
-    
+
     if (response.ok) {
       const data = await response.json();
       console.log('   ✅ Gemini API working');
       console.log('   ✅ Voice monitoring READY');
-      console.log('   Response preview:', data.candidates[0].content.parts[0].text.substring(0, 100) + '...');
+      console.log(
+        '   Response preview:',
+        data.candidates[0].content.parts[0].text.substring(0, 100) + '...'
+      );
     } else {
       console.log('   ❌ Gemini API failed:', response.status);
     }
   } catch (err) {
     console.log('   ❌ Error:', err.message);
   }
-  
+
   console.log('');
   console.log('═══════════════════════════════════════════════════════');
   console.log('  ✅ SYSTEM READY TO START!');

@@ -31,7 +31,13 @@ interface EmergencyResource {
 
 export default function CrisisDashboard() {
   return (
-    <Suspense fallback={<div className="min-h-screen bg-slate-900 flex items-center justify-center"><div className="text-white">Loading...</div></div>}>
+    <Suspense
+      fallback={
+        <div className="min-h-screen bg-slate-900 flex items-center justify-center">
+          <div className="text-white">Loading...</div>
+        </div>
+      }
+    >
       <CrisisDashboardContent />
     </Suspense>
   );
@@ -102,11 +108,13 @@ function CrisisDashboardContent() {
   }, [agents]);
 
   const addAgentTrace = (agent: Omit<AgentTrace, 'timestamp'>) => {
-    setAgents(prev => [...prev, { ...agent, timestamp: new Date() }]);
+    setAgents((prev) => [...prev, { ...agent, timestamp: new Date() }]);
   };
 
   const updateAgentPhase = (id: string, phase: AgentTrace['phase'], status: string) => {
-    setAgents(prev => prev.map(a => a.id === id ? { ...a, phase, status, timestamp: new Date() } : a));
+    setAgents((prev) =>
+      prev.map((a) => (a.id === id ? { ...a, phase, status, timestamp: new Date() } : a))
+    );
   };
 
   const runScenario = async (type: 'flood' | 'fire') => {
@@ -128,8 +136,9 @@ function CrisisDashboardContent() {
       name: 'Signal Fusion Agent',
       icon: '📡',
       phase: 'thinking',
-      status: type === 'flood' ? 'Detecting water level sensors...' : 'Detecting smoke/heat sensors...',
-      color: 'text-blue-400'
+      status:
+        type === 'flood' ? 'Detecting water level sensors...' : 'Detecting smoke/heat sensors...',
+      color: 'text-blue-400',
     });
 
     await sleep(800);
@@ -141,12 +150,15 @@ function CrisisDashboardContent() {
       icon: '🎤',
       phase: 'thinking',
       status: 'Analyzing voice patterns for distress...',
-      color: 'text-purple-400'
+      color: 'text-purple-400',
     });
 
-    updateAgentPhase('agent-signal', 'analyzing', type === 'flood'
-      ? 'Water level: CRITICAL (2.4m above normal)'
-      : 'Smoke density: 0.92 - FIRE CONFIRMED'
+    updateAgentPhase(
+      'agent-signal',
+      'analyzing',
+      type === 'flood'
+        ? 'Water level: CRITICAL (2.4m above normal)'
+        : 'Smoke density: 0.92 - FIRE CONFIRMED'
     );
 
     await sleep(1000);
@@ -158,7 +170,7 @@ function CrisisDashboardContent() {
       icon: '📍',
       phase: 'thinking',
       status: `Tracking location: ${loc ? `${loc.latitude.toFixed(4)}, ${loc.longitude.toFixed(4)}` : 'Acquiring...'}`,
-      color: 'text-green-400'
+      color: 'text-green-400',
     });
 
     updateAgentPhase('agent-voice', 'analyzing', 'Distress detected: HIGH CONFIDENCE (94%)');
@@ -172,7 +184,7 @@ function CrisisDashboardContent() {
       icon: '🚑',
       phase: 'thinking',
       status: 'Searching nearby emergency services...',
-      color: 'text-orange-400'
+      color: 'text-orange-400',
     });
 
     updateAgentPhase('agent-location', 'acting', 'Location locked - sharing with dispatch');
@@ -186,31 +198,97 @@ function CrisisDashboardContent() {
       icon: '👥',
       phase: 'thinking',
       status: `Found ${contactCount} emergency contacts`,
-      color: 'text-cyan-400'
+      color: 'text-cyan-400',
     });
 
-    updateAgentPhase('agent-resource', 'analyzing', type === 'flood'
-      ? 'Found: 2 ambulances, 1 rescue boat nearby'
-      : 'Found: 3 fire trucks, 2 ambulances nearby'
+    updateAgentPhase(
+      'agent-resource',
+      'analyzing',
+      type === 'flood'
+        ? 'Found: 2 ambulances, 1 rescue boat nearby'
+        : 'Found: 3 fire trucks, 2 ambulances nearby'
     );
 
     await sleep(1000);
 
     // Generate resources based on scenario
-    const scenarioResources: EmergencyResource[] = type === 'flood' ? [
-      { type: 'ambulance', name: 'Rescue Ambulance - City Hospital', icon: '🚑', distance: 1.2, eta: 4, phone: '115', status: 'dispatched' },
-      { type: 'ambulance', name: 'Emergency Unit - General Hospital', icon: '🚑', distance: 2.8, eta: 8, phone: '1122', status: 'en_route' },
-      { type: 'fire_brigade', name: 'Rescue Boat - Fire Station 7', icon: '🚒', distance: 3.5, eta: 12, phone: '16', status: 'dispatched' },
-    ] : [
-      { type: 'fire_brigade', name: 'Fire Station 3 - Main Road', icon: '🚒', distance: 0.8, eta: 3, phone: '16', status: 'dispatched' },
-      { type: 'fire_brigade', name: 'Fire Station 7 - Highway', icon: '🚒', distance: 2.1, eta: 6, phone: '16', status: 'en_route' },
-      { type: 'ambulance', name: 'Ambulance - City Hospital', icon: '🚑', distance: 1.5, eta: 5, phone: '115', status: 'dispatched' },
-      { type: 'ambulance', name: 'Emergency Unit - Civil Hospital', icon: '🚑', distance: 3.2, eta: 10, phone: '1122', status: 'dispatched' },
-    ];
+    const scenarioResources: EmergencyResource[] =
+      type === 'flood'
+        ? [
+            {
+              type: 'ambulance',
+              name: 'Rescue Ambulance - City Hospital',
+              icon: '🚑',
+              distance: 1.2,
+              eta: 4,
+              phone: '115',
+              status: 'dispatched',
+            },
+            {
+              type: 'ambulance',
+              name: 'Emergency Unit - General Hospital',
+              icon: '🚑',
+              distance: 2.8,
+              eta: 8,
+              phone: '1122',
+              status: 'en_route',
+            },
+            {
+              type: 'fire_brigade',
+              name: 'Rescue Boat - Fire Station 7',
+              icon: '🚒',
+              distance: 3.5,
+              eta: 12,
+              phone: '16',
+              status: 'dispatched',
+            },
+          ]
+        : [
+            {
+              type: 'fire_brigade',
+              name: 'Fire Station 3 - Main Road',
+              icon: '🚒',
+              distance: 0.8,
+              eta: 3,
+              phone: '16',
+              status: 'dispatched',
+            },
+            {
+              type: 'fire_brigade',
+              name: 'Fire Station 7 - Highway',
+              icon: '🚒',
+              distance: 2.1,
+              eta: 6,
+              phone: '16',
+              status: 'en_route',
+            },
+            {
+              type: 'ambulance',
+              name: 'Ambulance - City Hospital',
+              icon: '🚑',
+              distance: 1.5,
+              eta: 5,
+              phone: '115',
+              status: 'dispatched',
+            },
+            {
+              type: 'ambulance',
+              name: 'Emergency Unit - Civil Hospital',
+              icon: '🚑',
+              distance: 3.2,
+              eta: 10,
+              phone: '1122',
+              status: 'dispatched',
+            },
+          ];
 
     setResources(scenarioResources);
 
-    updateAgentPhase('agent-resource', 'acting', `Dispatched ${scenarioResources.length} resources`);
+    updateAgentPhase(
+      'agent-resource',
+      'acting',
+      `Dispatched ${scenarioResources.length} resources`
+    );
 
     await sleep(800);
 
@@ -232,9 +310,17 @@ function CrisisDashboardContent() {
       const data = await res.json();
       if (data.success) {
         setAlertsSent(true);
-        updateAgentPhase('agent-contacts', 'complete', `Alerts sent to ${data.contactsNotified || contactCount} contacts via SMS/WhatsApp/Call`);
+        updateAgentPhase(
+          'agent-contacts',
+          'complete',
+          `Alerts sent to ${data.contactsNotified || contactCount} contacts via SMS/WhatsApp/Call`
+        );
       } else {
-        updateAgentPhase('agent-contacts', 'complete', 'Alerts sent (Twilio trial limits may apply)');
+        updateAgentPhase(
+          'agent-contacts',
+          'complete',
+          'Alerts sent (Twilio trial limits may apply)'
+        );
         setAlertsSent(true);
       }
     } catch {
@@ -255,19 +341,21 @@ function CrisisDashboardContent() {
       icon: '🧠',
       phase: 'complete',
       status: `All agents coordinated. ${type === 'flood' ? 'Flood' : 'Fire'} emergency response ACTIVE.`,
-      color: 'text-red-400'
+      color: 'text-red-400',
     });
 
     setLoading(false);
 
     // Simulate resource movement
     const moveInterval = setInterval(() => {
-      setResources(prev => prev.map(r => ({
-        ...r,
-        eta: Math.max(0, r.eta - 1),
-        distance: Math.max(0, r.distance - 0.2),
-        status: r.eta <= 1 ? 'arrived' : r.eta <= 3 ? 'en_route' : 'dispatched',
-      })));
+      setResources((prev) =>
+        prev.map((r) => ({
+          ...r,
+          eta: Math.max(0, r.eta - 1),
+          distance: Math.max(0, r.distance - 0.2),
+          status: r.eta <= 1 ? 'arrived' : r.eta <= 3 ? 'en_route' : 'dispatched',
+        }))
+      );
     }, 5000);
 
     setTimeout(() => clearInterval(moveInterval), 60000);
@@ -292,7 +380,7 @@ function CrisisDashboardContent() {
       icon: '🛡️',
       phase: 'thinking',
       status: 'Analyzing audio for abuse/violence patterns...',
-      color: 'text-red-400'
+      color: 'text-red-400',
     });
 
     await sleep(800);
@@ -304,7 +392,7 @@ function CrisisDashboardContent() {
       icon: '🎤',
       phase: 'thinking',
       status: 'Detecting distress signals and emotional stress...',
-      color: 'text-purple-400'
+      color: 'text-purple-400',
     });
 
     updateAgentPhase('agent-signal', 'analyzing', 'Abuse indicators: HIGH CONFIDENCE (96%)');
@@ -318,7 +406,7 @@ function CrisisDashboardContent() {
       icon: '📍',
       phase: 'thinking',
       status: `Tracking location: ${loc ? `${loc.latitude.toFixed(4)}, ${loc.longitude.toFixed(4)}` : 'Acquiring...'}`,
-      color: 'text-green-400'
+      color: 'text-green-400',
     });
 
     updateAgentPhase('agent-voice', 'analyzing', 'Emotional distress detected: CRITICAL');
@@ -332,7 +420,7 @@ function CrisisDashboardContent() {
       icon: '🚑',
       phase: 'thinking',
       status: 'Dispatching emergency services...',
-      color: 'text-orange-400'
+      color: 'text-orange-400',
     });
 
     updateAgentPhase('agent-location', 'acting', 'Location locked - sharing with police dispatch');
@@ -346,7 +434,7 @@ function CrisisDashboardContent() {
       icon: '👥',
       phase: 'thinking',
       status: `Found ${contactCount} emergency contacts`,
-      color: 'text-cyan-400'
+      color: 'text-cyan-400',
     });
 
     updateAgentPhase('agent-resource', 'analyzing', 'Found: 2 ambulances, 1 police unit nearby');
@@ -355,9 +443,33 @@ function CrisisDashboardContent() {
 
     // Resources for abuse scenario
     const abuseResources: EmergencyResource[] = [
-      { type: 'ambulance', name: 'Ambulance - City Hospital', icon: '🚑', distance: 1.0, eta: 4, phone: '115', status: 'dispatched' },
-      { type: 'ambulance', name: 'Emergency Unit - Civil Hospital', icon: '🚑', distance: 2.5, eta: 8, phone: '1122', status: 'en_route' },
-      { type: 'police', name: 'Police Emergency Unit', icon: '🚔', distance: 1.8, eta: 5, phone: '15', status: 'dispatched' },
+      {
+        type: 'ambulance',
+        name: 'Ambulance - City Hospital',
+        icon: '🚑',
+        distance: 1.0,
+        eta: 4,
+        phone: '115',
+        status: 'dispatched',
+      },
+      {
+        type: 'ambulance',
+        name: 'Emergency Unit - Civil Hospital',
+        icon: '🚑',
+        distance: 2.5,
+        eta: 8,
+        phone: '1122',
+        status: 'en_route',
+      },
+      {
+        type: 'police',
+        name: 'Police Emergency Unit',
+        icon: '🚔',
+        distance: 1.8,
+        eta: 5,
+        phone: '15',
+        status: 'dispatched',
+      },
     ];
 
     setResources(abuseResources);
@@ -384,9 +496,17 @@ function CrisisDashboardContent() {
       const data = await res.json();
       if (data.success) {
         setAlertsSent(true);
-        updateAgentPhase('agent-contacts', 'complete', `Alerts sent to ${data.contactsNotified || contactCount} contacts via SMS/WhatsApp/Call`);
+        updateAgentPhase(
+          'agent-contacts',
+          'complete',
+          `Alerts sent to ${data.contactsNotified || contactCount} contacts via SMS/WhatsApp/Call`
+        );
       } else {
-        updateAgentPhase('agent-contacts', 'complete', 'Alerts sent (Twilio trial limits may apply)');
+        updateAgentPhase(
+          'agent-contacts',
+          'complete',
+          'Alerts sent (Twilio trial limits may apply)'
+        );
         setAlertsSent(true);
       }
     } catch {
@@ -407,52 +527,68 @@ function CrisisDashboardContent() {
       icon: '🧠',
       phase: 'complete',
       status: 'All agents coordinated. Abuse/Violence emergency response ACTIVE.',
-      color: 'text-red-400'
+      color: 'text-red-400',
     });
 
     setLoading(false);
 
     // Simulate resource movement
     const moveInterval = setInterval(() => {
-      setResources(prev => prev.map(r => ({
-        ...r,
-        eta: Math.max(0, r.eta - 1),
-        distance: Math.max(0, r.distance - 0.2),
-        status: r.eta <= 1 ? 'arrived' : r.eta <= 3 ? 'en_route' : 'dispatched',
-      })));
+      setResources((prev) =>
+        prev.map((r) => ({
+          ...r,
+          eta: Math.max(0, r.eta - 1),
+          distance: Math.max(0, r.distance - 0.2),
+          status: r.eta <= 1 ? 'arrived' : r.eta <= 3 ? 'en_route' : 'dispatched',
+        }))
+      );
     }, 5000);
 
     setTimeout(() => clearInterval(moveInterval), 60000);
   };
 
-  const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
+  const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
   const getPhaseColor = (phase: string) => {
     switch (phase) {
-      case 'thinking': return 'bg-yellow-400';
-      case 'analyzing': return 'bg-blue-400';
-      case 'acting': return 'bg-purple-400';
-      case 'complete': return 'bg-green-400';
-      default: return 'bg-slate-400';
+      case 'thinking':
+        return 'bg-yellow-400';
+      case 'analyzing':
+        return 'bg-blue-400';
+      case 'acting':
+        return 'bg-purple-400';
+      case 'complete':
+        return 'bg-green-400';
+      default:
+        return 'bg-slate-400';
     }
   };
 
   const getPhaseLabel = (phase: string) => {
     switch (phase) {
-      case 'thinking': return 'THINKING';
-      case 'analyzing': return 'ANALYZING';
-      case 'acting': return 'ACTING';
-      case 'complete': return 'COMPLETE';
-      default: return phase;
+      case 'thinking':
+        return 'THINKING';
+      case 'analyzing':
+        return 'ANALYZING';
+      case 'acting':
+        return 'ACTING';
+      case 'complete':
+        return 'COMPLETE';
+      default:
+        return phase;
     }
   };
 
   const getResourceStatusColor = (status: string) => {
     switch (status) {
-      case 'dispatched': return 'text-yellow-400';
-      case 'en_route': return 'text-blue-400';
-      case 'arrived': return 'text-green-400';
-      default: return 'text-slate-400';
+      case 'dispatched':
+        return 'text-yellow-400';
+      case 'en_route':
+        return 'text-blue-400';
+      case 'arrived':
+        return 'text-green-400';
+      default:
+        return 'text-slate-400';
     }
   };
 
@@ -461,7 +597,6 @@ function CrisisDashboardContent() {
       <Navbar isAuthenticated={true} />
       <div className="p-4 sm:p-6 lg:p-8">
         <div className="max-w-[1600px] mx-auto space-y-6 pb-8">
-
           {/* Header */}
           <motion.header
             initial={{ opacity: 0, y: -20 }}
@@ -469,8 +604,18 @@ function CrisisDashboardContent() {
             className="text-center space-y-2"
           >
             <h1 className="text-2xl sm:text-3xl lg:text-5xl font-black bg-gradient-to-r from-white via-red-200 to-purple-200 bg-clip-text text-transparent flex items-center gap-3">
-              <svg className="w-8 h-8 sm:w-10 sm:h-10 lg:w-12 lg:h-12 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+              <svg
+                className="w-8 h-8 sm:w-10 sm:h-10 lg:w-12 lg:h-12 text-red-400"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M13 10V3L4 14h7v7l9-11h-7z"
+                />
               </svg>
               CRISIS MANAGEMENT HUB
             </h1>
@@ -480,13 +625,23 @@ function CrisisDashboardContent() {
           </motion.header>
 
           {/* GPS Status */}
-          <div className={`rounded-2xl p-3 sm:p-4 text-center border-2 ${
-            gpsLocation ? 'bg-green-500/10 border-green-500/30' : 'bg-yellow-500/10 border-yellow-500/30'
-          }`}>
+          <div
+            className={`rounded-2xl p-3 sm:p-4 text-center border-2 ${
+              gpsLocation
+                ? 'bg-green-500/10 border-green-500/30'
+                : 'bg-yellow-500/10 border-yellow-500/30'
+            }`}
+          >
             <div className="flex items-center justify-center gap-2">
-              <div className={`w-2 h-2 rounded-full ${gpsLocation ? 'bg-green-500 animate-pulse' : 'bg-yellow-500 animate-spin'}`} />
-              <span className={`text-xs sm:text-sm font-bold ${gpsLocation ? 'text-green-400' : 'text-yellow-400'}`}>
-                {gpsLocation ? `GPS CONNECTED: ${gpsLocation.latitude.toFixed(6)}, ${gpsLocation.longitude.toFixed(6)}` : 'Acquiring GPS...'}
+              <div
+                className={`w-2 h-2 rounded-full ${gpsLocation ? 'bg-green-500 animate-pulse' : 'bg-yellow-500 animate-spin'}`}
+              />
+              <span
+                className={`text-xs sm:text-sm font-bold ${gpsLocation ? 'text-green-400' : 'text-yellow-400'}`}
+              >
+                {gpsLocation
+                  ? `GPS CONNECTED: ${gpsLocation.latitude.toFixed(6)}, ${gpsLocation.longitude.toFixed(6)}`
+                  : 'Acquiring GPS...'}
               </span>
             </div>
           </div>
@@ -500,7 +655,20 @@ function CrisisDashboardContent() {
               disabled={loading}
               className="flex-1 sm:flex-none px-4 sm:px-6 py-3 sm:py-4 bg-gradient-to-r from-red-600 to-orange-600 hover:from-red-500 hover:to-orange-500 rounded-xl sm:rounded-2xl font-bold text-sm sm:text-base transition-all disabled:opacity-50 flex items-center justify-center gap-2 shadow-lg shadow-red-500/30"
             >
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 18.657A8 8 0 016.343 7.343S7 9 9 10c0-2 .5-5 2.986-7C14 5 16.09 5.777 17.656 7.343A7.975 7.975 0 0120 13a7.975 7.975 0 01-2.343 5.657z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.879 16.121A3 3 0 1012.015 11L11 14H9c0 .768.293 1.536.879 2.121z" /></svg>
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M17.657 18.657A8 8 0 016.343 7.343S7 9 9 10c0-2 .5-5 2.986-7C14 5 16.09 5.777 17.656 7.343A7.975 7.975 0 0120 13a7.975 7.975 0 01-2.343 5.657z"
+                />
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M9.879 16.121A3 3 0 1012.015 11L11 14H9c0 .768.293 1.536.879 2.121z"
+                />
+              </svg>
               Fire Emergency
             </motion.button>
             <motion.button
@@ -510,7 +678,14 @@ function CrisisDashboardContent() {
               disabled={loading}
               className="flex-1 sm:flex-none px-4 sm:px-6 py-3 sm:py-4 bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-500 hover:to-cyan-500 rounded-xl sm:rounded-2xl font-bold text-sm sm:text-base transition-all disabled:opacity-50 flex items-center justify-center gap-2 shadow-lg shadow-blue-500/30"
             >
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 15a4 4 0 004 4h9a5 5 0 10-.1-9.999 5.002 5.002 0 10-9.78 2.096A4.001 4.001 0 003 15z" /></svg>
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M3 15a4 4 0 004 4h9a5 5 0 10-.1-9.999 5.002 5.002 0 10-9.78 2.096A4.001 4.001 0 003 15z"
+                />
+              </svg>
               Flood Alert
             </motion.button>
             <motion.button
@@ -520,7 +695,14 @@ function CrisisDashboardContent() {
               disabled={loading}
               className="flex-1 sm:flex-none px-4 sm:px-6 py-3 sm:py-4 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 rounded-xl sm:rounded-2xl font-bold text-sm sm:text-base transition-all disabled:opacity-50 flex items-center justify-center gap-2 shadow-lg shadow-purple-500/30"
             >
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" /></svg>
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"
+                />
+              </svg>
               Abuse/Violence
             </motion.button>
             <Link
@@ -533,7 +715,6 @@ function CrisisDashboardContent() {
 
           {/* Main Content */}
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 sm:gap-6">
-
             {/* Left: Agent Tracing */}
             <motion.div
               initial={{ opacity: 0, x: -20 }}
@@ -561,10 +742,22 @@ function CrisisDashboardContent() {
                       )}
 
                       {/* Dot */}
-                      <div className={`absolute left-1 top-2 w-5 h-5 rounded-full border-2 border-slate-900 z-10 flex items-center justify-center ${getPhaseColor(agent.phase)}`}>
+                      <div
+                        className={`absolute left-1 top-2 w-5 h-5 rounded-full border-2 border-slate-900 z-10 flex items-center justify-center ${getPhaseColor(agent.phase)}`}
+                      >
                         {agent.phase === 'complete' && (
-                          <svg className="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
+                          <svg
+                            className="w-3 h-3 text-white"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth={3}
+                              d="M5 13l4 4L19 7"
+                            />
                           </svg>
                         )}
                       </div>
@@ -573,14 +766,21 @@ function CrisisDashboardContent() {
                         <div className="flex items-center justify-between mb-1">
                           <div className="flex items-center gap-2">
                             <span className="text-lg">{agent.icon}</span>
-                            <span className={`text-xs sm:text-sm font-bold ${agent.color}`}>{agent.name}</span>
+                            <span className={`text-xs sm:text-sm font-bold ${agent.color}`}>
+                              {agent.name}
+                            </span>
                           </div>
-                          <span className={`text-[9px] sm:text-[10px] font-mono px-2 py-0.5 rounded-full ${
-                            agent.phase === 'complete' ? 'bg-green-500/20 text-green-400' :
-                            agent.phase === 'acting' ? 'bg-purple-500/20 text-purple-400' :
-                            agent.phase === 'analyzing' ? 'bg-blue-500/20 text-blue-400' :
-                            'bg-yellow-500/20 text-yellow-400'
-                          }`}>
+                          <span
+                            className={`text-[9px] sm:text-[10px] font-mono px-2 py-0.5 rounded-full ${
+                              agent.phase === 'complete'
+                                ? 'bg-green-500/20 text-green-400'
+                                : agent.phase === 'acting'
+                                  ? 'bg-purple-500/20 text-purple-400'
+                                  : agent.phase === 'analyzing'
+                                    ? 'bg-blue-500/20 text-blue-400'
+                                    : 'bg-yellow-500/20 text-yellow-400'
+                            }`}
+                          >
                             {getPhaseLabel(agent.phase)}
                           </span>
                         </div>
@@ -640,23 +840,43 @@ function CrisisDashboardContent() {
                           <div className="flex items-center gap-3">
                             <div className="text-2xl sm:text-3xl">{res.icon}</div>
                             <div>
-                              <p className="text-sm sm:text-base font-bold text-white">{res.name}</p>
+                              <p className="text-sm sm:text-base font-bold text-white">
+                                {res.name}
+                              </p>
                               <p className="text-[10px] sm:text-xs text-slate-400 font-mono">
-                                {res.type === 'ambulance' ? '🚑 Ambulance' : res.type === 'fire_brigade' ? '🚒 Fire Brigade' : '🚔 Police'}
+                                {res.type === 'ambulance'
+                                  ? '🚑 Ambulance'
+                                  : res.type === 'fire_brigade'
+                                    ? '🚒 Fire Brigade'
+                                    : '🚔 Police'}
                                 {' • '}Tel: {res.phone}
                               </p>
                             </div>
                           </div>
 
                           <div className="text-right">
-                            <div className={`text-lg sm:text-2xl font-black font-mono ${
-                              res.eta <= 1 ? 'text-green-400' : res.eta <= 5 ? 'text-yellow-400' : 'text-orange-400'
-                            }`}>
+                            <div
+                              className={`text-lg sm:text-2xl font-black font-mono ${
+                                res.eta <= 1
+                                  ? 'text-green-400'
+                                  : res.eta <= 5
+                                    ? 'text-yellow-400'
+                                    : 'text-orange-400'
+                              }`}
+                            >
                               {res.eta <= 0 ? 'ARRIVED' : `${res.eta} min`}
                             </div>
-                            <p className="text-[10px] sm:text-xs text-slate-400">{res.distance.toFixed(1)} km away</p>
-                            <span className={`text-[9px] sm:text-[10px] font-mono px-2 py-0.5 rounded-full ${getResourceStatusColor(res.status)} bg-white/5`}>
-                              {res.status === 'arrived' ? '✓ ARRIVED' : res.status === 'en_route' ? '🔵 EN ROUTE' : '🟡 DISPATCHED'}
+                            <p className="text-[10px] sm:text-xs text-slate-400">
+                              {res.distance.toFixed(1)} km away
+                            </p>
+                            <span
+                              className={`text-[9px] sm:text-[10px] font-mono px-2 py-0.5 rounded-full ${getResourceStatusColor(res.status)} bg-white/5`}
+                            >
+                              {res.status === 'arrived'
+                                ? '✓ ARRIVED'
+                                : res.status === 'en_route'
+                                  ? '🔵 EN ROUTE'
+                                  : '🟡 DISPATCHED'}
                             </span>
                           </div>
                         </div>
@@ -665,7 +885,14 @@ function CrisisDashboardContent() {
                         <div className="mt-3 h-1.5 bg-slate-700 rounded-full overflow-hidden">
                           <motion.div
                             initial={{ width: '0%' }}
-                            animate={{ width: res.status === 'arrived' ? '100%' : res.status === 'en_route' ? '70%' : '30%' }}
+                            animate={{
+                              width:
+                                res.status === 'arrived'
+                                  ? '100%'
+                                  : res.status === 'en_route'
+                                    ? '70%'
+                                    : '30%',
+                            }}
                             transition={{ duration: 2 }}
                             className={`h-full rounded-full ${
                               res.type === 'ambulance' ? 'bg-red-500' : 'bg-orange-500'
@@ -689,16 +916,25 @@ function CrisisDashboardContent() {
                   >
                     🗺️ Open Road Map in Google Maps
                     <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"
+                      />
                     </svg>
                   </a>
                 </div>
               )}
 
               {/* Emergency Contacts Alert Status */}
-              <div className={`rounded-2xl p-4 border-2 ${
-                alertsSent ? 'bg-green-500/10 border-green-500/30' : 'bg-slate-800/50 border-slate-700/50'
-              }`}>
+              <div
+                className={`rounded-2xl p-4 border-2 ${
+                  alertsSent
+                    ? 'bg-green-500/10 border-green-500/30'
+                    : 'bg-slate-800/50 border-slate-700/50'
+                }`}
+              >
                 <div className="flex items-center justify-between flex-wrap gap-3">
                   <div className="flex items-center gap-3">
                     <span className="text-2xl">👥</span>
@@ -753,7 +989,9 @@ function CrisisDashboardContent() {
                 <div className="bg-slate-800/30 border-2 border-dashed border-slate-700/50 rounded-2xl p-8 sm:p-12 text-center">
                   <div className="text-5xl mb-4 opacity-50">🎯</div>
                   <p className="text-sm sm:text-base text-slate-400">
-                    Select <strong className="text-red-400">Fire</strong> or <strong className="text-blue-400">Flood</strong> to start AI-powered crisis response
+                    Select <strong className="text-red-400">Fire</strong> or{' '}
+                    <strong className="text-blue-400">Flood</strong> to start AI-powered crisis
+                    response
                   </p>
                   <p className="text-xs text-slate-500 mt-2">
                     Agents will trace, dispatch emergency services, and alert your contacts

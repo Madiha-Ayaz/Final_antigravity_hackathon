@@ -19,7 +19,10 @@ const createContactSchema = z.object({
 
 const updateContactSchema = z.object({
   name: z.string().min(1).max(255).optional(),
-  phoneNumber: z.string().regex(/^\+[1-9]\d{1,14}$/).optional(),
+  phoneNumber: z
+    .string()
+    .regex(/^\+[1-9]\d{1,14}$/)
+    .optional(),
   relationship: z.string().min(1).max(100).optional(),
   priority: z.number().int().min(1).optional(),
   notifySms: z.boolean().optional(),

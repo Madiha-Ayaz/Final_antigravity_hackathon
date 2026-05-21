@@ -32,7 +32,7 @@ async function testVoiceMonitoring() {
   // Test 3: Voice Monitoring - Emergency Scenario
   console.log('3. Testing Voice Monitoring (Emergency Detection)...');
   console.log('   Scenario: Person screaming for help\n');
-  
+
   // Note: The actual endpoint might be different, this is a conceptual test
   console.log('   ✅ Gemini AI is configured and ready');
   console.log('   Model: gemini-2.5-flash');
@@ -41,7 +41,7 @@ async function testVoiceMonitoring() {
   console.log('═══════════════════════════════════════════════════════');
   console.log('  VOICE MONITORING STATUS: OPERATIONAL ✅');
   console.log('═══════════════════════════════════════════════════════\n');
-  
+
   console.log('Your system can now:');
   console.log('  • Analyze audio for emergency situations');
   console.log('  • Detect screams and cries for help');

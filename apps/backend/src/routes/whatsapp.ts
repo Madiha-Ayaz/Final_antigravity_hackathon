@@ -25,10 +25,12 @@ const sendEmergencyAlertSchema = z.object({
   transcript: z.string(),
   reasoning: z.string(),
   confidence: z.number().min(0).max(1),
-  location: z.object({
-    latitude: z.number(),
-    longitude: z.number(),
-  }).optional(),
+  location: z
+    .object({
+      latitude: z.number(),
+      longitude: z.number(),
+    })
+    .optional(),
   audioUrl: z.string().url().optional(),
 });
 
@@ -201,7 +203,7 @@ router.post('/emergency-alert', authenticate, async (req: AuthRequest, res: Resp
       alertData.threatLevel
     );
 
-    const whatsappContacts = contactsData.whatsapp.map(c => ({
+    const whatsappContacts = contactsData.whatsapp.map((c) => ({
       phoneNumber: c.phone_number,
       name: c.name,
     }));

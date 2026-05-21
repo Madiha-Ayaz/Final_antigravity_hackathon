@@ -35,18 +35,18 @@ export class SimulationService {
       before: {
         responseTime: baseResponse,
         riskScore: 0.85,
-        congestion: 0.7
+        congestion: 0.7,
       },
       after: {
         responseTime: Math.max(baseResponse - timeReduction, 3),
         riskScore: 0.2,
-        congestion: 0.3
+        congestion: 0.3,
       },
       improvement: {
         timeReduction: timeReduction,
         riskReduction: 0.65,
-        costEfficiency: 0.8
-      }
+        costEfficiency: 0.8,
+      },
     };
   }
 }

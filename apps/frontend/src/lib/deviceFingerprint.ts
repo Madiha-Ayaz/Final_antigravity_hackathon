@@ -129,7 +129,8 @@ class DeviceFingerprint {
    */
   private getWebGLFingerprint(): string {
     const canvas = document.createElement('canvas');
-    const gl = (canvas.getContext('webgl') || canvas.getContext('experimental-webgl')) as WebGLRenderingContext | null;
+    const gl = (canvas.getContext('webgl') ||
+      canvas.getContext('experimental-webgl')) as WebGLRenderingContext | null;
 
     if (!gl) {
       return '';

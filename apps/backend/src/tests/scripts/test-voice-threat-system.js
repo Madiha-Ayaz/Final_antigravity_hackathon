@@ -47,16 +47,12 @@ async function testVoiceThreatAnalysis() {
     });
 
     log('Sending voice analysis request...', 'cyan');
-    const response = await axios.post(
-      `${API_BASE_URL}/voice-threat/analyze`,
-      form,
-      {
-        headers: {
-          ...form.getHeaders(),
-          Authorization: `Bearer ${TEST_USER_TOKEN}`,
-        },
-      }
-    );
+    const response = await axios.post(`${API_BASE_URL}/voice-threat/analyze`, form, {
+      headers: {
+        ...form.getHeaders(),
+        Authorization: `Bearer ${TEST_USER_TOKEN}`,
+      },
+    });
 
     log('✓ Voice analysis completed', 'green');
     console.log('Result:', JSON.stringify(response.data, null, 2));
@@ -80,7 +76,7 @@ async function testEmergencyTrigger(sessionId) {
         sessionId,
         location: {
           latitude: 40.7128,
-          longitude: -74.0060,
+          longitude: -74.006,
           accuracy: 10,
         },
       },
@@ -135,14 +131,11 @@ async function testEmergencyStatus(alertId) {
 
   try {
     log('Checking emergency status...', 'cyan');
-    const response = await axios.get(
-      `${API_BASE_URL}/voice-threat/emergency/status/${alertId}`,
-      {
-        headers: {
-          Authorization: `Bearer ${TEST_USER_TOKEN}`,
-        },
-      }
-    );
+    const response = await axios.get(`${API_BASE_URL}/voice-threat/emergency/status/${alertId}`, {
+      headers: {
+        Authorization: `Bearer ${TEST_USER_TOKEN}`,
+      },
+    });
 
     log('✓ Status retrieved', 'green');
     console.log('Status:', JSON.stringify(response.data, null, 2));
@@ -180,14 +173,11 @@ async function testEmergencyContacts() {
 
     // Get all contacts
     log('Retrieving all contacts...', 'cyan');
-    const getResponse = await axios.get(
-      `${API_BASE_URL}/voice-threat/emergency/contacts`,
-      {
-        headers: {
-          Authorization: `Bearer ${TEST_USER_TOKEN}`,
-        },
-      }
-    );
+    const getResponse = await axios.get(`${API_BASE_URL}/voice-threat/emergency/contacts`, {
+      headers: {
+        Authorization: `Bearer ${TEST_USER_TOKEN}`,
+      },
+    });
 
     log('✓ Contacts retrieved', 'green');
     console.log('Total contacts:', getResponse.data.contacts.length);

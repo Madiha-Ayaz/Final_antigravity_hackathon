@@ -31,7 +31,9 @@ export default function HistoryPage() {
   const [events, setEvents] = useState<EmergencyEvent[]>([]);
   const [selectedEvent, setSelectedEvent] = useState<EmergencyEvent | null>(null);
   const { location: liveLocation, getCurrentLocation, error: gpsError } = useGPSLocation();
-  const [gpsStatus, setGpsStatus] = useState<'loading' | 'connected' | 'denied' | 'error'>('loading');
+  const [gpsStatus, setGpsStatus] = useState<'loading' | 'connected' | 'denied' | 'error'>(
+    'loading'
+  );
 
   // Get live GPS location
   useEffect(() => {
@@ -72,11 +74,14 @@ export default function HistoryPage() {
             type: e.event_type === 'manual' ? 'alert' : e.event_type,
             threatLevel: e.threat_level || 'LOW',
             confidence: e.confidence ? Math.round(e.confidence * 100) : 0,
-            location: e.latitude && e.longitude ? {
-              latitude: parseFloat(e.latitude),
-              longitude: parseFloat(e.longitude),
-              address: e.address || 'GPS Location',
-            } : undefined,
+            location:
+              e.latitude && e.longitude
+                ? {
+                    latitude: parseFloat(e.latitude),
+                    longitude: parseFloat(e.longitude),
+                    address: e.address || 'GPS Location',
+                  }
+                : undefined,
             contactsNotified: e.contacts_notified || 0,
             status: e.status || 'resolved',
             notes: e.transcript || e.reasoning,
@@ -97,11 +102,14 @@ export default function HistoryPage() {
             type: 'alert',
             threatLevel: a.threat_level || 'LOW',
             confidence: a.confidence ? Math.round(a.confidence * 100) : 0,
-            location: a.latitude && a.longitude ? {
-              latitude: parseFloat(a.latitude),
-              longitude: parseFloat(a.longitude),
-              address: 'GPS Location',
-            } : undefined,
+            location:
+              a.latitude && a.longitude
+                ? {
+                    latitude: parseFloat(a.latitude),
+                    longitude: parseFloat(a.longitude),
+                    address: 'GPS Location',
+                  }
+                : undefined,
             contactsNotified: a.whatsapp_sent ? 1 : 0,
             status: 'resolved',
             notes: a.transcript || a.reasoning,
@@ -127,15 +135,17 @@ export default function HistoryPage() {
         type: 'alert',
         threatLevel: 'HIGH',
         confidence: 95,
-        location: liveLocation ? {
-          latitude: liveLocation.latitude,
-          longitude: liveLocation.longitude,
-          address: 'Current Location',
-        } : {
-          latitude: 33.6844,
-          longitude: 73.0479,
-          address: 'Islamabad, Pakistan',
-        },
+        location: liveLocation
+          ? {
+              latitude: liveLocation.latitude,
+              longitude: liveLocation.longitude,
+              address: 'Current Location',
+            }
+          : {
+              latitude: 33.6844,
+              longitude: 73.0479,
+              address: 'Islamabad, Pakistan',
+            },
         contactsNotified: 3,
         status: 'active',
         notes: 'Emergency detected via voice analysis',
@@ -177,29 +187,42 @@ export default function HistoryPage() {
 
   const getTypeColor = (type: string) => {
     switch (type) {
-      case 'alert': return 'bg-red-500/20 text-red-400 border-red-500/30';
-      case 'false_alarm': return 'bg-yellow-500/20 text-yellow-400 border-yellow-500/30';
-      case 'test': return 'bg-blue-500/20 text-blue-400 border-blue-500/30';
-      default: return 'bg-slate-500/20 text-slate-400 border-slate-500/30';
+      case 'alert':
+        return 'bg-red-500/20 text-red-400 border-red-500/30';
+      case 'false_alarm':
+        return 'bg-yellow-500/20 text-yellow-400 border-yellow-500/30';
+      case 'test':
+        return 'bg-blue-500/20 text-blue-400 border-blue-500/30';
+      default:
+        return 'bg-slate-500/20 text-slate-400 border-slate-500/30';
     }
   };
 
   const getThreatColor = (level: string) => {
     switch (level) {
-      case 'CRITICAL': return 'text-red-500';
-      case 'HIGH': return 'text-red-400';
-      case 'MEDIUM': return 'text-yellow-400';
-      case 'LOW': return 'text-green-400';
-      default: return 'text-slate-400';
+      case 'CRITICAL':
+        return 'text-red-500';
+      case 'HIGH':
+        return 'text-red-400';
+      case 'MEDIUM':
+        return 'text-yellow-400';
+      case 'LOW':
+        return 'text-green-400';
+      default:
+        return 'text-slate-400';
     }
   };
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'active': return 'bg-red-500/20 text-red-400';
-      case 'resolved': return 'bg-green-500/20 text-green-400';
-      case 'cancelled': return 'bg-slate-500/20 text-slate-400';
-      default: return 'bg-slate-500/20 text-slate-400';
+      case 'active':
+        return 'bg-red-500/20 text-red-400';
+      case 'resolved':
+        return 'bg-green-500/20 text-green-400';
+      case 'cancelled':
+        return 'bg-slate-500/20 text-slate-400';
+      default:
+        return 'bg-slate-500/20 text-slate-400';
     }
   };
 
@@ -225,16 +248,23 @@ export default function HistoryPage() {
         {/* Live GPS Location Card */}
         <div className="bg-gradient-to-r from-blue-600 to-purple-600 rounded-2xl p-4 sm:p-6 text-white">
           <div className="flex items-center gap-3 mb-4">
-            <div className={`w-3 h-3 rounded-full ${
-              gpsStatus === 'connected' ? 'bg-green-400 animate-pulse' :
-              gpsStatus === 'loading' ? 'bg-yellow-400 animate-spin' :
-              'bg-red-400'
-            }`} />
+            <div
+              className={`w-3 h-3 rounded-full ${
+                gpsStatus === 'connected'
+                  ? 'bg-green-400 animate-pulse'
+                  : gpsStatus === 'loading'
+                    ? 'bg-yellow-400 animate-spin'
+                    : 'bg-red-400'
+              }`}
+            />
             <h2 className="text-lg sm:text-xl font-bold">
-              {gpsStatus === 'connected' ? '📍 Live GPS Location' :
-               gpsStatus === 'loading' ? '⏳ Connecting GPS...' :
-               gpsStatus === 'denied' ? '🚫 GPS Permission Denied' :
-               '⚠️ GPS Error'}
+              {gpsStatus === 'connected'
+                ? '📍 Live GPS Location'
+                : gpsStatus === 'loading'
+                  ? '⏳ Connecting GPS...'
+                  : gpsStatus === 'denied'
+                    ? '🚫 GPS Permission Denied'
+                    : '⚠️ GPS Error'}
             </h2>
           </div>
 
@@ -293,8 +323,8 @@ export default function HistoryPage() {
                 {gpsStatus === 'denied'
                   ? 'Please allow location access in your browser settings'
                   : gpsStatus === 'loading'
-                  ? 'Acquiring GPS signal...'
-                  : 'Unable to get location. Using default.'}
+                    ? 'Acquiring GPS signal...'
+                    : 'Unable to get location. Using default.'}
               </p>
               {gpsStatus === 'denied' && (
                 <button
@@ -311,12 +341,35 @@ export default function HistoryPage() {
         {/* Stats */}
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4">
           {[
-            { label: 'Total Events', value: events.length, icon: '📊', color: 'from-blue-600 to-cyan-600' },
-            { label: 'Real Alerts', value: events.filter((e) => e.type === 'alert').length, icon: '🚨', color: 'from-red-600 to-orange-600' },
-            { label: 'False Alarms', value: events.filter((e) => e.type === 'false_alarm').length, icon: '⚠️', color: 'from-yellow-600 to-amber-600' },
-            { label: 'Tests', value: events.filter((e) => e.type === 'test').length, icon: '✓', color: 'from-green-600 to-emerald-600' },
+            {
+              label: 'Total Events',
+              value: events.length,
+              icon: '📊',
+              color: 'from-blue-600 to-cyan-600',
+            },
+            {
+              label: 'Real Alerts',
+              value: events.filter((e) => e.type === 'alert').length,
+              icon: '🚨',
+              color: 'from-red-600 to-orange-600',
+            },
+            {
+              label: 'False Alarms',
+              value: events.filter((e) => e.type === 'false_alarm').length,
+              icon: '⚠️',
+              color: 'from-yellow-600 to-amber-600',
+            },
+            {
+              label: 'Tests',
+              value: events.filter((e) => e.type === 'test').length,
+              icon: '✓',
+              color: 'from-green-600 to-emerald-600',
+            },
           ].map((stat, index) => (
-            <div key={index} className={`bg-gradient-to-br ${stat.color} rounded-2xl p-4 text-white`}>
+            <div
+              key={index}
+              className={`bg-gradient-to-br ${stat.color} rounded-2xl p-4 text-white`}
+            >
               <div className="flex items-start justify-between">
                 <div>
                   <p className="text-xs opacity-90 mb-1">{stat.label}</p>
@@ -361,29 +414,42 @@ export default function HistoryPage() {
               <div className="text-6xl mb-4">📭</div>
               <h3 className="text-lg font-semibold text-white mb-2">No Events Found</h3>
               <p className="text-slate-400">
-                {filter === 'all' ? 'No emergency events recorded yet' : `No ${filter.replace('_', ' ')} events found`}
+                {filter === 'all'
+                  ? 'No emergency events recorded yet'
+                  : `No ${filter.replace('_', ' ')} events found`}
               </p>
             </div>
           ) : (
             filteredEvents.map((event) => (
-              <div key={event.id} className="bg-slate-800/50 backdrop-blur-sm border border-slate-700/50 rounded-2xl p-4 sm:p-6">
+              <div
+                key={event.id}
+                className="bg-slate-800/50 backdrop-blur-sm border border-slate-700/50 rounded-2xl p-4 sm:p-6"
+              >
                 <div className="flex items-start justify-between mb-4">
                   <div className="flex items-start gap-3 flex-1">
-                    <div className={`w-12 h-12 rounded-xl flex items-center justify-center text-2xl flex-shrink-0 ${
-                      event.type === 'alert' ? 'bg-red-500/20' :
-                      event.type === 'false_alarm' ? 'bg-yellow-500/20' :
-                      'bg-blue-500/20'
-                    }`}>
+                    <div
+                      className={`w-12 h-12 rounded-xl flex items-center justify-center text-2xl flex-shrink-0 ${
+                        event.type === 'alert'
+                          ? 'bg-red-500/20'
+                          : event.type === 'false_alarm'
+                            ? 'bg-yellow-500/20'
+                            : 'bg-blue-500/20'
+                      }`}
+                    >
                       {event.type === 'alert' ? '🚨' : event.type === 'false_alarm' ? '⚠️' : '✓'}
                     </div>
                     <div className="flex-1 min-w-0">
                       <div className="flex flex-wrap items-center gap-2 mb-1">
                         <h3 className="text-lg font-semibold text-white">
-                          {event.type === 'alert' ? 'Emergency Alert' :
-                           event.type === 'false_alarm' ? 'False Alarm' :
-                           'System Test'}
+                          {event.type === 'alert'
+                            ? 'Emergency Alert'
+                            : event.type === 'false_alarm'
+                              ? 'False Alarm'
+                              : 'System Test'}
                         </h3>
-                        <span className={`px-2 py-0.5 text-xs font-medium rounded-full border ${getTypeColor(event.type)}`}>
+                        <span
+                          className={`px-2 py-0.5 text-xs font-medium rounded-full border ${getTypeColor(event.type)}`}
+                        >
                           {event.type.replace('_', ' ').toUpperCase()}
                         </span>
                       </div>
@@ -392,7 +458,9 @@ export default function HistoryPage() {
                       </p>
                     </div>
                   </div>
-                  <span className={`px-3 py-1 text-xs font-medium rounded-full ${getStatusColor(event.status)}`}>
+                  <span
+                    className={`px-3 py-1 text-xs font-medium rounded-full ${getStatusColor(event.status)}`}
+                  >
                     {event.status}
                   </span>
                 </div>
@@ -422,11 +490,15 @@ export default function HistoryPage() {
                       {event.whatsappMessages.map((msg, idx) => (
                         <div key={idx} className="flex items-center justify-between text-sm">
                           <span className="text-green-300 font-mono">{msg.recipient}</span>
-                          <span className={`px-2 py-1 rounded-lg text-xs font-medium ${
-                            msg.status === 'delivered' ? 'bg-green-500/20 text-green-400' :
-                            msg.status === 'sent' ? 'bg-blue-500/20 text-blue-400' :
-                            'bg-red-500/20 text-red-400'
-                          }`}>
+                          <span
+                            className={`px-2 py-1 rounded-lg text-xs font-medium ${
+                              msg.status === 'delivered'
+                                ? 'bg-green-500/20 text-green-400'
+                                : msg.status === 'sent'
+                                  ? 'bg-blue-500/20 text-blue-400'
+                                  : 'bg-red-500/20 text-red-400'
+                            }`}
+                          >
                             {msg.status}
                           </span>
                         </div>
@@ -445,12 +517,15 @@ export default function HistoryPage() {
                             📍 {event.location.address}
                           </div>
                           <div className="text-xs text-blue-300 font-mono">
-                            {event.location.latitude.toFixed(6)}, {event.location.longitude.toFixed(6)}
+                            {event.location.latitude.toFixed(6)},{' '}
+                            {event.location.longitude.toFixed(6)}
                           </div>
                         </div>
                         <div className="flex gap-2">
                           <button
-                            onClick={() => setSelectedEvent(selectedEvent?.id === event.id ? null : event)}
+                            onClick={() =>
+                              setSelectedEvent(selectedEvent?.id === event.id ? null : event)
+                            }
                             className="px-3 py-1 bg-blue-500/20 text-blue-400 rounded-lg text-xs font-medium hover:bg-blue-500/30 transition-colors"
                           >
                             {selectedEvent?.id === event.id ? 'Hide' : 'Map'}

@@ -17,27 +17,87 @@ interface ClassificationResult {
 class EmergencyClassifier {
   private readonly patterns = {
     ROBBERY: {
-      keywords: ['rob', 'steal', 'thief', 'burglar', 'gun', 'weapon', 'money', 'wallet', 'purse', 'break in', 'breaking in'],
+      keywords: [
+        'rob',
+        'steal',
+        'thief',
+        'burglar',
+        'gun',
+        'weapon',
+        'money',
+        'wallet',
+        'purse',
+        'break in',
+        'breaking in',
+      ],
       patterns: ['someone_breaking_in', 'theft_in_progress', 'armed_threat', 'property_crime'],
       weight: 1.0,
     },
     MEDICAL: {
-      keywords: ['hurt', 'pain', 'bleeding', 'unconscious', 'heart attack', 'stroke', 'seizure', 'breathing', 'chest pain', 'ambulance', 'hospital', 'injury', 'fell', 'accident'],
+      keywords: [
+        'hurt',
+        'pain',
+        'bleeding',
+        'unconscious',
+        'heart attack',
+        'stroke',
+        'seizure',
+        'breathing',
+        'chest pain',
+        'ambulance',
+        'hospital',
+        'injury',
+        'fell',
+        'accident',
+      ],
       patterns: ['medical_distress', 'injury_detected', 'health_emergency', 'unconscious_person'],
       weight: 1.0,
     },
     ACCIDENT: {
-      keywords: ['crash', 'accident', 'collision', 'hit', 'car accident', 'vehicle', 'injured', 'trapped', 'fire'],
+      keywords: [
+        'crash',
+        'accident',
+        'collision',
+        'hit',
+        'car accident',
+        'vehicle',
+        'injured',
+        'trapped',
+        'fire',
+      ],
       patterns: ['vehicle_accident', 'collision_detected', 'impact_detected'],
       weight: 0.9,
     },
     HARASSMENT: {
-      keywords: ['following', 'stalking', 'harass', 'threatening', 'scared', 'uncomfortable', 'won\'t leave', 'bothering'],
-      patterns: ['stalking_behavior', 'harassment_detected', 'threatening_behavior', 'unwanted_contact'],
+      keywords: [
+        'following',
+        'stalking',
+        'harass',
+        'threatening',
+        'scared',
+        'uncomfortable',
+        "won't leave",
+        'bothering',
+      ],
+      patterns: [
+        'stalking_behavior',
+        'harassment_detected',
+        'threatening_behavior',
+        'unwanted_contact',
+      ],
       weight: 0.8,
     },
     ASSAULT: {
-      keywords: ['attack', 'hitting', 'fighting', 'assault', 'violence', 'hurt me', 'grabbed', 'pushed'],
+      keywords: [
+        'attack',
+        'hitting',
+        'fighting',
+        'assault',
+        'violence',
+        'hurt me',
+        'grabbed',
+        'pushed',
+      ],
       patterns: ['physical_violence', 'assault_in_progress', 'violent_behavior'],
       weight: 1.0,
     },
@@ -52,7 +112,7 @@ class EmergencyClassifier {
       weight: 1.0,
     },
     FALSE_ALARM: {
-      keywords: ['mistake', 'accident', 'didn\'t mean', 'false alarm', 'wrong button', 'sorry'],
+      keywords: ['mistake', 'accident', "didn't mean", 'false alarm', 'wrong button', 'sorry'],
       patterns: ['accidental_trigger', 'user_cancelled', 'false_positive'],
       weight: 0.5,
     },
@@ -144,11 +204,7 @@ class EmergencyClassifier {
   /**
    * Generate human-readable reasoning
    */
-  private generateReasoning(
-    type: EmergencyType,
-    matches: string[],
-    confidence: number
-  ): string {
+  private generateReasoning(type: EmergencyType, matches: string[], confidence: number): string {
     if (type === 'UNKNOWN') {
       return 'Unable to determine specific emergency type from available information';
     }
@@ -157,9 +213,10 @@ class EmergencyClassifier {
       return `Detected false alarm indicators: ${matches.slice(0, 3).join(', ')}`;
     }
 
-    const matchStr = matches.length > 0
-      ? `Detected indicators: ${matches.slice(0, 5).join(', ')}`
-      : 'Based on pattern analysis';
+    const matchStr =
+      matches.length > 0
+        ? `Detected indicators: ${matches.slice(0, 5).join(', ')}`
+        : 'Based on pattern analysis';
 
     return `Classified as ${type} emergency (${(confidence * 100).toFixed(1)}% confidence). ${matchStr}`;
   }
@@ -248,19 +305,13 @@ class EmergencyClassifier {
         priority: 'LOW' as const,
         channels: ['SMS'],
         dispatchRequired: false,
-        specialInstructions: [
-          'Confirm cancellation with user',
-          'Log incident for review',
-        ],
+        specialInstructions: ['Confirm cancellation with user', 'Log incident for review'],
       },
       UNKNOWN: {
         priority: 'MEDIUM' as const,
         channels: ['SMS', 'WHATSAPP'],
         dispatchRequired: false,
-        specialInstructions: [
-          'Request additional information',
-          'Monitor situation',
-        ],
+        specialInstructions: ['Request additional information', 'Monitor situation'],
       },
     };
 

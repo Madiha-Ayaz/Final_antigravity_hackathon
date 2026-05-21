@@ -21,13 +21,13 @@ export class FusionEngine {
     return {
       weather: { temp: 32, precipitation: 0.1, condition: 'Cloudy' },
       traffic: { congestionLevel: 0.4, roadStatus: 'Open' },
-      sensor: { type: 'flood_sensor_A1', value: 0.12 }
+      sensor: { type: 'flood_sensor_A1', value: 0.12 },
     };
   }
 
   calculateCrisisProbability(data: FusionSourceData): number {
     let score = 0;
-    
+
     if (data.voice && data.voice.confidence > 0.8) score += 0.4;
     if (data.weather && data.weather.precipitation > 0.5) score += 0.3;
     if (data.traffic && data.traffic.congestionLevel > 0.8) score += 0.2;

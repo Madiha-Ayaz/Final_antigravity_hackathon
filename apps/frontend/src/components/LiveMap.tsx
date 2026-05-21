@@ -11,14 +11,25 @@ interface LiveMapProps {
   zoom?: number;
 }
 
-export default function LiveMap({ height = '400px', onLocationUpdate, emergencyMode = false, center, zoom }: LiveMapProps) {
+export default function LiveMap({
+  height = '400px',
+  onLocationUpdate,
+  emergencyMode = false,
+  center,
+  zoom,
+}: LiveMapProps) {
   const mapRef = useRef<HTMLDivElement>(null);
   const mapInstanceRef = useRef<any>(null);
   const markerRef = useRef<any>(null);
   const [mapLoaded, setMapLoaded] = useState(false);
   const [mapsApiLoaded, setMapsApiLoaded] = useState(false);
 
-  const { position, error: gpsError, isLoading: gpsLoading, requestPosition } = useGeolocation(true);
+  const {
+    position,
+    error: gpsError,
+    isLoading: gpsLoading,
+    requestPosition,
+  } = useGeolocation(true);
 
   // Load Google Maps script dynamically
   useEffect(() => {
@@ -149,7 +160,10 @@ export default function LiveMap({ height = '400px', onLocationUpdate, emergencyM
     const lat = position?.latitude ?? 31.5204;
     const lng = position?.longitude ?? 74.3587;
     return (
-      <div className="relative rounded-xl overflow-hidden border border-gray-200 dark:border-dark-700" style={{ height }}>
+      <div
+        className="relative rounded-xl overflow-hidden border border-gray-200 dark:border-dark-700"
+        style={{ height }}
+      >
         {/* Embedded OpenStreetMap as free fallback */}
         <iframe
           src={`https://www.openstreetmap.org/export/embed.html?bbox=${lng - 0.01},${lat - 0.01},${lng + 0.01},${lat + 0.01}&layer=mapnik&marker=${lat},${lng}`}
@@ -158,7 +172,9 @@ export default function LiveMap({ height = '400px', onLocationUpdate, emergencyM
           loading="lazy"
         />
         <div className="absolute top-2 left-2 bg-black/70 text-white text-xs px-2 py-1 rounded flex items-center gap-1">
-          <span className={`w-2 h-2 rounded-full ${emergencyMode ? 'bg-red-500 animate-pulse' : 'bg-blue-400'}`} />
+          <span
+            className={`w-2 h-2 rounded-full ${emergencyMode ? 'bg-red-500 animate-pulse' : 'bg-blue-400'}`}
+          />
           {position ? `${lat.toFixed(4)}, ${lng.toFixed(4)}` : 'Getting GPS...'}
         </div>
         <div className="absolute bottom-2 right-2 bg-orange-500/90 text-white text-xs px-2 py-1 rounded">
@@ -169,18 +185,23 @@ export default function LiveMap({ height = '400px', onLocationUpdate, emergencyM
   }
 
   return (
-    <div className="relative rounded-xl overflow-hidden border border-gray-200 dark:border-dark-700" style={{ height }}>
+    <div
+      className="relative rounded-xl overflow-hidden border border-gray-200 dark:border-dark-700"
+      style={{ height }}
+    >
       <div ref={mapRef} style={{ width: '100%', height: '100%' }} />
 
       {/* GPS Status overlay */}
       <div className="absolute top-3 left-3 flex flex-col gap-2">
-        <div className={`flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-medium shadow-lg ${
-          emergencyMode
-            ? 'bg-red-500 text-white animate-pulse'
-            : position
-            ? 'bg-green-500 text-white'
-            : 'bg-gray-700 text-gray-200'
-        }`}>
+        <div
+          className={`flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-medium shadow-lg ${
+            emergencyMode
+              ? 'bg-red-500 text-white animate-pulse'
+              : position
+                ? 'bg-green-500 text-white'
+                : 'bg-gray-700 text-gray-200'
+          }`}
+        >
           <span className="w-2 h-2 rounded-full bg-white" />
           {emergencyMode ? '🚨 EMERGENCY MODE' : position ? '📍 GPS Live' : '⏳ Getting GPS...'}
         </div>
@@ -198,7 +219,9 @@ export default function LiveMap({ height = '400px', onLocationUpdate, emergencyM
           onClick={() => {
             const google = (window as any).google;
             if (mapInstanceRef.current && position) {
-              mapInstanceRef.current.panTo(new google.maps.LatLng(position.latitude, position.longitude));
+              mapInstanceRef.current.panTo(
+                new google.maps.LatLng(position.latitude, position.longitude)
+              );
               mapInstanceRef.current.setZoom(16);
             }
           }}

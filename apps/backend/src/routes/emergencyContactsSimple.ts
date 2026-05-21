@@ -37,7 +37,8 @@ router.post('/add', optionalAuthenticate, async (req: AuthRequest, res: Response
       });
     }
 
-    const { name, phoneNumber, relationship, notifyWhatsapp, notifySms, notifyCall } = validation.data;
+    const { name, phoneNumber, relationship, notifyWhatsapp, notifySms, notifyCall } =
+      validation.data;
 
     // Clean phone number (remove spaces, dashes)
     const cleanPhone = phoneNumber.replace(/[\s\-\(\)]/g, '');
@@ -63,13 +64,14 @@ router.post('/add', optionalAuthenticate, async (req: AuthRequest, res: Response
         }
       }
     } catch (userErr: any) {
-      logger.warn({ error: userErr.message, userId }, '⚠️ Could not verify/create user, trying UUID conversion');
+      logger.warn(
+        { error: userErr.message, userId },
+        '⚠️ Could not verify/create user, trying UUID conversion'
+      );
       // If userId is not a valid UUID, generate a deterministic UUID from it
       try {
         // Try to find or create a user with a proper UUID
-        const existingUser = await databaseService.query(
-          'SELECT id FROM users LIMIT 1'
-        );
+        const existingUser = await databaseService.query('SELECT id FROM users LIMIT 1');
         if (existingUser.rows.length > 0) {
           userId = existingUser.rows[0].id;
           logger.info({ userId }, 'Using existing user for contacts');

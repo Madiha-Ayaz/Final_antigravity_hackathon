@@ -37,10 +37,10 @@ export function useSiren() {
     // Siren sweep effect: cycle frequency between 600Hz and 1200Hz
     let rising = true;
     let freq = 600;
-    
+
     intervalRef.current = setInterval(() => {
       if (!oscillatorRef.current || !audioCtxRef.current) return;
-      
+
       if (rising) {
         freq += 50;
         if (freq >= 1200) rising = false;
@@ -48,10 +48,9 @@ export function useSiren() {
         freq -= 50;
         if (freq <= 600) rising = true;
       }
-      
+
       oscillatorRef.current.frequency.setValueAtTime(freq, audioCtxRef.current.currentTime);
     }, 30); // update every 30ms
-
   }, []);
 
   const stopSiren = useCallback(() => {

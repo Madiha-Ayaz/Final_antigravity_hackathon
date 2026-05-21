@@ -29,9 +29,7 @@ export default function VoiceThreatDetectionPage() {
       <div className="max-w-4xl mx-auto">
         {/* Header */}
         <div className="bg-white rounded-lg shadow-md p-6 mb-6">
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">
-            🎤 Voice Threat Detection
-          </h1>
+          <h1 className="text-3xl font-bold text-gray-900 mb-2">🎤 Voice Threat Detection</h1>
           <p className="text-gray-600">
             AI-powered voice analysis with automatic emergency response
           </p>
@@ -87,9 +85,10 @@ export default function VoiceThreatDetectionPage() {
               className={`
                 w-32 h-32 rounded-full font-bold text-white text-lg
                 transition-all duration-200 transform hover:scale-105
-                ${isRecording
-                  ? 'bg-red-500 hover:bg-red-600 animate-pulse'
-                  : 'bg-blue-500 hover:bg-blue-600'
+                ${
+                  isRecording
+                    ? 'bg-red-500 hover:bg-red-600 animate-pulse'
+                    : 'bg-blue-500 hover:bg-blue-600'
                 }
                 ${isAnalyzing ? 'opacity-50 cursor-not-allowed' : ''}
               `}
@@ -110,16 +109,24 @@ export default function VoiceThreatDetectionPage() {
         {/* Threat Detection Result */}
         {threatDetected && threatData && !alertActive && (
           <div className="bg-yellow-50 border-2 border-yellow-400 rounded-lg p-6 mb-6">
-            <h3 className="text-xl font-bold text-yellow-900 mb-3">
-              ⚠️ Threat Detected
-            </h3>
+            <h3 className="text-xl font-bold text-yellow-900 mb-3">⚠️ Threat Detected</h3>
             <div className="space-y-2">
-              <p><strong>Type:</strong> {threatData.emergencyType}</p>
-              <p><strong>Level:</strong> {threatData.threatLevel}</p>
-              <p><strong>Confidence:</strong> {(threatData.confidence * 100).toFixed(1)}%</p>
-              <p><strong>Reasoning:</strong> {threatData.reasoning}</p>
+              <p>
+                <strong>Type:</strong> {threatData.emergencyType}
+              </p>
+              <p>
+                <strong>Level:</strong> {threatData.threatLevel}
+              </p>
+              <p>
+                <strong>Confidence:</strong> {(threatData.confidence * 100).toFixed(1)}%
+              </p>
+              <p>
+                <strong>Reasoning:</strong> {threatData.reasoning}
+              </p>
               {threatData.transcript && (
-                <p><strong>Transcript:</strong> "{threatData.transcript}"</p>
+                <p>
+                  <strong>Transcript:</strong> "{threatData.transcript}"
+                </p>
               )}
             </div>
           </div>
@@ -173,15 +180,16 @@ export default function VoiceThreatDetectionPage() {
           <h2 className="text-xl font-semibold mb-4">Emergency Contacts</h2>
           <div className="space-y-3">
             {emergencyContacts.map((contact, index) => (
-              <div key={index} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+              <div
+                key={index}
+                className="flex items-center justify-between p-3 bg-gray-50 rounded-lg"
+              >
                 <div>
                   <p className="font-semibold">{contact.name}</p>
                   <p className="text-sm text-gray-600">{contact.phoneNumber}</p>
                   <p className="text-xs text-gray-500">{contact.relationship}</p>
                 </div>
-                <button className="text-blue-600 hover:text-blue-700 font-semibold">
-                  Edit
-                </button>
+                <button className="text-blue-600 hover:text-blue-700 font-semibold">Edit</button>
               </div>
             ))}
             <button className="w-full py-3 border-2 border-dashed border-gray-300 rounded-lg text-gray-600 hover:border-blue-400 hover:text-blue-600 font-semibold">

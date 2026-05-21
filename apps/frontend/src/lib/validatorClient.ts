@@ -60,9 +60,7 @@ class ValidatorClient {
    * Get validation status for an incident
    */
   async getValidationStatus(incidentId: string): Promise<ValidationStatusResponse> {
-    const response = await apiClient.get(
-      `/validator/status/${incidentId}`
-    );
+    const response = await apiClient.get(`/validator/status/${incidentId}`);
     return response.data;
   }
 

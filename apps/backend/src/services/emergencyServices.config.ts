@@ -24,12 +24,13 @@ class EmergencyServicesConfig {
       name: 'Emergency Ambulance',
       type: 'ambulance',
       phoneNumber: config.EMERGENCY_AMBULANCE_NUMBER || '911',
-      location: config.EMERGENCY_AMBULANCE_LAT && config.EMERGENCY_AMBULANCE_LNG
-        ? {
-            latitude: parseFloat(config.EMERGENCY_AMBULANCE_LAT),
-            longitude: parseFloat(config.EMERGENCY_AMBULANCE_LNG),
-          }
-        : undefined,
+      location:
+        config.EMERGENCY_AMBULANCE_LAT && config.EMERGENCY_AMBULANCE_LNG
+          ? {
+              latitude: parseFloat(config.EMERGENCY_AMBULANCE_LAT),
+              longitude: parseFloat(config.EMERGENCY_AMBULANCE_LNG),
+            }
+          : undefined,
     });
 
     // Police Service
@@ -37,12 +38,13 @@ class EmergencyServicesConfig {
       name: 'Emergency Police',
       type: 'police',
       phoneNumber: config.EMERGENCY_POLICE_NUMBER || '911',
-      location: config.EMERGENCY_POLICE_LAT && config.EMERGENCY_POLICE_LNG
-        ? {
-            latitude: parseFloat(config.EMERGENCY_POLICE_LAT),
-            longitude: parseFloat(config.EMERGENCY_POLICE_LNG),
-          }
-        : undefined,
+      location:
+        config.EMERGENCY_POLICE_LAT && config.EMERGENCY_POLICE_LNG
+          ? {
+              latitude: parseFloat(config.EMERGENCY_POLICE_LAT),
+              longitude: parseFloat(config.EMERGENCY_POLICE_LNG),
+            }
+          : undefined,
     });
 
     // Fire Service
@@ -54,7 +56,7 @@ class EmergencyServicesConfig {
   }
 
   getService(type: 'ambulance' | 'police' | 'fire'): EmergencyService | undefined {
-    return this.services.find(s => s.type === type);
+    return this.services.find((s) => s.type === type);
   }
 
   getAllServices(): EmergencyService[] {
@@ -66,7 +68,9 @@ class EmergencyServicesConfig {
     return service?.phoneNumber || '911';
   }
 
-  getServiceLocation(type: 'ambulance' | 'police' | 'fire'): { latitude: number; longitude: number } | undefined {
+  getServiceLocation(
+    type: 'ambulance' | 'police' | 'fire'
+  ): { latitude: number; longitude: number } | undefined {
     const service = this.getService(type);
     return service?.location;
   }

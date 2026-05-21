@@ -85,7 +85,20 @@ router.get('/dispatch-logs', optionalAuthenticate, async (req: AuthRequest, res:
  */
 router.post('/dispatch-logs', optionalAuthenticate, async (req: AuthRequest, res: Response) => {
   try {
-    const { eventId, dispatchType, recipientPhone, recipientName, message, threatLevel, latitude, longitude, status, provider, providerMessageId, errorMessage } = req.body;
+    const {
+      eventId,
+      dispatchType,
+      recipientPhone,
+      recipientName,
+      message,
+      threatLevel,
+      latitude,
+      longitude,
+      status,
+      provider,
+      providerMessageId,
+      errorMessage,
+    } = req.body;
 
     const id = await neonDBService.logDispatch({
       eventId,
@@ -114,50 +127,67 @@ router.post('/dispatch-logs', optionalAuthenticate, async (req: AuthRequest, res
  * GET /api/neon/community-validations
  * Get community validations from Neon DB
  */
-router.get('/community-validations', optionalAuthenticate, async (req: AuthRequest, res: Response) => {
-  try {
-    const alertId = req.query.alertId ? parseInt(req.query.alertId as string) : undefined;
-    const limit = parseInt(req.query.limit as string) || 50;
+router.get(
+  '/community-validations',
+  optionalAuthenticate,
+  async (req: AuthRequest, res: Response) => {
+    try {
+      const alertId = req.query.alertId ? parseInt(req.query.alertId as string) : undefined;
+      const limit = parseInt(req.query.limit as string) || 50;
 
-    const validations = await neonDBService.getValidations(alertId, limit);
+      const validations = await neonDBService.getValidations(alertId, limit);
 
-    res.json({
-      success: true,
-      data: validations,
-      total: validations.length,
-    });
-  } catch (error: any) {
-    logger.error({ error }, 'Failed to fetch validations');
-    res.status(500).json({ success: false, error: error.message });
+      res.json({
+        success: true,
+        data: validations,
+        total: validations.length,
+      });
+    } catch (error: any) {
+      logger.error({ error }, 'Failed to fetch validations');
+      res.status(500).json({ success: false, error: error.message });
+    }
   }
-});
+);
 
 /**
  * POST /api/neon/community-validations
  * Add community validation
  */
-router.post('/community-validations', optionalAuthenticate, async (req: AuthRequest, res: Response) => {
-  try {
-    const { alertId, validatorId, validationType, isValid, confidence, comment, latitude, longitude } = req.body;
+router.post(
+  '/community-validations',
+  optionalAuthenticate,
+  async (req: AuthRequest, res: Response) => {
+    try {
+      const {
+        alertId,
+        validatorId,
+        validationType,
+        isValid,
+        confidence,
+        comment,
+        latitude,
+        longitude,
+      } = req.body;
 
-    const id = await neonDBService.addValidation({
-      alertId,
-      userId: req.userId || 'anonymous',
-      validatorId,
-      validationType,
-      isValid,
-      confidence,
-      comment,
-      latitude,
-      longitude,
-    });
+      const id = await neonDBService.addValidation({
+        alertId,
+        userId: req.userId || 'anonymous',
+        validatorId,
+        validationType,
+        isValid,
+        confidence,
+        comment,
+        latitude,
+        longitude,
+      });
 
-    res.json({ success: true, id });
-  } catch (error: any) {
-    logger.error({ error }, 'Failed to add validation');
-    res.status(500).json({ success: false, error: error.message });
+      res.json({ success: true, id });
+    } catch (error: any) {
+      logger.error({ error }, 'Failed to add validation');
+      res.status(500).json({ success: false, error: error.message });
+    }
   }
-});
+);
 
 /**
  * GET /api/neon/emergency-events
@@ -187,7 +217,22 @@ router.get('/emergency-events', optionalAuthenticate, async (req: AuthRequest, r
  */
 router.post('/emergency-events', optionalAuthenticate, async (req: AuthRequest, res: Response) => {
   try {
-    const { eventType, threatLevel, confidence, transcript, reasoning, category, latitude, longitude, address, audioUrl, contactsNotified, whatsappSent, smsSent, callMade } = req.body;
+    const {
+      eventType,
+      threatLevel,
+      confidence,
+      transcript,
+      reasoning,
+      category,
+      latitude,
+      longitude,
+      address,
+      audioUrl,
+      contactsNotified,
+      whatsappSent,
+      smsSent,
+      callMade,
+    } = req.body;
 
     const id = await neonDBService.createEmergencyEvent({
       userId: req.userId,
@@ -218,19 +263,23 @@ router.post('/emergency-events', optionalAuthenticate, async (req: AuthRequest, 
  * PATCH /api/neon/emergency-events/:id
  * Update emergency event status
  */
-router.patch('/emergency-events/:id', optionalAuthenticate, async (req: AuthRequest, res: Response) => {
-  try {
-    const { id } = req.params;
-    const { status } = req.body;
+router.patch(
+  '/emergency-events/:id',
+  optionalAuthenticate,
+  async (req: AuthRequest, res: Response) => {
+    try {
+      const { id } = req.params;
+      const { status } = req.body;
 
-    await neonDBService.updateEventStatus(parseInt(id), status);
+      await neonDBService.updateEventStatus(parseInt(id), status);
 
-    res.json({ success: true, message: 'Event status updated' });
-  } catch (error: any) {
-    logger.error({ error }, 'Failed to update event');
-    res.status(500).json({ success: false, error: error.message });
+      res.json({ success: true, message: 'Event status updated' });
+    } catch (error: any) {
+      logger.error({ error }, 'Failed to update event');
+      res.status(500).json({ success: false, error: error.message });
+    }
   }
-});
+);
 
 /**
  * GET /api/neon/statistics

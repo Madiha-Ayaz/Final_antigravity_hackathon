@@ -28,7 +28,7 @@ export async function POST(request: Request) {
 
     console.log(`Forwarding WhatsApp dispatch to TextMeBot: recipient=${cleanPhone}`);
     const res = await fetch(url, { method: 'GET' });
-    
+
     // Fallback if TextMeBot returns text instead of json
     const responseText = await res.text();
     let data;

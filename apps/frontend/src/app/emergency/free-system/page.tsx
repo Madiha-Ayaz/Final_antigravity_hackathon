@@ -63,9 +63,7 @@ export default function FreeEmergencyPage() {
               <span className="text-3xl">🆓</span>
             </div>
             <div>
-              <h1 className="text-3xl font-bold text-gray-900">
-                Free Emergency Alert System
-              </h1>
+              <h1 className="text-3xl font-bold text-gray-900">Free Emergency Alert System</h1>
               <p className="text-gray-600">
                 No Twilio, No Cost - Uses Your Phone's Native Features
               </p>
@@ -107,9 +105,7 @@ export default function FreeEmergencyPage() {
               {isAnalyzing && (
                 <div className="flex items-center justify-center space-x-2">
                   <div className="w-4 h-4 bg-blue-500 rounded-full animate-spin border-2 border-blue-500 border-t-transparent"></div>
-                  <span className="text-blue-600 font-semibold">
-                    Analyzing with Gemini AI...
-                  </span>
+                  <span className="text-blue-600 font-semibold">Analyzing with Gemini AI...</span>
                 </div>
               )}
               {!isRecording && !isAnalyzing && (
@@ -139,9 +135,7 @@ export default function FreeEmergencyPage() {
           {/* Threat Detection Result */}
           {threatDetected && threatData && (
             <div className="mt-6 bg-yellow-50 border-2 border-yellow-400 rounded-lg p-4">
-              <h3 className="text-xl font-bold text-yellow-900 mb-3">
-                ⚠️ Threat Detected!
-              </h3>
+              <h3 className="text-xl font-bold text-yellow-900 mb-3">⚠️ Threat Detected!</h3>
               <div className="space-y-2 text-sm">
                 <p>
                   <strong>Type:</strong> {threatData.emergencyType}
@@ -186,9 +180,7 @@ export default function FreeEmergencyPage() {
                 type="tel"
                 placeholder="Phone Number (e.g., +923001234567)"
                 value={newContact.phoneNumber}
-                onChange={(e) =>
-                  setNewContact({ ...newContact, phoneNumber: e.target.value })
-                }
+                onChange={(e) => setNewContact({ ...newContact, phoneNumber: e.target.value })}
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
               />
               <CarrierSelector
@@ -200,9 +192,7 @@ export default function FreeEmergencyPage() {
                 type="text"
                 placeholder="Relationship (e.g., Family, Friend)"
                 value={newContact.relationship}
-                onChange={(e) =>
-                  setNewContact({ ...newContact, relationship: e.target.value })
-                }
+                onChange={(e) => setNewContact({ ...newContact, relationship: e.target.value })}
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
               />
               <button
@@ -271,13 +261,27 @@ export default function FreeEmergencyPage() {
         <div className="bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg shadow-lg p-6 text-white">
           <h3 className="text-xl font-bold mb-3">💡 How It Works</h3>
           <div className="space-y-2 text-sm">
-            <p>✅ <strong>Step 1:</strong> Record your voice</p>
-            <p>✅ <strong>Step 2:</strong> Gemini AI analyzes for threats</p>
-            <p>✅ <strong>Step 3:</strong> If threat detected, trigger emergency</p>
-            <p>✅ <strong>Step 4:</strong> Free SMS sent via email gateway</p>
-            <p>✅ <strong>Step 5:</strong> WhatsApp opens with pre-filled message</p>
-            <p>✅ <strong>Step 6:</strong> Phone dialer opens to call first contact</p>
-            <p>✅ <strong>Step 7:</strong> Voice recording shared via link</p>
+            <p>
+              ✅ <strong>Step 1:</strong> Record your voice
+            </p>
+            <p>
+              ✅ <strong>Step 2:</strong> Gemini AI analyzes for threats
+            </p>
+            <p>
+              ✅ <strong>Step 3:</strong> If threat detected, trigger emergency
+            </p>
+            <p>
+              ✅ <strong>Step 4:</strong> Free SMS sent via email gateway
+            </p>
+            <p>
+              ✅ <strong>Step 5:</strong> WhatsApp opens with pre-filled message
+            </p>
+            <p>
+              ✅ <strong>Step 6:</strong> Phone dialer opens to call first contact
+            </p>
+            <p>
+              ✅ <strong>Step 7:</strong> Voice recording shared via link
+            </p>
             <p className="mt-4 pt-4 border-t border-white/30">
               💰 <strong>Total Cost:</strong> ₹0 (Completely FREE!)
             </p>

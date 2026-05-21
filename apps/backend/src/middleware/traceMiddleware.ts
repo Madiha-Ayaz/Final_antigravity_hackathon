@@ -117,11 +117,7 @@ export function traceMiddleware(req: Request, res: Response, next: NextFunction)
 /**
  * Middleware to start a new trace session for emergency endpoints
  */
-export function emergencyTraceMiddleware(
-  req: Request,
-  res: Response,
-  next: NextFunction
-): void {
+export function emergencyTraceMiddleware(req: Request, res: Response, next: NextFunction): void {
   // Only apply to emergency trigger endpoints
   if (!req.path.includes('/emergency/trigger')) {
     return next();

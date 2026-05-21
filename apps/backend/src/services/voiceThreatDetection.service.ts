@@ -59,16 +59,22 @@ class VoiceThreatDetectionService {
 
       // Determine if this is a real threat
       const isThreat = this.determineThreatStatus(analysis);
-      const shouldTriggerSiren = isThreat && (analysis.threatLevel === 'HIGH' || analysis.threatLevel === 'CRITICAL');
-      const shouldCallAmbulance = classification.emergencyType === 'MEDICAL' ||
-                                   classification.emergencyType === 'ACCIDENT' ||
-                                   analysis.threatLevel === 'CRITICAL';
+      const shouldTriggerSiren =
+        isThreat && (analysis.threatLevel === 'HIGH' || analysis.threatLevel === 'CRITICAL');
+      const shouldCallAmbulance =
+        classification.emergencyType === 'MEDICAL' ||
+        classification.emergencyType === 'ACCIDENT' ||
+        analysis.threatLevel === 'CRITICAL';
 
       // Map emergency type to category for frontend routing
-      const emergencyCategory = this.mapToCategory(classification.emergencyType, analysis.reasoning);
+      const emergencyCategory = this.mapToCategory(
+        classification.emergencyType,
+        analysis.reasoning
+      );
 
       // Fire brigade for fire emergencies
-      const shouldCallFireBrigade = emergencyCategory === 'fire' || classification.emergencyType === 'FIRE';
+      const shouldCallFireBrigade =
+        emergencyCategory === 'fire' || classification.emergencyType === 'FIRE';
 
       const result: ThreatDetectionResult = {
         isThreat,
@@ -98,16 +104,37 @@ class VoiceThreatDetectionService {
   private mapToCategory(emergencyType: string, transcript: string): EmergencyCategory {
     const t = transcript.toLowerCase();
 
-    if (emergencyType === 'FIRE' || t.includes('fire') || t.includes('burning') || t.includes('smoke')) {
+    if (
+      emergencyType === 'FIRE' ||
+      t.includes('fire') ||
+      t.includes('burning') ||
+      t.includes('smoke')
+    ) {
       return 'fire';
     }
-    if (emergencyType === 'NATURAL_DISASTER' || t.includes('flood') || t.includes('water rising') || t.includes('tsunami')) {
+    if (
+      emergencyType === 'NATURAL_DISASTER' ||
+      t.includes('flood') ||
+      t.includes('water rising') ||
+      t.includes('tsunami')
+    ) {
       return 'flood';
     }
-    if (emergencyType === 'ACCIDENT' || t.includes('accident') || t.includes('crash') || t.includes('collision')) {
+    if (
+      emergencyType === 'ACCIDENT' ||
+      t.includes('accident') ||
+      t.includes('crash') ||
+      t.includes('collision')
+    ) {
       return 'accident';
     }
-    if (emergencyType === 'ASSAULT' || emergencyType === 'HARASSMENT' || t.includes('abuse') || t.includes('hitting') || t.includes('violence')) {
+    if (
+      emergencyType === 'ASSAULT' ||
+      emergencyType === 'HARASSMENT' ||
+      t.includes('abuse') ||
+      t.includes('hitting') ||
+      t.includes('violence')
+    ) {
       return 'abuse';
     }
 
@@ -119,7 +146,10 @@ class VoiceThreatDetectionService {
    */
   private determineThreatStatus(analysis: AIAnalysisResult): boolean {
     // High confidence and high/critical threat level
-    if (analysis.confidence >= 0.7 && (analysis.threatLevel === 'HIGH' || analysis.threatLevel === 'CRITICAL')) {
+    if (
+      analysis.confidence >= 0.7 &&
+      (analysis.threatLevel === 'HIGH' || analysis.threatLevel === 'CRITICAL')
+    ) {
       return true;
     }
 
@@ -129,7 +159,10 @@ class VoiceThreatDetectionService {
     }
 
     // Strong emotional stress with panic indicators
-    if (analysis.emotionalStress >= 0.8 && (analysis.audioFeatures.hasPanic || analysis.audioFeatures.hasScream)) {
+    if (
+      analysis.emotionalStress >= 0.8 &&
+      (analysis.audioFeatures.hasPanic || analysis.audioFeatures.hasScream)
+    ) {
       return true;
     }
 
@@ -151,23 +184,29 @@ class VoiceThreatDetectionService {
     logger.info({ userId, countdownId, expiresAt }, 'Starting emergency countdown');
 
     // Set countdown timer
-    const timeout = setTimeout(async () => {
-      logger.info({ userId, countdownId }, 'Countdown expired - sending emergency alerts');
+    const timeout = setTimeout(
+      async () => {
+        logger.info({ userId, countdownId }, 'Countdown expired - sending emergency alerts');
 
-      try {
-        await this.sendEmergencyAlerts(userId, threatData, contacts, location);
+        try {
+          await this.sendEmergencyAlerts(userId, threatData, contacts, location);
 
-        // Call ambulance if needed
-        if (threatData.shouldCallAmbulance) {
-          await this.callAmbulance(userId, location);
+          // Call ambulance if needed
+          if (threatData.shouldCallAmbulance) {
+            await this.callAmbulance(userId, location);
+          }
+        } catch (error) {
+          logger.error(
+            { error, userId, countdownId },
+            'Failed to send emergency alerts after countdown'
+          );
+        } finally {
+          this.activeCountdowns.delete(countdownId);
+          this.sirenActive.delete(userId);
         }
-      } catch (error) {
-        logger.error({ error, userId, countdownId }, 'Failed to send emergency alerts after countdown');
-      } finally {
-        this.activeCountdowns.delete(countdownId);
-        this.sirenActive.delete(userId);
-      }
-    }, 2 * 60 * 1000); // 2 minutes
+      },
+      2 * 60 * 1000
+    ); // 2 minutes
 
     this.activeCountdowns.set(countdownId, timeout);
     this.sirenActive.set(userId, true);
@@ -213,7 +252,7 @@ class VoiceThreatDetectionService {
     const safeMessage = this.formatSafeMessage(location);
 
     const results = await Promise.allSettled(
-      contacts.map(contact =>
+      contacts.map((contact) =>
         whatsAppService.sendMessage({
           to: contact.phoneNumber,
           message: safeMessage.replace('{name}', contact.name),
@@ -221,7 +260,7 @@ class VoiceThreatDetectionService {
       )
     );
 
-    const successful = results.filter(r => r.status === 'fulfilled').length;
+    const successful = results.filter((r) => r.status === 'fulfilled').length;
     logger.info({ userId, successful, total: contacts.length }, '"I am safe" messages sent');
   }
 
@@ -265,7 +304,7 @@ class VoiceThreatDetectionService {
     const alertMessage = this.formatEmergencyAlert(threatData, location);
 
     const results = await Promise.allSettled(
-      contacts.map(contact =>
+      contacts.map((contact) =>
         whatsAppService.sendMessage({
           to: contact.phoneNumber,
           message: alertMessage.replace('{name}', contact.name),
@@ -273,7 +312,7 @@ class VoiceThreatDetectionService {
       )
     );
 
-    const successful = results.filter(r => r.status === 'fulfilled').length;
+    const successful = results.filter((r) => r.status === 'fulfilled').length;
     logger.info({ userId, successful, total: contacts.length }, 'Emergency alerts sent');
   }
 
@@ -358,7 +397,8 @@ class VoiceThreatDetectionService {
   async callFireBrigade(userId: string, location?: LocationData): Promise<void> {
     logger.info({ userId, location }, 'Calling fire brigade');
 
-    const fireBrigadeNumber = process.env.FIRE_BRIGADE_NUMBER || process.env.EMERGENCY_CONTACT_NUMBER || '+923452508043';
+    const fireBrigadeNumber =
+      process.env.FIRE_BRIGADE_NUMBER || process.env.EMERGENCY_CONTACT_NUMBER || '+923452508043';
 
     try {
       let message = `🚒 *EMERGENCY - FIRE BRIGADE NEEDED* 🚒\n\n`;

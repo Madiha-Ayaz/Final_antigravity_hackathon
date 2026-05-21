@@ -1,4 +1,3 @@
-
 import { redisService } from './redis.service';
 import { encryptionService } from './encryption.service';
 import { logger } from '@silentsiren/logger';
@@ -49,7 +48,7 @@ class OTPService {
 
       // Mock SMS delivery and print code to console for hackathon demo
       logger.info(`[DEMO ONLY - NATIVE OTP] Verification Code for ${phoneNumber} is: ${otp}`);
-      
+
       const smsResult = { success: true };
 
       // Increment rate limit counter

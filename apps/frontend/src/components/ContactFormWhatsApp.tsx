@@ -49,9 +49,7 @@ export default function ContactFormWhatsApp({ recipientNumber }: ContactFormWhat
 
   return (
     <div className="bg-white rounded-lg shadow-lg p-6 sm:p-8 max-w-2xl mx-auto">
-      <h2 className="text-2xl sm:text-3xl font-bold mb-6 text-gray-800">
-        📱 Contact Us
-      </h2>
+      <h2 className="text-2xl sm:text-3xl font-bold mb-6 text-gray-800">📱 Contact Us</h2>
       <p className="text-gray-600 mb-6">
         Send us a message and we'll get back to you via WhatsApp!
       </p>
@@ -131,11 +129,15 @@ export default function ContactFormWhatsApp({ recipientNumber }: ContactFormWhat
 
         {/* Status Message */}
         {status && (
-          <div className={`p-4 rounded-lg text-center font-medium ${
-            status.includes('✅') ? 'bg-green-100 text-green-800' :
-            status.includes('❌') ? 'bg-red-100 text-red-800' :
-            'bg-blue-100 text-blue-800'
-          }`}>
+          <div
+            className={`p-4 rounded-lg text-center font-medium ${
+              status.includes('✅')
+                ? 'bg-green-100 text-green-800'
+                : status.includes('❌')
+                  ? 'bg-red-100 text-red-800'
+                  : 'bg-blue-100 text-blue-800'
+            }`}
+          >
             {status}
           </div>
         )}
@@ -144,8 +146,8 @@ export default function ContactFormWhatsApp({ recipientNumber }: ContactFormWhat
       {/* Info Box */}
       <div className="mt-6 bg-blue-50 p-4 rounded-lg border border-blue-200">
         <p className="text-sm text-blue-700">
-          💡 <strong>Note:</strong> Your message will be sent directly to our WhatsApp number.
-          We'll respond as soon as possible!
+          💡 <strong>Note:</strong> Your message will be sent directly to our WhatsApp number. We'll
+          respond as soon as possible!
         </p>
       </div>
     </div>

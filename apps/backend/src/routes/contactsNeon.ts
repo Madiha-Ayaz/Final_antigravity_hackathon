@@ -7,11 +7,12 @@ const router = Router();
 const logger = createLogger('contacts-neon');
 
 // Direct Neon DB connection
-const getPool = () => new Pool({
-  connectionString: process.env.DATABASE_URL,
-  ssl: { rejectUnauthorized: false },
-  max: 3,
-});
+const getPool = () =>
+  new Pool({
+    connectionString: process.env.DATABASE_URL,
+    ssl: { rejectUnauthorized: false },
+    max: 3,
+  });
 
 /**
  * Ensure contacts table exists

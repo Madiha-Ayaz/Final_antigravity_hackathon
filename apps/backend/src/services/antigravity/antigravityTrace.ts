@@ -17,7 +17,16 @@ export interface EmergencyContext {
   transcript?: string;
 }
 
-export type EmergencyType = 'ROBBERY' | 'MEDICAL' | 'ACCIDENT' | 'HARASSMENT' | 'ASSAULT' | 'FIRE' | 'NATURAL_DISASTER' | 'FALSE_ALARM' | 'UNKNOWN';
+export type EmergencyType =
+  | 'ROBBERY'
+  | 'MEDICAL'
+  | 'ACCIDENT'
+  | 'HARASSMENT'
+  | 'ASSAULT'
+  | 'FIRE'
+  | 'NATURAL_DISASTER'
+  | 'FALSE_ALARM'
+  | 'UNKNOWN';
 
 export interface AIAnalysisResult {
   isCrisis: boolean;
@@ -104,15 +113,10 @@ class AntigravityTrace {
     result: AIAnalysisResult
   ): Promise<void> {
     // Log prompt
-    const promptId = antigravityTraceLogger.logAIPrompt(
-      traceId,
-      prompt,
-      model,
-      {
-        purpose: 'emergency_analysis',
-        expectedOutput: 'crisis_detection',
-      }
-    );
+    const promptId = antigravityTraceLogger.logAIPrompt(traceId, prompt, model, {
+      purpose: 'emergency_analysis',
+      expectedOutput: 'crisis_detection',
+    });
 
     // Log response
     antigravityTraceLogger.logAIResponse(
@@ -216,12 +220,7 @@ class AntigravityTrace {
     fallbackAction: string,
     reason: string
   ): void {
-    antigravityTraceLogger.logFallbackAction(
-      traceId,
-      originalAction,
-      fallbackAction,
-      reason
-    );
+    antigravityTraceLogger.logFallbackAction(traceId, originalAction, fallbackAction, reason);
 
     // Add decision node
     antigravityTraceLogger.addDecisionNode(
@@ -261,20 +260,9 @@ class AntigravityTrace {
     try {
       const result = await executeAlert();
 
-      antigravityTraceLogger.updateAction(
-        traceId,
-        actionId,
-        'COMPLETED',
-        result
-      );
+      antigravityTraceLogger.updateAction(traceId, actionId, 'COMPLETED', result);
 
-      antigravityTraceLogger.logAlertExecution(
-        traceId,
-        alertType,
-        recipients,
-        'SUCCESS',
-        result
-      );
+      antigravityTraceLogger.logAlertExecution(traceId, alertType, recipients, 'SUCCESS', result);
 
       logger.info('Alert executed successfully', {
         traceId,
@@ -292,21 +280,11 @@ class AntigravityTrace {
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'Unknown error';
 
-      antigravityTraceLogger.updateAction(
-        traceId,
-        actionId,
-        'FAILED',
-        undefined,
-        errorMessage
-      );
+      antigravityTraceLogger.updateAction(traceId, actionId, 'FAILED', undefined, errorMessage);
 
-      antigravityTraceLogger.logAlertExecution(
-        traceId,
-        alertType,
-        recipients,
-        'FAILED',
-        { error: errorMessage }
-      );
+      antigravityTraceLogger.logAlertExecution(traceId, alertType, recipients, 'FAILED', {
+        error: errorMessage,
+      });
 
       logger.error('Alert execution failed', {
         traceId,

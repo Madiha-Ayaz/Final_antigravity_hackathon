@@ -49,7 +49,7 @@ router.post(
         {
           userId: req.userId,
           fileSize: req.file.size,
-          mimeType: req.file.mimetype
+          mimeType: req.file.mimetype,
         },
         '📦 Audio file received'
       );
@@ -67,7 +67,7 @@ router.post(
           userId: req.userId,
           isThreat: threatResult.isThreat,
           threatLevel: threatResult.threatLevel,
-          confidence: threatResult.confidence
+          confidence: threatResult.confidence,
         },
         '✅ Gemini AI analysis complete'
       );
@@ -88,7 +88,6 @@ router.post(
         shouldCallFireBrigade: threatResult.shouldCallFireBrigade,
         audioUrl: `/api/audio/${req.userId}_${Date.now()}.wav`,
       });
-
     } catch (error: any) {
       logger.error({ error, userId: req.userId }, '❌ Voice analysis failed');
       res.status(500).json({
@@ -103,68 +102,57 @@ router.post(
  * GET /api/voice-threat/test-gemini
  * Test if Gemini AI is working
  */
-router.get(
-  '/test-gemini',
-  authenticate,
-  async (req: AuthRequest, res: Response) => {
-    try {
-      logger.info({ userId: req.userId }, '🧪 Testing Gemini AI connection...');
+router.get('/test-gemini', authenticate, async (req: AuthRequest, res: Response) => {
+  try {
+    logger.info({ userId: req.userId }, '🧪 Testing Gemini AI connection...');
 
-      // Create a simple test audio buffer
-      const testAudio = Buffer.from('test-audio-data');
+    // Create a simple test audio buffer
+    const testAudio = Buffer.from('test-audio-data');
 
-      const result = await voiceThreatDetectionService.analyzeVoiceForThreat(
-        testAudio,
-        req.userId!
-      );
+    const result = await voiceThreatDetectionService.analyzeVoiceForThreat(testAudio, req.userId!);
 
-      logger.info({ userId: req.userId, result }, '✅ Gemini AI test successful');
+    logger.info({ userId: req.userId, result }, '✅ Gemini AI test successful');
 
-      res.json({
-        success: true,
-        message: 'Gemini AI is working!',
-        testResult: result,
-      });
-    } catch (error: any) {
-      logger.error({ error, userId: req.userId }, '❌ Gemini AI test failed');
-      res.status(500).json({
-        success: false,
-        error: error.message,
-        message: 'Gemini AI is not working. Check GEMINI_API_KEY in .env',
-      });
-    }
+    res.json({
+      success: true,
+      message: 'Gemini AI is working!',
+      testResult: result,
+    });
+  } catch (error: any) {
+    logger.error({ error, userId: req.userId }, '❌ Gemini AI test failed');
+    res.status(500).json({
+      success: false,
+      error: error.message,
+      message: 'Gemini AI is not working. Check GEMINI_API_KEY in .env',
+    });
   }
-);
+});
 
 /**
  * POST /api/voice-threat/emergency/trigger
  * Trigger emergency alert with countdown
  */
-router.post(
-  '/emergency/trigger',
-  optionalAuthenticate,
-  async (req: AuthRequest, res: Response) => {
-    try {
-      const { sessionId, location } = req.body;
+router.post('/emergency/trigger', optionalAuthenticate, async (req: AuthRequest, res: Response) => {
+  try {
+    const { sessionId, location } = req.body;
 
-      logger.info({ userId: req.userId, sessionId }, '🚨 Emergency alert triggered');
+    logger.info({ userId: req.userId, sessionId }, '🚨 Emergency alert triggered');
 
-      res.json({
-        success: true,
-        alertId: `alert_${req.userId}_${Date.now()}`,
-        countdownStarted: true,
-        expiresAt: new Date(Date.now() + 2 * 60 * 1000),
-        sirenTriggered: true,
-      });
-    } catch (error: any) {
-      logger.error({ error, userId: req.userId }, '❌ Failed to trigger emergency');
-      res.status(500).json({
-        success: false,
-        error: error.message,
-      });
-    }
+    res.json({
+      success: true,
+      alertId: `alert_${req.userId}_${Date.now()}`,
+      countdownStarted: true,
+      expiresAt: new Date(Date.now() + 2 * 60 * 1000),
+      sirenTriggered: true,
+    });
+  } catch (error: any) {
+    logger.error({ error, userId: req.userId }, '❌ Failed to trigger emergency');
+    res.status(500).json({
+      success: false,
+      error: error.message,
+    });
   }
-);
+});
 
 /**
  * POST /api/voice-threat/emergency/send-alerts
@@ -229,12 +217,16 @@ router.post(
         });
       }
 
-      logger.info({ userId: req.userId, contactCount: contacts.length }, '📋 Found emergency contacts');
+      logger.info(
+        { userId: req.userId, contactCount: contacts.length },
+        '📋 Found emergency contacts'
+      );
 
       // Create emergency message
-      const locationUrl = location?.latitude && location?.longitude
-        ? `https://www.google.com/maps?q=${location.latitude},${location.longitude}`
-        : 'Location unavailable';
+      const locationUrl =
+        location?.latitude && location?.longitude
+          ? `https://www.google.com/maps?q=${location.latitude},${location.longitude}`
+          : 'Location unavailable';
 
       const message = `🚨 EMERGENCY ALERT 🚨\n\n${user.full_name || 'Your contact'} needs help!\n\nLocation: ${locationUrl}\n\nThis is an automated emergency alert from Silent Siren.`;
 
@@ -244,7 +236,10 @@ router.post(
 
       for (const contact of contacts) {
         try {
-          logger.info({ contactId: contact.id, name: contact.name, phone: contact.phone_number }, '📱 Sending Twilio alerts to contact');
+          logger.info(
+            { contactId: contact.id, name: contact.name, phone: contact.phone_number },
+            '📱 Sending Twilio alerts to contact'
+          );
 
           const alertPayload = {
             recipientPhone: contact.phone_number,
@@ -266,7 +261,16 @@ router.post(
             call: alertResults.call,
           });
 
-          logger.info({ contactId: contact.id, name: contact.name, sms: alertResults.sms.success, whatsapp: alertResults.whatsapp.success, call: alertResults.call.success }, '✅ Twilio alerts sent to contact');
+          logger.info(
+            {
+              contactId: contact.id,
+              name: contact.name,
+              sms: alertResults.sms.success,
+              whatsapp: alertResults.whatsapp.success,
+              call: alertResults.call.success,
+            },
+            '✅ Twilio alerts sent to contact'
+          );
         } catch (error: any) {
           logger.error({ error, contactId: contact.id }, '❌ Failed to send alert to contact');
           results.push({
@@ -280,7 +284,10 @@ router.post(
         }
       }
 
-      logger.info({ userId: req.userId, totalContacts: contacts.length }, '✅ Emergency alerts sent via Twilio');
+      logger.info(
+        { userId: req.userId, totalContacts: contacts.length },
+        '✅ Emergency alerts sent via Twilio'
+      );
 
       res.json({
         success: true,
@@ -303,125 +310,127 @@ router.post(
  * POST /api/voice-threat/emergency/save-me
  * Immediate "Save Me" alert - sends SMS, WhatsApp, and Voice Call to all contacts
  */
-router.post(
-  '/emergency/save-me',
-  optionalAuthenticate,
-  async (req: AuthRequest, res: Response) => {
+router.post('/emergency/save-me', optionalAuthenticate, async (req: AuthRequest, res: Response) => {
+  try {
+    const { location } = req.body;
+    const uid = req.userId || 'test-user-001';
+
+    logger.info({ userId: uid, location }, '🆘 SAVE ME button pressed - sending all alerts');
+
+    // Get user info
+    const { databaseService } = await import('../services/database.service');
+
+    let user = { full_name: 'Someone', phone_number: null };
     try {
-      const { location } = req.body;
-      const uid = req.userId || 'test-user-001';
-
-      logger.info({ userId: uid, location }, '🆘 SAVE ME button pressed - sending all alerts');
-
-      // Get user info
-      const { databaseService } = await import('../services/database.service');
-
-      let user = { full_name: 'Someone', phone_number: null };
-      try {
-        const userResult = await databaseService.query(
-          'SELECT full_name, phone_number FROM users WHERE id = $1',
-          [uid]
-        );
-        if (userResult.rows.length > 0) {
-          user = userResult.rows[0];
-        }
-      } catch (uErr) {
-        logger.warn({ error: uErr }, 'Could not fetch user info');
+      const userResult = await databaseService.query(
+        'SELECT full_name, phone_number FROM users WHERE id = $1',
+        [uid]
+      );
+      if (userResult.rows.length > 0) {
+        user = userResult.rows[0];
       }
+    } catch (uErr) {
+      logger.warn({ error: uErr }, 'Could not fetch user info');
+    }
 
-      // Get all emergency contacts - try user-specific first, fall back to all
-      let contactsResult;
-      try {
-        contactsResult = await databaseService.query(
-          `SELECT id, name, phone_number, relationship
+    // Get all emergency contacts - try user-specific first, fall back to all
+    let contactsResult;
+    try {
+      contactsResult = await databaseService.query(
+        `SELECT id, name, phone_number, relationship
            FROM emergency_contacts
            WHERE user_id = $1 AND is_active = true
            ORDER BY priority ASC`,
-          [uid]
-        );
-      } catch (qErr) {
-        logger.warn({ error: qErr }, 'User-specific query failed, fetching all contacts');
-      }
+        [uid]
+      );
+    } catch (qErr) {
+      logger.warn({ error: qErr }, 'User-specific query failed, fetching all contacts');
+    }
 
-      if (!contactsResult || contactsResult.rows.length === 0) {
-        contactsResult = await databaseService.query(
-          `SELECT id, name, phone_number, relationship
+    if (!contactsResult || contactsResult.rows.length === 0) {
+      contactsResult = await databaseService.query(
+        `SELECT id, name, phone_number, relationship
            FROM emergency_contacts
            WHERE is_active = true
            ORDER BY priority ASC`
-        );
-      }
+      );
+    }
 
-      const contacts = contactsResult.rows;
+    const contacts = contactsResult.rows;
 
-      if (contacts.length === 0) {
-        logger.warn({ userId: uid }, '⚠️ No emergency contacts found for Save Me');
-        return res.json({
-          success: false,
-          message: 'No emergency contacts configured. Please add contacts first.',
-          contactsNotified: 0,
-        });
-      }
-
-      logger.info({ userId: uid, contactCount: contacts.length }, '📋 Found contacts for Save Me alert');
-
-      // Send alerts using Twilio service
-      const { twilioService } = await import('../services/twilio.service');
-      const results = [];
-
-      for (const contact of contacts) {
-        try {
-          const alertPayload = {
-            recipientPhone: contact.phone_number,
-            recipientName: contact.name,
-            latitude: location?.latitude,
-            longitude: location?.longitude,
-            threatLevel: 'CRITICAL',
-            transcript: `🆘 SAVE ME! ${user.full_name || 'Someone'} needs immediate help! This is an urgent emergency alert.`,
-          };
-
-          const alertResults = await twilioService.sendAllAlerts(alertPayload);
-
-          results.push({
-            contactId: contact.id,
-            name: contact.name,
-            phone: contact.phone_number,
-            sms: alertResults.sms,
-            whatsapp: alertResults.whatsapp,
-            call: alertResults.call,
-          });
-
-          logger.info({ contactId: contact.id, name: contact.name }, '✅ Save Me alerts sent to contact');
-        } catch (error: any) {
-          logger.error({ error, contactId: contact.id }, '❌ Failed to send Save Me alert');
-          results.push({
-            contactId: contact.id,
-            name: contact.name,
-            phone: contact.phone_number,
-            sms: { success: false, error: error.message },
-            whatsapp: { success: false, error: error.message },
-            call: { success: false, error: error.message },
-          });
-        }
-      }
-
-      logger.info({ userId: uid, totalContacts: contacts.length }, '✅ Save Me alerts completed');
-
-      res.json({
-        success: true,
-        message: 'Save Me alerts sent to all contacts via SMS, WhatsApp, and Voice Call',
-        contactsNotified: contacts.length,
-        results,
-      });
-    } catch (error: any) {
-      logger.error({ error }, '❌ Save Me alert failed');
-      res.status(500).json({
+    if (contacts.length === 0) {
+      logger.warn({ userId: uid }, '⚠️ No emergency contacts found for Save Me');
+      return res.json({
         success: false,
-        error: error.message || 'Failed to send Save Me alerts',
+        message: 'No emergency contacts configured. Please add contacts first.',
+        contactsNotified: 0,
       });
     }
+
+    logger.info(
+      { userId: uid, contactCount: contacts.length },
+      '📋 Found contacts for Save Me alert'
+    );
+
+    // Send alerts using Twilio service
+    const { twilioService } = await import('../services/twilio.service');
+    const results = [];
+
+    for (const contact of contacts) {
+      try {
+        const alertPayload = {
+          recipientPhone: contact.phone_number,
+          recipientName: contact.name,
+          latitude: location?.latitude,
+          longitude: location?.longitude,
+          threatLevel: 'CRITICAL',
+          transcript: `🆘 SAVE ME! ${user.full_name || 'Someone'} needs immediate help! This is an urgent emergency alert.`,
+        };
+
+        const alertResults = await twilioService.sendAllAlerts(alertPayload);
+
+        results.push({
+          contactId: contact.id,
+          name: contact.name,
+          phone: contact.phone_number,
+          sms: alertResults.sms,
+          whatsapp: alertResults.whatsapp,
+          call: alertResults.call,
+        });
+
+        logger.info(
+          { contactId: contact.id, name: contact.name },
+          '✅ Save Me alerts sent to contact'
+        );
+      } catch (error: any) {
+        logger.error({ error, contactId: contact.id }, '❌ Failed to send Save Me alert');
+        results.push({
+          contactId: contact.id,
+          name: contact.name,
+          phone: contact.phone_number,
+          sms: { success: false, error: error.message },
+          whatsapp: { success: false, error: error.message },
+          call: { success: false, error: error.message },
+        });
+      }
+    }
+
+    logger.info({ userId: uid, totalContacts: contacts.length }, '✅ Save Me alerts completed');
+
+    res.json({
+      success: true,
+      message: 'Save Me alerts sent to all contacts via SMS, WhatsApp, and Voice Call',
+      contactsNotified: contacts.length,
+      results,
+    });
+  } catch (error: any) {
+    logger.error({ error }, '❌ Save Me alert failed');
+    res.status(500).json({
+      success: false,
+      error: error.message || 'Failed to send Save Me alerts',
+    });
   }
-);
+});
 
 /**
  * POST /api/voice-threat/emergency/confirm-safe
@@ -509,9 +518,13 @@ router.post(
 router.get('/twilio-status', async (_req: AuthRequest, res: Response) => {
   const { twilioService } = await import('../services/twilio.service');
 
-  const hasSid = !!process.env.TWILIO_ACCOUNT_SID && process.env.TWILIO_ACCOUNT_SID !== 'your-twilio-account-sid';
-  const hasToken = !!process.env.TWILIO_AUTH_TOKEN && process.env.TWILIO_AUTH_TOKEN !== 'your-twilio-auth-token';
-  const hasPhone = !!process.env.TWILIO_PHONE_NUMBER && process.env.TWILIO_PHONE_NUMBER !== '+1234567890';
+  const hasSid =
+    !!process.env.TWILIO_ACCOUNT_SID &&
+    process.env.TWILIO_ACCOUNT_SID !== 'your-twilio-account-sid';
+  const hasToken =
+    !!process.env.TWILIO_AUTH_TOKEN && process.env.TWILIO_AUTH_TOKEN !== 'your-twilio-auth-token';
+  const hasPhone =
+    !!process.env.TWILIO_PHONE_NUMBER && process.env.TWILIO_PHONE_NUMBER !== '+1234567890';
   const useTwilio = process.env.USE_TWILIO !== 'false';
 
   res.json({
@@ -523,11 +536,12 @@ router.get('/twilio-status', async (_req: AuthRequest, res: Response) => {
       phoneNumber: hasPhone ? 'SET' : 'MISSING',
     },
     mode: twilioService.isReady() && useTwilio ? 'TWILIO' : 'FALLBACK (Textbelt/CallMeBot)',
-    fixInstructions: !hasSid || !hasToken || !hasPhone
-      ? 'Add real Twilio credentials to apps/backend/.env file'
-      : !useTwilio
-        ? 'Set USE_TWILIO=true in apps/backend/.env'
-        : null,
+    fixInstructions:
+      !hasSid || !hasToken || !hasPhone
+        ? 'Add real Twilio credentials to apps/backend/.env file'
+        : !useTwilio
+          ? 'Set USE_TWILIO=true in apps/backend/.env'
+          : null,
   });
 });
 
@@ -571,7 +585,8 @@ router.post('/test-sms', optionalAuthenticate, async (req: AuthRequest, res: Res
  */
 router.post('/store-alert', async (req: AuthRequest, res: Response) => {
   try {
-    const { transcript, threatLevel, confidence, category, reasoning, whatsappSent, location } = req.body;
+    const { transcript, threatLevel, confidence, category, reasoning, whatsappSent, location } =
+      req.body;
 
     // Store in Neon DB using raw SQL
     const { Pool } = require('pg');

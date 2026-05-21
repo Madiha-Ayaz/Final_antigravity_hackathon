@@ -27,12 +27,6 @@ export type {
   EmergencyType,
 } from './antigravityTrace';
 
-export type {
-  ConfidenceFactor,
-  ConfidenceScore,
-} from './confidenceScorer';
+export type { ConfidenceFactor, ConfidenceScore } from './confidenceScorer';
 
-export type {
-  PipelineStage,
-  PipelineResult,
-} from './eventPipeline';
+export type { PipelineStage, PipelineResult } from './eventPipeline';

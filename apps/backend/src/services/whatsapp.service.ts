@@ -22,7 +22,9 @@ class WhatsAppService {
   /**
    * Send text message via WhatsApp
    */
-  async sendMessage(data: WhatsAppMessage): Promise<{ success: boolean; messageId?: string; error?: string }> {
+  async sendMessage(
+    data: WhatsAppMessage
+  ): Promise<{ success: boolean; messageId?: string; error?: string }> {
     try {
       if (!TEXTMEBOT_API_KEY) {
         logger.error('TextMeBot API key not configured');
@@ -43,7 +45,7 @@ class WhatsAppService {
         logger.info({ to: data.to }, 'WhatsApp message sent successfully');
         return {
           success: true,
-          messageId: `wa_${Date.now()}_${Math.random().toString(36).substring(7)}`
+          messageId: `wa_${Date.now()}_${Math.random().toString(36).substring(7)}`,
         };
       }
 
@@ -58,7 +60,9 @@ class WhatsAppService {
   /**
    * Send voice message via WhatsApp
    */
-  async sendVoiceMessage(data: WhatsAppVoiceMessage): Promise<{ success: boolean; messageId?: string; error?: string }> {
+  async sendVoiceMessage(
+    data: WhatsAppVoiceMessage
+  ): Promise<{ success: boolean; messageId?: string; error?: string }> {
     try {
       if (!TEXTMEBOT_API_KEY) {
         logger.error('TextMeBot API key not configured');
@@ -81,7 +85,7 @@ class WhatsAppService {
         logger.info({ to: data.to }, 'WhatsApp voice message sent successfully');
         return {
           success: true,
-          messageId: `wa_voice_${Date.now()}_${Math.random().toString(36).substring(7)}`
+          messageId: `wa_voice_${Date.now()}_${Math.random().toString(36).substring(7)}`,
         };
       }
 
@@ -106,7 +110,11 @@ class WhatsAppService {
       location?: { latitude: number; longitude: number };
       audioUrl?: string;
     }
-  ): Promise<{ sent: number; failed: number; results: Array<{ contact: string; success: boolean }> }> {
+  ): Promise<{
+    sent: number;
+    failed: number;
+    results: Array<{ contact: string; success: boolean }>;
+  }> {
     const results: Array<{ contact: string; success: boolean }> = [];
     let sent = 0;
     let failed = 0;
@@ -190,7 +198,8 @@ class WhatsAppService {
       phone?: string;
     }
   ): Promise<{ success: boolean; messageId?: string; error?: string }> {
-    const message = `📝 *New Contact Form Submission*\n\n` +
+    const message =
+      `📝 *New Contact Form Submission*\n\n` +
       `*Name:* ${formData.name}\n` +
       `*Email:* ${formData.email}\n` +
       `${formData.phone ? `*Phone:* ${formData.phone}\n` : ''}` +
@@ -204,7 +213,7 @@ class WhatsAppService {
    * Delay helper
    */
   private delay(ms: number): Promise<void> {
-    return new Promise(resolve => setTimeout(resolve, ms));
+    return new Promise((resolve) => setTimeout(resolve, ms));
   }
 
   /**

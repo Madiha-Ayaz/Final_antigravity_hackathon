@@ -90,10 +90,9 @@ export class FirebaseNeonSyncService {
    */
   async getNeonUserId(firebaseUid: string): Promise<string | null> {
     try {
-      const result = await databaseService.query(
-        'SELECT id FROM users WHERE firebase_uid = $1',
-        [firebaseUid]
-      );
+      const result = await databaseService.query('SELECT id FROM users WHERE firebase_uid = $1', [
+        firebaseUid,
+      ]);
 
       if (result.rows.length > 0) {
         return result.rows[0].id;

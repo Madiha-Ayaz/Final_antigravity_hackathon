@@ -18,20 +18,27 @@ const TraceTimeline: React.FC<TraceTimelineProps> = ({ steps }) => {
         <span className="w-2 h-6 bg-indigo-500 rounded-full"></span>
         Antigravity AI Reasoning Trace
       </h3>
-      
+
       <div className="space-y-6 relative">
         {/* Timeline Line */}
         <div className="absolute left-4 top-2 bottom-2 w-px bg-white/10"></div>
-        
+
         {steps.map((step, idx) => (
           <div key={idx} className="relative pl-10 group">
             {/* Dot */}
-            <div className={`absolute left-2.5 top-1.5 w-3 h-3 rounded-full border-2 border-slate-900 z-10 
-              ${step.phase === 'thought' ? 'bg-amber-400' : 
-                step.phase === 'action' ? 'bg-indigo-500' : 
-                step.phase === 'observation' ? 'bg-emerald-500' : 'bg-slate-400'}`} 
+            <div
+              className={`absolute left-2.5 top-1.5 w-3 h-3 rounded-full border-2 border-slate-900 z-10 
+              ${
+                step.phase === 'thought'
+                  ? 'bg-amber-400'
+                  : step.phase === 'action'
+                    ? 'bg-indigo-500'
+                    : step.phase === 'observation'
+                      ? 'bg-emerald-500'
+                      : 'bg-slate-400'
+              }`}
             />
-            
+
             <div className="flex flex-col gap-1">
               <div className="flex items-center justify-between">
                 <span className="text-xs font-mono text-white/40 uppercase tracking-widest">

@@ -34,7 +34,12 @@ class DeviceTokenRepository {
            last_used_at = NOW(),
            device_info = EXCLUDED.device_info
          RETURNING *`,
-        [input.user_id, input.token, input.device_type || 'web', JSON.stringify(input.device_info || {})]
+        [
+          input.user_id,
+          input.token,
+          input.device_type || 'web',
+          JSON.stringify(input.device_info || {}),
+        ]
       );
 
       logger.info('Device token saved', { userId: input.user_id, tokenId: result.rows[0].id });

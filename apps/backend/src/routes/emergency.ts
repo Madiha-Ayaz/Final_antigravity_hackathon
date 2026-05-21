@@ -56,12 +56,15 @@ router.post(
         userId: req.userId!,
         sessionId: req.headers['x-session-id'] as string,
         eventType: data.eventType,
-        location: data.latitude && data.longitude ? {
-          latitude: data.latitude,
-          longitude: data.longitude,
-          accuracy: 10,
-          address: data.address,
-        } : undefined,
+        location:
+          data.latitude && data.longitude
+            ? {
+                latitude: data.latitude,
+                longitude: data.longitude,
+                accuracy: 10,
+                address: data.address,
+              }
+            : undefined,
         audioUrl: data.audioUrl,
         transcript: data.transcript,
       });
@@ -166,7 +169,7 @@ router.post(
         'PENDING'
       );
       antigravityTraceLogger.updateAction(traceId, sirenActionId, 'IN_PROGRESS');
-      await new Promise(resolve => setTimeout(resolve, 100)); // Simulate action
+      await new Promise((resolve) => setTimeout(resolve, 100)); // Simulate action
       antigravityTraceLogger.updateAction(traceId, sirenActionId, 'COMPLETED', {
         volume: 'MAX',
         duration: '30s',
@@ -180,7 +183,7 @@ router.post(
         'PENDING'
       );
       antigravityTraceLogger.updateAction(traceId, recordingActionId, 'IN_PROGRESS');
-      await new Promise(resolve => setTimeout(resolve, 100)); // Simulate action
+      await new Promise((resolve) => setTimeout(resolve, 100)); // Simulate action
       antigravityTraceLogger.updateAction(traceId, recordingActionId, 'COMPLETED', {
         recordingType: 'audio_video',
         quality: 'high',
@@ -194,7 +197,7 @@ router.post(
         'PENDING'
       );
       antigravityTraceLogger.updateAction(traceId, fullscreenActionId, 'IN_PROGRESS');
-      await new Promise(resolve => setTimeout(resolve, 100)); // Simulate action
+      await new Promise((resolve) => setTimeout(resolve, 100)); // Simulate action
       antigravityTraceLogger.updateAction(traceId, fullscreenActionId, 'COMPLETED', {
         mode: 'emergency_lockscreen',
         features: ['sos_button', 'location_sharing', 'quick_contacts'],
@@ -217,7 +220,8 @@ router.post(
       });
 
       const { fcmService } = await import('../services/fcm.service');
-      const { emergencyContactRepository } = await import('../repositories/emergencyContact.repository');
+      const { emergencyContactRepository } =
+        await import('../repositories/emergencyContact.repository');
 
       // Get emergency contacts based on threat level
       const contacts = await emergencyContactRepository.getContactsForThreatLevel(
@@ -228,27 +232,32 @@ router.post(
       const emergencyData = {
         eventId: event.id,
         threatLevel: data.threatLevel,
-        location: data.latitude && data.longitude ? { latitude: data.latitude, longitude: data.longitude } : undefined,
+        location:
+          data.latitude && data.longitude
+            ? { latitude: data.latitude, longitude: data.longitude }
+            : undefined,
         address: data.address,
       };
 
       // Collect FCM tokens from contacts
-      const fcmTokens = Array.from(new Set([
-        ...contacts.sms.map(c => c.fcm_token).filter(Boolean) as string[],
-        ...contacts.whatsapp.map(c => c.fcm_token).filter(Boolean) as string[],
-        ...contacts.call.map(c => c.fcm_token).filter(Boolean) as string[],
-      ]));
+      const fcmTokens = Array.from(
+        new Set([
+          ...(contacts.sms.map((c) => c.fcm_token).filter(Boolean) as string[]),
+          ...(contacts.whatsapp.map((c) => c.fcm_token).filter(Boolean) as string[]),
+          ...(contacts.call.map((c) => c.fcm_token).filter(Boolean) as string[]),
+        ])
+      );
 
       const fallbacks: any[] = [];
 
       if (contacts.sms.length > 0) {
         fallbacks.push({
           type: 'SMS',
-          recipients: contacts.sms.map(c => c.phone_number),
+          recipients: contacts.sms.map((c) => c.phone_number),
           fn: async () => {
             const { twilioService } = await import('../services/twilio.service');
             return Promise.all(
-              contacts.sms.map(c =>
+              contacts.sms.map((c) =>
                 twilioService.sendEmergencySMS({
                   recipientPhone: c.phone_number,
                   recipientName: c.name || 'Emergency Contact',
@@ -259,18 +268,18 @@ router.post(
                 })
               )
             );
-          }
+          },
         });
       }
 
       if (contacts.whatsapp.length > 0) {
         fallbacks.push({
           type: 'WHATSAPP',
-          recipients: contacts.whatsapp.map(c => c.phone_number),
+          recipients: contacts.whatsapp.map((c) => c.phone_number),
           fn: async () => {
             const { twilioService } = await import('../services/twilio.service');
             return Promise.all(
-              contacts.whatsapp.map(c =>
+              contacts.whatsapp.map((c) =>
                 twilioService.sendEmergencyWhatsApp({
                   recipientPhone: c.phone_number,
                   recipientName: c.name || 'Emergency Contact',
@@ -281,18 +290,18 @@ router.post(
                 })
               )
             );
-          }
+          },
         });
       }
 
       if (contacts.call.length > 0) {
         fallbacks.push({
           type: 'VOICE_CALL',
-          recipients: contacts.call.map(c => c.phone_number),
+          recipients: contacts.call.map((c) => c.phone_number),
           fn: async () => {
             const { twilioService } = await import('../services/twilio.service');
             return Promise.all(
-              contacts.call.map(c =>
+              contacts.call.map((c) =>
                 twilioService.makeEmergencyCall({
                   recipientPhone: c.phone_number,
                   recipientName: c.name || 'Emergency Contact',
@@ -303,7 +312,7 @@ router.post(
                 })
               )
             );
-          }
+          },
         });
       }
 
@@ -313,23 +322,29 @@ router.post(
         primaryChannel = {
           type: 'FCM_PUSH',
           recipients: fcmTokens,
-          fn: async () => fcmService.sendEmergencyAlert(fcmTokens, {
-             eventId: emergencyData.eventId,
-             threatLevel: emergencyData.threatLevel,
-             location: emergencyData.location ? `${emergencyData.location.latitude}, ${emergencyData.location.longitude}` : undefined,
-             userName: 'A user'
-          }),
+          fn: async () =>
+            fcmService.sendEmergencyAlert(fcmTokens, {
+              eventId: emergencyData.eventId,
+              threatLevel: emergencyData.threatLevel,
+              location: emergencyData.location
+                ? `${emergencyData.location.latitude}, ${emergencyData.location.longitude}`
+                : undefined,
+              userName: 'A user',
+            }),
         };
       } else if (fallbacks.length > 0) {
         primaryChannel = fallbacks.shift();
       }
 
       if (primaryChannel) {
-        logger.info({
-          primaryType: primaryChannel.type,
-          fallbackCount: fallbacks.length,
-          traceId
-        }, 'Executing alert fallback chain');
+        logger.info(
+          {
+            primaryType: primaryChannel.type,
+            fallbackCount: fallbacks.length,
+            traceId,
+          },
+          'Executing alert fallback chain'
+        );
 
         const fallbackChain = {
           primary: primaryChannel,
@@ -338,42 +353,51 @@ router.post(
 
         const result = await alertRetryManager.executeWithFallback(traceId, fallbackChain);
 
-        logger.info({
-          success: result.success,
-          channelUsed: result.channelUsed,
-          traceId,
-        }, 'Alert execution completed');
+        logger.info(
+          {
+            success: result.success,
+            channelUsed: result.channelUsed,
+            traceId,
+          },
+          'Alert execution completed'
+        );
       } else {
         logger.warn({ traceId }, 'No emergency contacts or channels found for alerts');
       }
 
       antigravityTrace.logEmergencyResponse(traceId, 'ALERT', 'COMPLETED', {
         phase: 'stakeholder_notifications',
-        contactsNotified: fcmTokens.length + contacts.sms.length + contacts.whatsapp.length + contacts.call.length,
+        contactsNotified:
+          fcmTokens.length + contacts.sms.length + contacts.whatsapp.length + contacts.call.length,
       });
 
       // Send to nearby users for community validation (HIGH/CRITICAL only)
-      if ((data.threatLevel === 'HIGH' || data.threatLevel === 'CRITICAL') && data.latitude && data.longitude) {
+      if (
+        (data.threatLevel === 'HIGH' || data.threatLevel === 'CRITICAL') &&
+        data.latitude &&
+        data.longitude
+      ) {
         const { notificationService } = await import('../services/notification.service');
-        notificationService.sendCommunityValidationRequest(
-          event.id,
-          {
-            latitude: data.latitude,
-            longitude: data.longitude,
-            address: data.address,
-          },
-          5 // 5km radius
-        ).catch((err: any) => {
-          logger.error('Failed to send community validation notification', { error: err, traceId });
-        });
+        notificationService
+          .sendCommunityValidationRequest(
+            event.id,
+            {
+              latitude: data.latitude,
+              longitude: data.longitude,
+              address: data.address,
+            },
+            5 // 5km radius
+          )
+          .catch((err: any) => {
+            logger.error('Failed to send community validation notification', {
+              error: err,
+              traceId,
+            });
+          });
       }
 
       // End trace session
-      antigravityTrace.endEmergencyTrace(
-        traceId,
-        'Emergency Processed Successfully',
-        'COMPLETED'
-      );
+      antigravityTrace.endEmergencyTrace(traceId, 'Emergency Processed Successfully', 'COMPLETED');
 
       res.json({
         success: true,
@@ -396,11 +420,7 @@ router.post(
         antigravityTrace.logEmergencyResponse(traceId, 'DETECTION', 'FAILED', {
           error: error instanceof Error ? error.message : 'Unknown error',
         });
-        antigravityTrace.endEmergencyTrace(
-          traceId,
-          'Emergency Processing Failed',
-          'FAILED'
-        );
+        antigravityTrace.endEmergencyTrace(traceId, 'Emergency Processing Failed', 'FAILED');
       }
 
       res.status(500).json({

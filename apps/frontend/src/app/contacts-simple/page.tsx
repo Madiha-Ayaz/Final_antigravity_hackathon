@@ -93,19 +93,17 @@ export default function SimpleContactsPage() {
       <div className="max-w-2xl mx-auto">
         {/* Header */}
         <div className="bg-white rounded-lg shadow p-6 mb-4">
-          <h1 className="text-2xl font-bold text-gray-900 mb-2">
-            Emergency Contacts
-          </h1>
-          <p className="text-gray-600 text-sm">
-            Simple contact management
-          </p>
+          <h1 className="text-2xl font-bold text-gray-900 mb-2">Emergency Contacts</h1>
+          <p className="text-gray-600 text-sm">Simple contact management</p>
         </div>
 
         {/* Message */}
         {message && (
-          <div className={`p-4 rounded-lg mb-4 ${
-            message.includes('✅') ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
-          }`}>
+          <div
+            className={`p-4 rounded-lg mb-4 ${
+              message.includes('✅') ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
+            }`}
+          >
             {message}
           </div>
         )}

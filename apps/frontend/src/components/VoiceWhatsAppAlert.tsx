@@ -29,7 +29,7 @@ export default function VoiceWhatsAppAlert({ onSend }: VoiceWhatsAppProps) {
       mediaRecorder.onstop = () => {
         const blob = new Blob(chunks, { type: 'audio/webm' });
         setAudioBlob(blob);
-        stream.getTracks().forEach(track => track.stop());
+        stream.getTracks().forEach((track) => track.stop());
       };
 
       mediaRecorder.start();
@@ -117,15 +117,17 @@ export default function VoiceWhatsAppAlert({ onSend }: VoiceWhatsAppProps) {
 
       // Get emergency contacts
       const token = localStorage.getItem('token');
-      const contactsResponse = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/emergency-contacts/list`, {
-        headers: token ? { 'Authorization': `Bearer ${token}` } : {},
-      });
+      const contactsResponse = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/api/emergency-contacts/list`,
+        {
+          headers: token ? { Authorization: `Bearer ${token}` } : {},
+        }
+      );
 
       let recipients: string[] = [];
       if (contactsResponse.ok) {
         const contactsData = await contactsResponse.json();
-        recipients = contactsData.contacts
-          ?.map((c: any) => c.phoneNumber || c.phone_number) || [];
+        recipients = contactsData.contacts?.map((c: any) => c.phoneNumber || c.phone_number) || [];
       }
 
       // Fallback to default number if no contacts
@@ -134,7 +136,8 @@ export default function VoiceWhatsAppAlert({ onSend }: VoiceWhatsAppProps) {
       }
 
       // Send text message first
-      const message = `🚨 *SILENT SIREN AI ALERT* 🚨\n\n` +
+      const message =
+        `🚨 *SILENT SIREN AI ALERT* 🚨\n\n` +
         `*Emergency Detected!*\n\n` +
         `*Transcript:* "${analysisData.transcript || 'Voice detected'}"\n` +
         `*Reasoning:* ${analysisData.reasoning || 'Emergency keywords detected'}\n` +
@@ -166,7 +169,7 @@ export default function VoiceWhatsAppAlert({ onSend }: VoiceWhatsAppProps) {
           }
 
           // Small delay between messages
-          await new Promise(resolve => setTimeout(resolve, 1000));
+          await new Promise((resolve) => setTimeout(resolve, 1000));
         } catch (error) {
           console.error(`Failed to send to ${recipient}:`, error);
           failedCount++;
@@ -188,9 +191,7 @@ export default function VoiceWhatsAppAlert({ onSend }: VoiceWhatsAppProps) {
 
   return (
     <div className="bg-white rounded-lg shadow-lg p-6 max-w-2xl mx-auto">
-      <h2 className="text-2xl font-bold mb-6 text-gray-800">
-        🎤 Voice Alert System
-      </h2>
+      <h2 className="text-2xl font-bold mb-6 text-gray-800">🎤 Voice Alert System</h2>
 
       <div className="space-y-4">
         {/* Recording Controls */}
@@ -226,11 +227,15 @@ export default function VoiceWhatsAppAlert({ onSend }: VoiceWhatsAppProps) {
 
         {/* Status Display */}
         {status && (
-          <div className={`p-4 rounded-lg ${
-            status.includes('✅') ? 'bg-green-100 text-green-800' :
-            status.includes('Failed') ? 'bg-red-100 text-red-800' :
-            'bg-blue-100 text-blue-800'
-          }`}>
+          <div
+            className={`p-4 rounded-lg ${
+              status.includes('✅')
+                ? 'bg-green-100 text-green-800'
+                : status.includes('Failed')
+                  ? 'bg-red-100 text-red-800'
+                  : 'bg-blue-100 text-blue-800'
+            }`}
+          >
             <p className="font-medium">{status}</p>
           </div>
         )}
@@ -247,11 +252,7 @@ export default function VoiceWhatsAppAlert({ onSend }: VoiceWhatsAppProps) {
         {audioBlob && (
           <div className="bg-gray-100 p-4 rounded-lg">
             <h3 className="font-semibold text-gray-700 mb-2">Recorded Audio:</h3>
-            <audio
-              controls
-              src={URL.createObjectURL(audioBlob)}
-              className="w-full"
-            />
+            <audio controls src={URL.createObjectURL(audioBlob)} className="w-full" />
           </div>
         )}
 

@@ -47,5 +47,4 @@ router.use('/agent-logs', agentLogsRoutes);
 router.use('/neon', neonDBRoutes);
 router.use('/contacts-neon', contactsNeonRoutes);
 
-
 export default router;

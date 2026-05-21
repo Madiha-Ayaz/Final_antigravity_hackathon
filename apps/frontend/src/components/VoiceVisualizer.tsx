@@ -8,13 +8,21 @@ interface VoiceVisualizerProps {
   threatDetected?: boolean;
 }
 
-export function VoiceVisualizer({ isRecording, isAnalyzing, threatDetected }: VoiceVisualizerProps) {
+export function VoiceVisualizer({
+  isRecording,
+  isAnalyzing,
+  threatDetected,
+}: VoiceVisualizerProps) {
   const [bars, setBars] = useState<number[]>(Array(20).fill(0));
 
   useEffect(() => {
     if (isRecording) {
       const interval = setInterval(() => {
-        setBars(Array(20).fill(0).map(() => Math.random() * 100));
+        setBars(
+          Array(20)
+            .fill(0)
+            .map(() => Math.random() * 100)
+        );
       }, 100);
       return () => clearInterval(interval);
     } else {
@@ -74,7 +82,10 @@ export function VoiceVisualizer({ isRecording, isAnalyzing, threatDetected }: Vo
               </div>
             </div>
             <div className="w-full bg-blue-200 rounded-full h-2">
-              <div className="bg-blue-600 h-2 rounded-full animate-pulse" style={{ width: '70%' }}></div>
+              <div
+                className="bg-blue-600 h-2 rounded-full animate-pulse"
+                style={{ width: '70%' }}
+              ></div>
             </div>
           </div>
         </div>

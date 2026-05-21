@@ -9,7 +9,11 @@ import { ValidationResult } from '@silentsiren/shared-types';
 export default function ValidatorTestPage() {
   const { submitIncident, getValidationStatus, getUserReputation, isSubmitting, error } =
     useCommunityValidator();
-  const { position: location, requestPosition: getLocation, isLoading: isLoadingLocation } = useGeolocation();
+  const {
+    position: location,
+    requestPosition: getLocation,
+    isLoading: isLoadingLocation,
+  } = useGeolocation();
 
   const [userId, setUserId] = useState('test-user-' + Math.random().toString(36).substr(2, 9));
   const [deviceId] = useState('device-' + Math.random().toString(36).substr(2, 9));
@@ -118,7 +122,8 @@ export default function ValidatorTestPage() {
                 <span className="font-medium">Longitude:</span> {location.longitude.toFixed(6)}
               </p>
               <p>
-                <span className="font-medium">Accuracy:</span> {location.accuracy !== undefined ? `${location.accuracy.toFixed(0)}m` : 'N/A'}
+                <span className="font-medium">Accuracy:</span>{' '}
+                {location.accuracy !== undefined ? `${location.accuracy.toFixed(0)}m` : 'N/A'}
               </p>
             </div>
           ) : (

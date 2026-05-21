@@ -17,7 +17,7 @@ export default function WhatsAppTestPage() {
       const token = localStorage.getItem('token');
       const response = await fetch('/api/whatsapp/status', {
         headers: {
-          'Authorization': `Bearer ${token}`,
+          Authorization: `Bearer ${token}`,
         },
       });
       const data = await response.json();
@@ -35,26 +35,24 @@ export default function WhatsAppTestPage() {
           <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-gray-900 mb-4">
             📱 WhatsApp Integration Test
           </h1>
-          <p className="text-lg text-gray-600">
-            Test voice alerts and contact form with WhatsApp
-          </p>
+          <p className="text-lg text-gray-600">Test voice alerts and contact form with WhatsApp</p>
         </div>
 
         {/* Service Status */}
         {serviceStatus && (
-          <div className={`mb-6 p-4 rounded-lg ${
-            serviceStatus.configured
-              ? 'bg-green-100 border border-green-300'
-              : 'bg-red-100 border border-red-300'
-          }`}>
+          <div
+            className={`mb-6 p-4 rounded-lg ${
+              serviceStatus.configured
+                ? 'bg-green-100 border border-green-300'
+                : 'bg-red-100 border border-red-300'
+            }`}
+          >
             <div className="flex items-center justify-between">
               <div>
                 <h3 className="font-semibold text-gray-800">
                   {serviceStatus.configured ? '✅ Service Active' : '❌ Service Inactive'}
                 </h3>
-                <p className="text-sm text-gray-600">
-                  Provider: {serviceStatus.service}
-                </p>
+                <p className="text-sm text-gray-600">Provider: {serviceStatus.service}</p>
               </div>
               <button
                 onClick={checkServiceStatus}
@@ -99,9 +97,7 @@ export default function WhatsAppTestPage() {
                 }}
               />
             ) : (
-              <ContactFormWhatsApp
-                recipientNumber="+923452508043"
-              />
+              <ContactFormWhatsApp recipientNumber="+923452508043" />
             )}
           </div>
         </div>
@@ -109,9 +105,7 @@ export default function WhatsAppTestPage() {
         {/* Features List */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
           <div className="bg-white rounded-lg shadow-lg p-6">
-            <h3 className="text-xl font-bold text-gray-800 mb-4">
-              🎤 Voice Alert Features
-            </h3>
+            <h3 className="text-xl font-bold text-gray-800 mb-4">🎤 Voice Alert Features</h3>
             <ul className="space-y-2 text-gray-600">
               <li className="flex items-start">
                 <span className="text-green-500 mr-2">✓</span>
@@ -137,9 +131,7 @@ export default function WhatsAppTestPage() {
           </div>
 
           <div className="bg-white rounded-lg shadow-lg p-6">
-            <h3 className="text-xl font-bold text-gray-800 mb-4">
-              📝 Contact Form Features
-            </h3>
+            <h3 className="text-xl font-bold text-gray-800 mb-4">📝 Contact Form Features</h3>
             <ul className="space-y-2 text-gray-600">
               <li className="flex items-start">
                 <span className="text-green-500 mr-2">✓</span>
@@ -167,9 +159,7 @@ export default function WhatsAppTestPage() {
 
         {/* API Documentation */}
         <div className="bg-white rounded-lg shadow-lg p-6">
-          <h3 className="text-xl font-bold text-gray-800 mb-4">
-            📚 API Endpoints
-          </h3>
+          <h3 className="text-xl font-bold text-gray-800 mb-4">📚 API Endpoints</h3>
           <div className="space-y-3 text-sm">
             <div className="bg-gray-50 p-3 rounded">
               <code className="text-blue-600">POST /api/whatsapp/send</code>

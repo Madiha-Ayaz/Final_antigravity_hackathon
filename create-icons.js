@@ -18,10 +18,7 @@ const svgIcon = `<svg width="512" height="512" xmlns="http://www.w3.org/2000/svg
 const publicDir = path.join(__dirname, 'apps', 'frontend', 'public');
 
 // Create icon-192.png placeholder
-fs.writeFileSync(
-  path.join(publicDir, 'icon.svg'),
-  svgIcon
-);
+fs.writeFileSync(path.join(publicDir, 'icon.svg'), svgIcon);
 
 console.log('✅ Icon SVG created!');
 console.log('📝 To create PNG icons:');

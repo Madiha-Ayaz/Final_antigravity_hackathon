@@ -46,7 +46,10 @@ router.post('/alert', authenticate, strictRateLimiter, async (req: AuthRequest, 
 
     const { eventId, threatLevel, gpsCoordinates, audioUrl } = validation.data;
 
-    logger.info({ userId: req.userId, eventId, threatLevel }, 'Emergency dispatch requested via FCM');
+    logger.info(
+      { userId: req.userId, eventId, threatLevel },
+      'Emergency dispatch requested via FCM'
+    );
 
     // Get emergency contacts and extract FCM tokens
     const contacts = await emergencyContactRepository.getContactsForThreatLevel(
@@ -54,11 +57,13 @@ router.post('/alert', authenticate, strictRateLimiter, async (req: AuthRequest, 
       threatLevel
     );
 
-    const fcmTokens = Array.from(new Set([
-      ...contacts.sms.map(c => c.fcm_token).filter(Boolean) as string[],
-      ...contacts.whatsapp.map(c => c.fcm_token).filter(Boolean) as string[],
-      ...contacts.call.map(c => c.fcm_token).filter(Boolean) as string[],
-    ]));
+    const fcmTokens = Array.from(
+      new Set([
+        ...(contacts.sms.map((c) => c.fcm_token).filter(Boolean) as string[]),
+        ...(contacts.whatsapp.map((c) => c.fcm_token).filter(Boolean) as string[]),
+        ...(contacts.call.map((c) => c.fcm_token).filter(Boolean) as string[]),
+      ])
+    );
 
     if (fcmTokens.length === 0) {
       return res.status(404).json({
@@ -73,7 +78,9 @@ router.post('/alert', authenticate, strictRateLimiter, async (req: AuthRequest, 
     const alert = {
       eventId,
       threatLevel,
-      location: gpsCoordinates ? `${gpsCoordinates.latitude}, ${gpsCoordinates.longitude}` : undefined,
+      location: gpsCoordinates
+        ? `${gpsCoordinates.latitude}, ${gpsCoordinates.longitude}`
+        : undefined,
       userName: 'SilentSiren User',
     };
 
@@ -128,9 +135,13 @@ router.post('/alert', authenticate, strictRateLimiter, async (req: AuthRequest, 
 // New automatic emergency dispatch endpoint - NO AUTHENTICATION for demo
 router.post('/emergency', async (req: Request, res: Response) => {
   try {
-    const { eventType, latitude, longitude, transcript, aiConfidence, threatLevel, audioBuffer } = req.body;
+    const { eventType, latitude, longitude, transcript, aiConfidence, threatLevel, audioBuffer } =
+      req.body;
 
-    logger.info({ eventType, threatLevel, latitude, longitude }, 'Automatic emergency dispatch triggered');
+    logger.info(
+      { eventType, threatLevel, latitude, longitude },
+      'Automatic emergency dispatch triggered'
+    );
 
     // Mock emergency contacts for demo
     const emergencyContacts = [
@@ -142,7 +153,10 @@ router.post('/emergency', async (req: Request, res: Response) => {
 
     // Send browser notifications instead of Twilio
     for (const contact of emergencyContacts) {
-      logger.info({ contact: contact.name, phone: contact.phoneNumber }, 'Emergency alert dispatched');
+      logger.info(
+        { contact: contact.name, phone: contact.phoneNumber },
+        'Emergency alert dispatched'
+      );
 
       const alertData = {
         recipientPhone: contact.phoneNumber,

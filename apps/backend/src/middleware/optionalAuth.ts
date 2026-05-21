@@ -12,7 +12,11 @@ export interface AuthRequest extends Request {
  * - If no token, uses default test user ID
  * - Useful for testing without login
  */
-export const optionalAuthenticate = (req: AuthRequest, _res: Response, next: NextFunction): void => {
+export const optionalAuthenticate = (
+  req: AuthRequest,
+  _res: Response,
+  next: NextFunction
+): void => {
   try {
     const authHeader = req.headers.authorization;
 

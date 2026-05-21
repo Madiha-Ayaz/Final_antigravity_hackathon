@@ -32,12 +32,12 @@ export default function VoiceAnalysisIndicator({
       <div className="bg-white dark:bg-dark-800 rounded-2xl shadow-2xl p-6 min-w-[300px] border border-gray-200 dark:border-dark-700">
         {/* Status Header */}
         <div className="flex items-center justify-between mb-4">
-          <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
-            Voice Monitor
-          </h3>
+          <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Voice Monitor</h3>
           <div className="flex items-center space-x-2">
             {isListening && (
-              <div className={`w-3 h-3 rounded-full bg-green-500 ${pulse ? 'animate-pulse' : ''}`} />
+              <div
+                className={`w-3 h-3 rounded-full bg-green-500 ${pulse ? 'animate-pulse' : ''}`}
+              />
             )}
             {isAnalyzing && (
               <div className="w-4 h-4 border-2 border-primary-600 border-t-transparent rounded-full animate-spin" />
@@ -63,7 +63,14 @@ export default function VoiceAnalysisIndicator({
           {isAnalyzing && (
             <div className="flex items-center space-x-2 text-primary-600 dark:text-primary-400">
               <svg className="w-5 h-5 animate-spin" fill="none" viewBox="0 0 24 24">
-                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                <circle
+                  className="opacity-25"
+                  cx="12"
+                  cy="12"
+                  r="10"
+                  stroke="currentColor"
+                  strokeWidth="4"
+                />
                 <path
                   className="opacity-75"
                   fill="currentColor"
@@ -115,7 +122,9 @@ export default function VoiceAnalysisIndicator({
                   </div>
                   <div className="flex items-center justify-between text-xs">
                     <span className="text-gray-600 dark:text-gray-400">Confidence:</span>
-                    <span className="font-semibold">{(lastAnalysis.confidence * 100).toFixed(0)}%</span>
+                    <span className="font-semibold">
+                      {(lastAnalysis.confidence * 100).toFixed(0)}%
+                    </span>
                   </div>
                   {lastAnalysis.alertSent && (
                     <div className="mt-2 p-2 bg-green-50 dark:bg-green-900/20 rounded-lg">

@@ -62,7 +62,7 @@ export function EmergencyAlert({
       audioRef.current.volume = 1.0;
 
       // Try to play (may be blocked by browser)
-      audioRef.current.play().catch(err => {
+      audioRef.current.play().catch((err) => {
         console.warn('Siren audio blocked by browser:', err);
       });
     }
@@ -123,7 +123,11 @@ export function EmergencyAlert({
             <div className="flex items-center space-x-3">
               <div className="w-12 h-12 bg-white bg-opacity-20 rounded-full flex items-center justify-center animate-pulse">
                 <svg className="w-7 h-7" fill="currentColor" viewBox="0 0 20 20">
-                  <path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+                  <path
+                    fillRule="evenodd"
+                    d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z"
+                    clipRule="evenodd"
+                  />
                 </svg>
               </div>
               <div>
@@ -177,9 +181,12 @@ export function EmergencyAlert({
                 <span className="text-xl">⏰</span>
               </div>
               <div className="flex-1">
-                <h3 className="font-semibold text-gray-900 dark:text-white mb-1">What Happens Next</h3>
+                <h3 className="font-semibold text-gray-900 dark:text-white mb-1">
+                  What Happens Next
+                </h3>
                 <p className="text-gray-600 dark:text-gray-400">
-                  In {formatTime(timeRemaining)}, emergency alerts will be sent to all your contacts via WhatsApp with your GPS location.
+                  In {formatTime(timeRemaining)}, emergency alerts will be sent to all your contacts
+                  via WhatsApp with your GPS location.
                   {emergencyType === 'MEDICAL' && ' Ambulance will be automatically contacted.'}
                 </p>
               </div>
@@ -189,15 +196,24 @@ export function EmergencyAlert({
           {/* Warning message */}
           <div className="bg-yellow-50 dark:bg-yellow-900 dark:bg-opacity-20 border-2 border-yellow-400 dark:border-yellow-600 rounded-xl p-4">
             <div className="flex items-start space-x-3">
-              <svg className="w-6 h-6 text-yellow-600 dark:text-yellow-400 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
-                <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
+              <svg
+                className="w-6 h-6 text-yellow-600 dark:text-yellow-400 flex-shrink-0 mt-0.5"
+                fill="currentColor"
+                viewBox="0 0 20 20"
+              >
+                <path
+                  fillRule="evenodd"
+                  d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z"
+                  clipRule="evenodd"
+                />
               </svg>
               <div className="flex-1">
                 <h4 className="font-semibold text-yellow-900 dark:text-yellow-200 mb-1">
                   Are you safe?
                 </h4>
                 <p className="text-sm text-yellow-800 dark:text-yellow-300">
-                  If this is a false alarm or you are safe, click the button below to cancel the emergency alert.
+                  If this is a false alarm or you are safe, click the button below to cancel the
+                  emergency alert.
                 </p>
               </div>
             </div>
@@ -212,16 +228,30 @@ export function EmergencyAlert({
             >
               {isCancelling ? (
                 <span className="flex items-center justify-center">
-                  <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                  <svg
+                    className="animate-spin -ml-1 mr-3 h-5 w-5 text-white"
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                  >
+                    <circle
+                      className="opacity-25"
+                      cx="12"
+                      cy="12"
+                      r="10"
+                      stroke="currentColor"
+                      strokeWidth="4"
+                    ></circle>
+                    <path
+                      className="opacity-75"
+                      fill="currentColor"
+                      d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                    ></path>
                   </svg>
                   Cancelling...
                 </span>
               ) : (
-                <span className="flex items-center justify-center">
-                  ✅ I'M SAFE - CANCEL ALERT
-                </span>
+                <span className="flex items-center justify-center">✅ I'M SAFE - CANCEL ALERT</span>
               )}
             </button>
 

@@ -52,9 +52,7 @@ export function CarrierSelector({ value, onChange, required = false }: CarrierSe
   return (
     <div className="space-y-3">
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1">
-          Country
-        </label>
+        <label className="block text-sm font-medium text-gray-700 mb-1">Country</label>
         <select
           value={selectedCountry}
           onChange={(e) => setSelectedCountry(e.target.value)}

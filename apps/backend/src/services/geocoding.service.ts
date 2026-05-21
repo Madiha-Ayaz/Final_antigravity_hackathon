@@ -22,8 +22,8 @@ export class GeocodingService {
         params: {
           access_key: this.apiKey,
           query: `${lat},${lng}`,
-          limit: 1
-        }
+          limit: 1,
+        },
       });
 
       if (response.data && response.data.data && response.data.data.length > 0) {

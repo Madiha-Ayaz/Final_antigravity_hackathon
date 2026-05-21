@@ -2,13 +2,9 @@ const GEMINI_KEY = 'AIzaSyDqFcImOSkhkUSsFq4AGW74C2JzjwY5W7g';
 
 async function testNewModels() {
   console.log('Testing with NEW Gemini models...\n');
-  
-  const modelsToTest = [
-    'gemini-2.0-flash-exp',
-    'gemini-2.0-flash',
-    'gemini-1.5-flash-latest'
-  ];
-  
+
+  const modelsToTest = ['gemini-2.0-flash-exp', 'gemini-2.0-flash', 'gemini-1.5-flash-latest'];
+
   for (const model of modelsToTest) {
     console.log(`Testing ${model}...`);
     try {
@@ -18,13 +14,15 @@ async function testNewModels() {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
-            contents: [{
-              parts: [{ text: 'Respond with exactly: "Voice monitoring ready"' }]
-            }]
-          })
+            contents: [
+              {
+                parts: [{ text: 'Respond with exactly: "Voice monitoring ready"' }],
+              },
+            ],
+          }),
         }
       );
-      
+
       if (response.ok) {
         const data = await response.json();
         console.log(`✅ SUCCESS with ${model}!`);
@@ -38,7 +36,7 @@ async function testNewModels() {
       console.log(`❌ Error with ${model}:`, err.message);
     }
   }
-  
+
   return null;
 }
 

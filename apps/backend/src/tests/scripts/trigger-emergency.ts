@@ -22,7 +22,7 @@ async function triggerEmergency() {
         email: 'demo.user@silentsiren.ai',
         full_name: 'Antigravity Demo User',
         password: 'password123',
-        device_fingerprint: 'demo-device-fingerprint'
+        device_fingerprint: 'demo-device-fingerprint',
       });
       userId = demoUser.id;
       console.log('Demo user successfully created with ID:', userId);
@@ -46,16 +46,16 @@ async function triggerEmergency() {
     aiReasoning: 'Distress detected',
     detectedPatterns: ['fire', 'panic'],
     emotionalStress: 0.9,
-    threatLevel: 'CRITICAL'
+    threatLevel: 'CRITICAL',
   };
 
   console.log('Sending emergency trigger POST request to backend...');
   try {
     const response = await axios.post('http://localhost:3001/api/emergency/trigger', payload, {
       headers: {
-        'Authorization': `Bearer ${token}`,
-        'Content-Type': 'application/json'
-      }
+        Authorization: `Bearer ${token}`,
+        'Content-Type': 'application/json',
+      },
     });
 
     console.log('Trigger Request Succeeded! Response Status:', response.status);

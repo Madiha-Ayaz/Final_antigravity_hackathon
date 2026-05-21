@@ -40,7 +40,7 @@ export default function AdminDashboard() {
       const token = localStorage.getItem('token');
       const response = await fetch('/api/audit/logs?limit=50', {
         headers: {
-          'Authorization': `Bearer ${token}`,
+          Authorization: `Bearer ${token}`,
         },
       });
       const data = await response.json();
@@ -60,7 +60,7 @@ export default function AdminDashboard() {
       const token = localStorage.getItem('token');
       const response = await fetch('/api/abuse/metrics', {
         headers: {
-          'Authorization': `Bearer ${token}`,
+          Authorization: `Bearer ${token}`,
         },
       });
       const data = await response.json();
@@ -79,12 +79,8 @@ export default function AdminDashboard() {
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="mb-8">
-          <h1 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-2">
-            🛡️ Admin Dashboard
-          </h1>
-          <p className="text-gray-600">
-            Monitor audit logs, abuse reports, and community activity
-          </p>
+          <h1 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-2">🛡️ Admin Dashboard</h1>
+          <p className="text-gray-600">Monitor audit logs, abuse reports, and community activity</p>
         </div>
 
         {/* Tab Navigation */}
@@ -134,9 +130,7 @@ export default function AdminDashboard() {
                 {activeTab === 'audit' && (
                   <div>
                     <div className="flex justify-between items-center mb-4">
-                      <h2 className="text-xl font-bold text-gray-800">
-                        Recent Audit Logs
-                      </h2>
+                      <h2 className="text-xl font-bold text-gray-800">Recent Audit Logs</h2>
                       <button
                         onClick={fetchAuditLogs}
                         className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
@@ -172,20 +166,20 @@ export default function AdminDashboard() {
                                 <td className="px-4 py-3 text-sm text-gray-900">
                                   {new Date(log.timestamp).toLocaleString()}
                                 </td>
-                                <td className="px-4 py-3 text-sm text-gray-900">
-                                  {log.action}
-                                </td>
+                                <td className="px-4 py-3 text-sm text-gray-900">{log.action}</td>
                                 <td className="px-4 py-3 text-sm text-gray-500">
                                   {log.userId?.substring(0, 8)}...
                                 </td>
                                 <td className="px-4 py-3 text-sm">
-                                  <span className={`px-2 py-1 rounded-full text-xs font-medium ${
-                                    log.status === 'success'
-                                      ? 'bg-green-100 text-green-800'
-                                      : log.status === 'failure'
-                                      ? 'bg-red-100 text-red-800'
-                                      : 'bg-yellow-100 text-yellow-800'
-                                  }`}>
+                                  <span
+                                    className={`px-2 py-1 rounded-full text-xs font-medium ${
+                                      log.status === 'success'
+                                        ? 'bg-green-100 text-green-800'
+                                        : log.status === 'failure'
+                                          ? 'bg-red-100 text-red-800'
+                                          : 'bg-yellow-100 text-yellow-800'
+                                    }`}
+                                  >
                                     {log.status}
                                   </span>
                                 </td>
@@ -202,9 +196,7 @@ export default function AdminDashboard() {
                 {activeTab === 'abuse' && abuseMetrics && (
                   <div>
                     <div className="flex justify-between items-center mb-6">
-                      <h2 className="text-xl font-bold text-gray-800">
-                        Abuse Metrics
-                      </h2>
+                      <h2 className="text-xl font-bold text-gray-800">Abuse Metrics</h2>
                       <button
                         onClick={fetchAbuseMetrics}
                         className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
@@ -215,27 +207,21 @@ export default function AdminDashboard() {
 
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                       <div className="bg-blue-50 p-6 rounded-lg border border-blue-200">
-                        <h3 className="text-sm font-medium text-blue-600 mb-2">
-                          Total Incidents
-                        </h3>
+                        <h3 className="text-sm font-medium text-blue-600 mb-2">Total Incidents</h3>
                         <p className="text-3xl font-bold text-blue-900">
                           {abuseMetrics.totalIncidents}
                         </p>
                       </div>
 
                       <div className="bg-red-50 p-6 rounded-lg border border-red-200">
-                        <h3 className="text-sm font-medium text-red-600 mb-2">
-                          False Alarms
-                        </h3>
+                        <h3 className="text-sm font-medium text-red-600 mb-2">False Alarms</h3>
                         <p className="text-3xl font-bold text-red-900">
                           {abuseMetrics.falseAlarms}
                         </p>
                       </div>
 
                       <div className="bg-green-50 p-6 rounded-lg border border-green-200">
-                        <h3 className="text-sm font-medium text-green-600 mb-2">
-                          Validated
-                        </h3>
+                        <h3 className="text-sm font-medium text-green-600 mb-2">Validated</h3>
                         <p className="text-3xl font-bold text-green-900">
                           {abuseMetrics.validatedIncidents}
                         </p>
@@ -251,9 +237,7 @@ export default function AdminDashboard() {
                       </div>
 
                       <div className="bg-purple-50 p-6 rounded-lg border border-purple-200">
-                        <h3 className="text-sm font-medium text-purple-600 mb-2">
-                          Avg Confidence
-                        </h3>
+                        <h3 className="text-sm font-medium text-purple-600 mb-2">Avg Confidence</h3>
                         <p className="text-3xl font-bold text-purple-900">
                           {(abuseMetrics.averageConfidence * 100).toFixed(0)}%
                         </p>
@@ -274,9 +258,7 @@ export default function AdminDashboard() {
                 {/* Community Tab */}
                 {activeTab === 'community' && (
                   <div className="text-center py-12">
-                    <p className="text-gray-500">
-                      Community features coming soon...
-                    </p>
+                    <p className="text-gray-500">Community features coming soon...</p>
                   </div>
                 )}
               </>

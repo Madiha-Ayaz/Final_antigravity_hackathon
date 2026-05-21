@@ -24,8 +24,16 @@ function classifyPhrase(phrase: string): EmergencyCategory {
   if (p.includes('fire') || p.includes('burning') || p.includes('smoke')) return 'fire';
   if (p.includes('flood') || p.includes('water') || p.includes('drowning')) return 'flood';
   if (p.includes('accident') || p.includes('crash') || p.includes('collision')) return 'accident';
-  if (p.includes('abuse') || p.includes('hitting') || p.includes('violence') || p.includes('stop')) return 'abuse';
-  if (p.includes('ambulance') || p.includes('heart') || p.includes('breathe') || p.includes('chest') || p.includes('collapse')) return 'medical';
+  if (p.includes('abuse') || p.includes('hitting') || p.includes('violence') || p.includes('stop'))
+    return 'abuse';
+  if (
+    p.includes('ambulance') ||
+    p.includes('heart') ||
+    p.includes('breathe') ||
+    p.includes('chest') ||
+    p.includes('collapse')
+  )
+    return 'medical';
   return 'general';
 }
 
@@ -119,7 +127,9 @@ export function useWakePhraseDetection() {
 
           for (const wakePhrase of WAKE_PHRASES) {
             if (transcript.includes(wakePhrase) && confidence >= DETECTION_THRESHOLD) {
-              console.log(`✅ WAKE PHRASE DETECTED: "${wakePhrase}" (confidence: ${confidence.toFixed(2)})`);
+              console.log(
+                `✅ WAKE PHRASE DETECTED: "${wakePhrase}" (confidence: ${confidence.toFixed(2)})`
+              );
               lastDetectionTimeRef.current = now;
 
               const detection: WakePhraseDetection = {

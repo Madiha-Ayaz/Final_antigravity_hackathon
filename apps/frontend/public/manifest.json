@@ -54,11 +54,7 @@
   ],
   "prefer_related_applications": false,
   "related_applications": [],
-  "permissions": [
-    "geolocation",
-    "notifications",
-    "microphone"
-  ],
+  "permissions": ["geolocation", "notifications", "microphone"],
   "lang": "en",
   "dir": "ltr",
   "iarc_rating_id": "",

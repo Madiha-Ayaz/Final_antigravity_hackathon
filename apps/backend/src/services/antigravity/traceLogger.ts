@@ -10,9 +10,17 @@ export interface TraceEvent {
   eventId: string;
   traceId: string;
   timestamp: Date;
-  eventType: 'AI_PROMPT' | 'AI_RESPONSE' | 'CRISIS_DETECTION' | 'CONFIDENCE_SCORE' |
-             'SIGNAL_FUSION' | 'EMERGENCY_CLASSIFICATION' | 'FALLBACK_ACTION' |
-             'GPS_EVENT' | 'ALERT_EXECUTION' | 'EMERGENCY_RESPONSE';
+  eventType:
+    | 'AI_PROMPT'
+    | 'AI_RESPONSE'
+    | 'CRISIS_DETECTION'
+    | 'CONFIDENCE_SCORE'
+    | 'SIGNAL_FUSION'
+    | 'EMERGENCY_CLASSIFICATION'
+    | 'FALLBACK_ACTION'
+    | 'GPS_EVENT'
+    | 'ALERT_EXECUTION'
+    | 'EMERGENCY_RESPONSE';
   severity: 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL';
   data: any;
   metadata?: {
@@ -123,12 +131,15 @@ class AntigravityTraceLogger {
     // Save initial session to Firestore
     if (admin.apps.length > 0) {
       const db = admin.firestore();
-      db.collection('antigravity_traces').doc(traceId).set({
-        traceId,
-        sessionStart: session.sessionStart,
-        metadata: metadata || {},
-        status: 'STARTED',
-      }).catch(err => logger.error('Failed to create Firestore session', { err }));
+      db.collection('antigravity_traces')
+        .doc(traceId)
+        .set({
+          traceId,
+          sessionStart: session.sessionStart,
+          metadata: metadata || {},
+          status: 'STARTED',
+        })
+        .catch((err) => logger.error('Failed to create Firestore session', { err }));
     }
 
     // Log session start event
@@ -173,10 +184,7 @@ class AntigravityTraceLogger {
   /**
    * Log an event to a trace session
    */
-  logEvent(
-    traceId: string,
-    event: Omit<TraceEvent, 'eventId' | 'traceId' | 'timestamp'>
-  ): void {
+  logEvent(traceId: string, event: Omit<TraceEvent, 'eventId' | 'traceId' | 'timestamp'>): void {
     const session = this.activeSessions.get(traceId);
     if (!session) {
       logger.warn('Attempted to log event to non-existent session', { traceId });
@@ -195,11 +203,15 @@ class AntigravityTraceLogger {
     // Save event to Firestore
     if (admin.apps.length > 0) {
       const db = admin.firestore();
-      db.collection('antigravity_traces').doc(traceId)
-        .collection('events').doc(traceEvent.eventId).set({
+      db.collection('antigravity_traces')
+        .doc(traceId)
+        .collection('events')
+        .doc(traceEvent.eventId)
+        .set({
           ...traceEvent,
           timestamp: admin.firestore.FieldValue.serverTimestamp(),
-        }).catch(err => logger.error('Failed to log event to Firestore', { err }));
+        })
+        .catch((err) => logger.error('Failed to log event to Firestore', { err }));
     }
 
     logger.debug('Logged trace event', {
@@ -213,12 +225,7 @@ class AntigravityTraceLogger {
   /**
    * Log AI prompt
    */
-  logAIPrompt(
-    traceId: string,
-    prompt: string,
-    model: string,
-    metadata?: any
-  ): string {
+  logAIPrompt(traceId: string, prompt: string, model: string, metadata?: any): string {
     const promptId = randomUUID();
     const timestamp = new Date().toISOString();
 
@@ -458,11 +465,15 @@ class AntigravityTraceLogger {
     // Save decision node to Firestore
     if (admin.apps.length > 0) {
       const db = admin.firestore();
-      db.collection('antigravity_traces').doc(traceId)
-        .collection('decision_chain').doc(nodeId).set({
+      db.collection('antigravity_traces')
+        .doc(traceId)
+        .collection('decision_chain')
+        .doc(nodeId)
+        .set({
           ...node,
           timestamp: admin.firestore.FieldValue.serverTimestamp(),
-        }).catch(err => logger.error('Failed to log decision node to Firestore', { err }));
+        })
+        .catch((err) => logger.error('Failed to log decision node to Firestore', { err }));
     }
 
     logger.debug('Added decision node', { traceId, nodeId, decision });
@@ -498,11 +509,15 @@ class AntigravityTraceLogger {
     // Save action to Firestore
     if (admin.apps.length > 0) {
       const db = admin.firestore();
-      db.collection('antigravity_traces').doc(traceId)
-        .collection('action_history').doc(actionId).set({
+      db.collection('antigravity_traces')
+        .doc(traceId)
+        .collection('action_history')
+        .doc(actionId)
+        .set({
           ...actionRecord,
           timestamp: admin.firestore.FieldValue.serverTimestamp(),
-        }).catch(err => logger.error('Failed to log action to Firestore', { err }));
+        })
+        .catch((err) => logger.error('Failed to log action to Firestore', { err }));
     }
 
     logger.debug('Added action record', { traceId, actionId, action, status });
@@ -534,13 +549,17 @@ class AntigravityTraceLogger {
     // Update action in Firestore
     if (admin.apps.length > 0) {
       const db = admin.firestore();
-      db.collection('antigravity_traces').doc(traceId)
-        .collection('action_history').doc(actionId).update({
+      db.collection('antigravity_traces')
+        .doc(traceId)
+        .collection('action_history')
+        .doc(actionId)
+        .update({
           status,
           result: result || null,
           error: error || null,
           duration: action.duration,
-        }).catch(err => logger.error('Failed to update action in Firestore', { err }));
+        })
+        .catch((err) => logger.error('Failed to update action in Firestore', { err }));
     }
 
     logger.debug('Updated action status', { traceId, actionId, status });
@@ -602,11 +621,14 @@ class AntigravityTraceLogger {
     // Save final summary to Firestore
     if (admin.apps.length > 0) {
       const db = admin.firestore();
-      db.collection('antigravity_traces').doc(session.traceId).update({
-        sessionEnd: session.sessionEnd,
-        summary: session.summary,
-        status: 'COMPLETED',
-      }).catch(err => logger.error('Failed to save session summary to Firestore', { err }));
+      db.collection('antigravity_traces')
+        .doc(session.traceId)
+        .update({
+          sessionEnd: session.sessionEnd,
+          summary: session.summary,
+          status: 'COMPLETED',
+        })
+        .catch((err) => logger.error('Failed to save session summary to Firestore', { err }));
     }
 
     logger.info('Saved trace session', {
@@ -632,8 +654,12 @@ class AntigravityTraceLogger {
       lines.push(`## Summary`);
       lines.push(`- **Total Events:** ${session.summary.totalEvents}`);
       lines.push(`- **Critical Events:** ${session.summary.criticalEvents}`);
-      lines.push(`- **Average Confidence:** ${(session.summary.averageConfidence * 100).toFixed(2)}%`);
-      lines.push(`- **Emergency Classification:** ${session.summary.emergencyClassification || 'N/A'}`);
+      lines.push(
+        `- **Average Confidence:** ${(session.summary.averageConfidence * 100).toFixed(2)}%`
+      );
+      lines.push(
+        `- **Emergency Classification:** ${session.summary.emergencyClassification || 'N/A'}`
+      );
       lines.push(`- **Final Decision:** ${session.summary.finalDecision || 'N/A'}`);
       lines.push(`- **Alerts Sent:** ${session.summary.alertsSent}`);
       lines.push(`- **Duration:** ${session.summary.duration}ms`);

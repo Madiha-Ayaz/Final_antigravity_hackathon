@@ -69,7 +69,7 @@ Respond STRICTLY in JSON format with the following fields:
 
     const result = await response.json();
     const responseText = result.candidates?.[0]?.content?.parts?.[0]?.text;
-    
+
     if (!responseText) {
       throw new Error('Empty response from Gemini API');
     }
@@ -88,7 +88,7 @@ Respond STRICTLY in JSON format with the following fields:
       if (textmebotApiKey && recipient) {
         const cleanPhone = recipient.replace('+', '').replace(/\s+/g, '');
         const messageText = `🚨 *SILENT SIREN AI ALERT* 🚨\n\n*Emergency Detected!*\n\n*Threat Level:* ${analysis.threatLevel}\n*Transcript:* "${analysis.transcript}"\n*Reasoning:* ${analysis.reasoning}\n*Confidence:* ${(analysis.confidence * 100).toFixed(0)}%\n\n📍 _Live audio monitoring is active._`;
-        
+
         try {
           const textmebotUrl = `https://api.textmebot.com/send.php?recipient=${cleanPhone}&apikey=${textmebotApiKey}&text=${encodeURIComponent(messageText)}&json=yes`;
           const alertRes = await fetch(textmebotUrl);

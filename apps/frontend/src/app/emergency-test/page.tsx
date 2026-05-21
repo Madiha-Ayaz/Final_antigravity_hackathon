@@ -74,7 +74,9 @@ export default function EmergencyTestPage() {
                     ? '🚨 Emergency Alert Sent'
                     : '✓ Alert Cancelled Successfully'}
                 </h3>
-                <p className={`text-sm sm:text-base ${result === 'completed' ? 'text-red-700' : 'text-green-700'}`}>
+                <p
+                  className={`text-sm sm:text-base ${result === 'completed' ? 'text-red-700' : 'text-green-700'}`}
+                >
                   {result === 'completed'
                     ? 'Emergency contacts have been notified with your location and audio evidence.'
                     : 'The emergency alert was cancelled. Your emergency contacts were not notified.'}

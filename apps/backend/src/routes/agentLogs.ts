@@ -59,15 +59,15 @@ router.get('/logs', async (req: Request, res: Response) => {
     let filteredLogs = [...agentLogs];
 
     if (agent) {
-      filteredLogs = filteredLogs.filter(log => log.agent === agent);
+      filteredLogs = filteredLogs.filter((log) => log.agent === agent);
     }
 
     if (userId) {
-      filteredLogs = filteredLogs.filter(log => log.userId === userId);
+      filteredLogs = filteredLogs.filter((log) => log.userId === userId);
     }
 
     if (sessionId) {
-      filteredLogs = filteredLogs.filter(log => log.sessionId === sessionId);
+      filteredLogs = filteredLogs.filter((log) => log.sessionId === sessionId);
     }
 
     const start = parseInt(offset as string);
@@ -92,7 +92,7 @@ router.get('/logs/session/:sessionId', async (req: Request, res: Response) => {
   try {
     const { sessionId } = req.params;
 
-    const sessionLogs = agentLogs.filter(log => log.sessionId === sessionId);
+    const sessionLogs = agentLogs.filter((log) => log.sessionId === sessionId);
 
     res.json({
       success: true,
@@ -111,7 +111,7 @@ router.get('/stats', async (req: Request, res: Response) => {
     const agentCounts: Record<string, number> = {};
     const actionCounts: Record<string, number> = {};
 
-    agentLogs.forEach(log => {
+    agentLogs.forEach((log) => {
       agentCounts[log.agent] = (agentCounts[log.agent] || 0) + 1;
       actionCounts[log.action] = (actionCounts[log.action] || 0) + 1;
     });

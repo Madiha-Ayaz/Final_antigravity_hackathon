@@ -160,12 +160,8 @@ export default function TracesPage() {
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">
-            🔬 Antigravity Trace System
-          </h1>
-          <p className="text-gray-600">
-            Complete emergency detection and response tracing
-          </p>
+          <h1 className="text-3xl font-bold text-gray-900 mb-2">🔬 Antigravity Trace System</h1>
+          <p className="text-gray-600">Complete emergency detection and response tracing</p>
         </div>
 
         {/* Stats Cards */}
@@ -173,21 +169,15 @@ export default function TracesPage() {
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
             <div className="bg-white rounded-lg shadow p-6">
               <div className="text-sm text-gray-600 mb-1">Total Traces</div>
-              <div className="text-3xl font-bold text-gray-900">
-                {stats.totalTraces}
-              </div>
+              <div className="text-3xl font-bold text-gray-900">{stats.totalTraces}</div>
             </div>
             <div className="bg-white rounded-lg shadow p-6">
               <div className="text-sm text-gray-600 mb-1">Total Events</div>
-              <div className="text-3xl font-bold text-blue-600">
-                {stats.totalEvents}
-              </div>
+              <div className="text-3xl font-bold text-blue-600">{stats.totalEvents}</div>
             </div>
             <div className="bg-white rounded-lg shadow p-6">
               <div className="text-sm text-gray-600 mb-1">Critical Events</div>
-              <div className="text-3xl font-bold text-red-600">
-                {stats.totalCriticalEvents}
-              </div>
+              <div className="text-3xl font-bold text-red-600">{stats.totalCriticalEvents}</div>
             </div>
             <div className="bg-white rounded-lg shadow p-6">
               <div className="text-sm text-gray-600 mb-1">Avg Confidence</div>
@@ -201,9 +191,7 @@ export default function TracesPage() {
         {/* Traces List */}
         <div className="bg-white rounded-lg shadow">
           <div className="px-6 py-4 border-b border-gray-200">
-            <h2 className="text-xl font-semibold text-gray-900">
-              Recent Traces
-            </h2>
+            <h2 className="text-xl font-semibold text-gray-900">Recent Traces</h2>
           </div>
 
           <div className="divide-y divide-gray-200">
@@ -271,8 +259,8 @@ export default function TracesPage() {
                                 trace.summary.averageConfidence > 0.8
                                   ? 'text-green-600'
                                   : trace.summary.averageConfidence > 0.5
-                                  ? 'text-yellow-600'
-                                  : 'text-red-600'
+                                    ? 'text-yellow-600'
+                                    : 'text-red-600'
                               }`}
                             >
                               {(trace.summary.averageConfidence * 100).toFixed(1)}%
@@ -327,9 +315,7 @@ export default function TracesPage() {
 
         {/* Legend */}
         <div className="mt-8 bg-blue-50 border border-blue-200 rounded-lg p-4">
-          <h3 className="text-sm font-semibold text-blue-900 mb-2">
-            📊 Trace System Features
-          </h3>
+          <h3 className="text-sm font-semibold text-blue-900 mb-2">📊 Trace System Features</h3>
           <ul className="text-sm text-blue-800 space-y-1">
             <li>✅ Emergency type classification (ROBBERY, MEDICAL, ACCIDENT, etc.)</li>
             <li>✅ Complete AI prompt and response logging</li>

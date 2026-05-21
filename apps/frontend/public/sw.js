@@ -19,7 +19,8 @@ const urlsToCache = [
 // Install event - cache static resources
 self.addEventListener('install', (event) => {
   event.waitUntil(
-    caches.open(STATIC_CACHE)
+    caches
+      .open(STATIC_CACHE)
       .then((cache) => cache.addAll(urlsToCache))
       .then(() => self.skipWaiting())
   );
@@ -28,15 +29,18 @@ self.addEventListener('install', (event) => {
 // Activate event - clean up old caches
 self.addEventListener('activate', (event) => {
   event.waitUntil(
-    caches.keys().then((cacheNames) => {
-      return Promise.all(
-        cacheNames.map((cacheName) => {
-          if (cacheName !== STATIC_CACHE && cacheName !== DYNAMIC_CACHE) {
-            return caches.delete(cacheName);
-          }
-        })
-      );
-    }).then(() => self.clients.claim())
+    caches
+      .keys()
+      .then((cacheNames) => {
+        return Promise.all(
+          cacheNames.map((cacheName) => {
+            if (cacheName !== STATIC_CACHE && cacheName !== DYNAMIC_CACHE) {
+              return caches.delete(cacheName);
+            }
+          })
+        );
+      })
+      .then(() => self.clients.claim())
   );
 });
 
@@ -52,21 +56,22 @@ self.addEventListener('fetch', (event) => {
   }
 
   // Static assets - cache first
-  if (event.request.url.includes('/_next/static/') ||
-      event.request.url.includes('/icon') ||
-      event.request.url.includes('.png') ||
-      event.request.url.includes('.svg') ||
-      event.request.url.includes('.css')) {
+  if (
+    event.request.url.includes('/_next/static/') ||
+    event.request.url.includes('/icon') ||
+    event.request.url.includes('.png') ||
+    event.request.url.includes('.svg') ||
+    event.request.url.includes('.css')
+  ) {
     event.respondWith(
-      caches.match(event.request)
-        .then((response) => {
-          if (response) return response;
-          return fetch(event.request).then((networkResponse) => {
-            const cache = caches.open(STATIC_CACHE);
-            cache.then(c => c.put(event.request, networkResponse.clone()));
-            return networkResponse;
-          });
-        })
+      caches.match(event.request).then((response) => {
+        if (response) return response;
+        return fetch(event.request).then((networkResponse) => {
+          const cache = caches.open(STATIC_CACHE);
+          cache.then((c) => c.put(event.request, networkResponse.clone()));
+          return networkResponse;
+        });
+      })
     );
     return;
   }
@@ -76,20 +81,18 @@ self.addEventListener('fetch', (event) => {
     fetch(event.request)
       .then((response) => {
         const responseClone = response.clone();
-        caches.open(DYNAMIC_CACHE)
-          .then((cache) => cache.put(event.request, responseClone));
+        caches.open(DYNAMIC_CACHE).then((cache) => cache.put(event.request, responseClone));
         return response;
       })
       .catch(() => {
-        return caches.match(event.request)
-          .then((response) => {
-            if (response) return response;
-            // Return offline page for navigation requests
-            if (event.request.mode === 'navigate') {
-              return caches.match('/');
-            }
-            return new Response('Offline', { status: 503 });
-          });
+        return caches.match(event.request).then((response) => {
+          if (response) return response;
+          // Return offline page for navigation requests
+          if (event.request.mode === 'navigate') {
+            return caches.match('/');
+          }
+          return new Response('Offline', { status: 503 });
+        });
       })
   );
 });
@@ -107,17 +110,15 @@ self.addEventListener('push', (event) => {
     requireInteraction: true,
     actions: [
       { action: 'view', title: '🚨 View Emergency' },
-      { action: 'safe', title: '✅ I am Safe' }
+      { action: 'safe', title: '✅ I am Safe' },
     ],
     data: {
       url: data.url || '/crisis',
       timestamp: Date.now(),
-    }
+    },
   };
 
-  event.waitUntil(
-    self.registration.showNotification(title, options)
-  );
+  event.waitUntil(self.registration.showNotification(title, options));
 });
 
 // Notification click event
@@ -130,8 +131,8 @@ self.addEventListener('notificationclick', (event) => {
   if (action === 'safe') {
     // Send "I am safe" signal
     event.waitUntil(
-      self.clients.matchAll().then(clients => {
-        clients.forEach(client => {
+      self.clients.matchAll().then((clients) => {
+        clients.forEach((client) => {
           client.postMessage({ type: 'I_AM_SAFE' });
         });
       })
@@ -143,19 +144,21 @@ self.addEventListener('notificationclick', (event) => {
   const urlToOpen = data?.url || '/crisis';
 
   event.waitUntil(
-    self.clients.matchAll({
-      type: 'window',
-      includeUncontrolled: true
-    }).then((clientList) => {
-      // Focus existing window if available
-      for (const client of clientList) {
-        if (client.url.includes(urlToOpen) && 'focus' in client) {
-          return client.focus();
+    self.clients
+      .matchAll({
+        type: 'window',
+        includeUncontrolled: true,
+      })
+      .then((clientList) => {
+        // Focus existing window if available
+        for (const client of clientList) {
+          if (client.url.includes(urlToOpen) && 'focus' in client) {
+            return client.focus();
+          }
         }
-      }
-      // Open new window
-      return self.clients.openWindow(urlToOpen);
-    })
+        // Open new window
+        return self.clients.openWindow(urlToOpen);
+      })
   );
 });
 
@@ -164,8 +167,8 @@ self.addEventListener('sync', (event) => {
   if (event.tag === 'emergency-alert') {
     event.waitUntil(
       // Retry sending emergency alerts when back online
-      self.clients.matchAll().then(clients => {
-        clients.forEach(client => {
+      self.clients.matchAll().then((clients) => {
+        clients.forEach((client) => {
           client.postMessage({ type: 'RETRY_ALERT' });
         });
       })
@@ -177,7 +180,7 @@ self.addEventListener('sync', (event) => {
 self.addEventListener('periodicsync', (event) => {
   if (event.tag === 'monitor-check') {
     event.waitUntil(
-      self.clients.matchAll().then(clients => {
+      self.clients.matchAll().then((clients) => {
         if (clients.length === 0) {
           // App is in background, check for emergencies
           self.clients.openWindow('/monitor');

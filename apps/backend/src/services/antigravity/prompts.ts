@@ -196,21 +196,21 @@ export const WAKE_PHRASES = [
  * Emergency category mapping from wake phrases
  */
 export const PHRASE_CATEGORY_MAP: Record<string, string> = {
-  'fire': 'fire',
-  'burning': 'fire',
-  'smoke': 'fire',
-  'flood': 'flood',
-  'water': 'flood',
-  'drowning': 'flood',
-  'accident': 'accident',
-  'crash': 'accident',
-  'collision': 'accident',
-  'abuse': 'abuse',
-  'hitting': 'abuse',
-  'violence': 'abuse',
-  'ambulance': 'medical',
-  'heart': 'medical',
-  'breathe': 'medical',
+  fire: 'fire',
+  burning: 'fire',
+  smoke: 'fire',
+  flood: 'flood',
+  water: 'flood',
+  drowning: 'flood',
+  accident: 'accident',
+  crash: 'accident',
+  collision: 'accident',
+  abuse: 'abuse',
+  hitting: 'abuse',
+  violence: 'abuse',
+  ambulance: 'medical',
+  heart: 'medical',
+  breathe: 'medical',
 };
 
 // ============================================

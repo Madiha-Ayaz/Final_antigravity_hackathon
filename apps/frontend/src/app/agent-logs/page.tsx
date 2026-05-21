@@ -34,9 +34,10 @@ export default function AgentLogsViewer() {
   const fetchLogs = async () => {
     try {
       setLoading(true);
-      const url = filter === 'all'
-        ? `${process.env.NEXT_PUBLIC_API_URL}/api/agent-logs/logs?limit=50`
-        : `${process.env.NEXT_PUBLIC_API_URL}/api/agent-logs/logs?agent=${filter}&limit=50`;
+      const url =
+        filter === 'all'
+          ? `${process.env.NEXT_PUBLIC_API_URL}/api/agent-logs/logs?limit=50`
+          : `${process.env.NEXT_PUBLIC_API_URL}/api/agent-logs/logs?agent=${filter}&limit=50`;
 
       const response = await fetch(url);
       const data = await response.json();
@@ -66,12 +67,12 @@ export default function AgentLogsViewer() {
 
   const getAgentColor = (agent: string) => {
     const colors: Record<string, string> = {
-      'AudioAnalysisAgent': 'from-blue-500 to-cyan-500',
-      'VerificationAgent': 'from-purple-500 to-pink-500',
-      'DispatchAgent': 'from-red-500 to-orange-500',
-      'CommunityValidationAgent': 'from-green-500 to-emerald-500',
-      'SignalFusionAgent': 'from-yellow-500 to-amber-500',
-      'CrisisVerificationAgent': 'from-indigo-500 to-violet-500',
+      AudioAnalysisAgent: 'from-blue-500 to-cyan-500',
+      VerificationAgent: 'from-purple-500 to-pink-500',
+      DispatchAgent: 'from-red-500 to-orange-500',
+      CommunityValidationAgent: 'from-green-500 to-emerald-500',
+      SignalFusionAgent: 'from-yellow-500 to-amber-500',
+      CrisisVerificationAgent: 'from-indigo-500 to-violet-500',
     };
     return colors[agent] || 'from-gray-500 to-slate-500';
   };
@@ -101,19 +102,31 @@ export default function AgentLogsViewer() {
             className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8"
           >
             <div className="bg-slate-800/40 border border-slate-700/50 rounded-xl p-4 backdrop-blur-sm">
-              <div className="text-slate-400 text-xs font-semibold uppercase tracking-wider mb-1">Total Logs</div>
+              <div className="text-slate-400 text-xs font-semibold uppercase tracking-wider mb-1">
+                Total Logs
+              </div>
               <div className="text-3xl font-bold text-white">{stats.totalLogs}</div>
             </div>
             <div className="bg-slate-800/40 border border-slate-700/50 rounded-xl p-4 backdrop-blur-sm">
-              <div className="text-slate-400 text-xs font-semibold uppercase tracking-wider mb-1">Active Agents</div>
-              <div className="text-3xl font-bold text-emerald-400">{Object.keys(stats.agentCounts || {}).length}</div>
+              <div className="text-slate-400 text-xs font-semibold uppercase tracking-wider mb-1">
+                Active Agents
+              </div>
+              <div className="text-3xl font-bold text-emerald-400">
+                {Object.keys(stats.agentCounts || {}).length}
+              </div>
             </div>
             <div className="bg-slate-800/40 border border-slate-700/50 rounded-xl p-4 backdrop-blur-sm">
-              <div className="text-slate-400 text-xs font-semibold uppercase tracking-wider mb-1">Actions</div>
-              <div className="text-3xl font-bold text-blue-400">{Object.keys(stats.actionCounts || {}).length}</div>
+              <div className="text-slate-400 text-xs font-semibold uppercase tracking-wider mb-1">
+                Actions
+              </div>
+              <div className="text-3xl font-bold text-blue-400">
+                {Object.keys(stats.actionCounts || {}).length}
+              </div>
             </div>
             <div className="bg-slate-800/40 border border-slate-700/50 rounded-xl p-4 backdrop-blur-sm">
-              <div className="text-slate-400 text-xs font-semibold uppercase tracking-wider mb-1">Status</div>
+              <div className="text-slate-400 text-xs font-semibold uppercase tracking-wider mb-1">
+                Status
+              </div>
               <div className="flex items-center gap-2">
                 <div className="w-3 h-3 bg-emerald-500 rounded-full animate-pulse"></div>
                 <span className="text-lg font-bold text-emerald-400">LIVE</span>
@@ -124,7 +137,13 @@ export default function AgentLogsViewer() {
 
         {/* Filter Tabs */}
         <div className="flex flex-wrap gap-2 mb-6">
-          {['all', 'AudioAnalysisAgent', 'VerificationAgent', 'DispatchAgent', 'CommunityValidationAgent'].map((f) => (
+          {[
+            'all',
+            'AudioAnalysisAgent',
+            'VerificationAgent',
+            'DispatchAgent',
+            'CommunityValidationAgent',
+          ].map((f) => (
             <button
               key={f}
               onClick={() => setFilter(f)}
@@ -177,7 +196,9 @@ export default function AgentLogsViewer() {
                   >
                     <div className="flex items-start justify-between gap-4 mb-2">
                       <div className="flex items-center gap-3 flex-1">
-                        <div className={`w-10 h-10 bg-gradient-to-br ${getAgentColor(log.agent)} rounded-lg flex items-center justify-center text-white font-bold text-sm flex-shrink-0`}>
+                        <div
+                          className={`w-10 h-10 bg-gradient-to-br ${getAgentColor(log.agent)} rounded-lg flex items-center justify-center text-white font-bold text-sm flex-shrink-0`}
+                        >
                           {log.agent.charAt(0)}
                         </div>
                         <div className="flex-1 min-w-0">
@@ -192,7 +213,9 @@ export default function AgentLogsViewer() {
                     <p className="text-sm text-slate-300 mb-2">{log.reasoning}</p>
                     {log.result && (
                       <details className="text-xs">
-                        <summary className="cursor-pointer text-blue-400 hover:text-blue-300">View Result</summary>
+                        <summary className="cursor-pointer text-blue-400 hover:text-blue-300">
+                          View Result
+                        </summary>
                         <pre className="mt-2 p-2 bg-slate-950/80 border border-slate-800 rounded text-slate-400 overflow-x-auto">
                           {JSON.stringify(log.result, null, 2)}
                         </pre>

@@ -20,7 +20,13 @@ interface AlertResult {
 
 export default function AlertPage() {
   return (
-    <Suspense fallback={<div className="min-h-screen bg-slate-900 flex items-center justify-center"><div className="text-white">Loading...</div></div>}>
+    <Suspense
+      fallback={
+        <div className="min-h-screen bg-slate-900 flex items-center justify-center">
+          <div className="text-white">Loading...</div>
+        </div>
+      }
+    >
       <AlertPageContent />
     </Suspense>
   );
@@ -28,7 +34,14 @@ export default function AlertPage() {
 
 function AlertPageContent() {
   const router = useRouter();
-  const { location: gpsLocation, error: gpsError, loading: gpsLoading, getCurrentLocation, watchLocation, clearWatch } = useGPSLocation();
+  const {
+    location: gpsLocation,
+    error: gpsError,
+    loading: gpsLoading,
+    getCurrentLocation,
+    watchLocation,
+    clearWatch,
+  } = useGPSLocation();
   const searchParams = useSearchParams();
   const [isAlertActive, setIsAlertActive] = useState(false);
   const [isSending, setIsSending] = useState(false);
@@ -37,7 +50,9 @@ function AlertPageContent() {
   const [countdown, setCountdown] = useState(180);
   const [sirenActive, setSirenActive] = useState(false);
   const [contactCount, setContactCount] = useState<number | null>(null);
-  const [gpsStatus, setGpsStatus] = useState<'loading' | 'connected' | 'error' | 'denied'>('loading');
+  const [gpsStatus, setGpsStatus] = useState<'loading' | 'connected' | 'error' | 'denied'>(
+    'loading'
+  );
   const audioContextRef = useRef<AudioContext | null>(null);
   const oscillatorRef = useRef<OscillatorNode | null>(null);
   const gainRef = useRef<GainNode | null>(null);
@@ -183,10 +198,14 @@ function AlertPageContent() {
   const stopSiren = () => {
     if (intervalRef.current) clearInterval(intervalRef.current);
     if (oscillatorRef.current) {
-      try { oscillatorRef.current.stop(); } catch {}
+      try {
+        oscillatorRef.current.stop();
+      } catch {}
     }
     if (audioContextRef.current) {
-      try { audioContextRef.current.close(); } catch {}
+      try {
+        audioContextRef.current.close();
+      } catch {}
     }
     setSirenActive(false);
   };
@@ -210,7 +229,9 @@ function AlertPageContent() {
     try {
       const token = localStorage.getItem('token') || localStorage.getItem('auth_token');
       const payload = {
-        location: currentLocation ? { latitude: currentLocation.latitude, longitude: currentLocation.longitude } : undefined,
+        location: currentLocation
+          ? { latitude: currentLocation.latitude, longitude: currentLocation.longitude }
+          : undefined,
       };
 
       console.log('🆘 SAVE ME - Sending alerts with GPS:', currentLocation);
@@ -219,7 +240,7 @@ function AlertPageContent() {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          ...(token ? { 'Authorization': `Bearer ${token}` } : {}),
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
         },
         body: JSON.stringify(payload),
       });
@@ -261,7 +282,7 @@ function AlertPageContent() {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          ...(token ? { 'Authorization': `Bearer ${token}` } : {}),
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
         },
         body: JSON.stringify({}),
       });
@@ -274,21 +295,31 @@ function AlertPageContent() {
 
   const getGpsStatusColor = () => {
     switch (gpsStatus) {
-      case 'connected': return 'text-green-400';
-      case 'loading': return 'text-yellow-400';
-      case 'error': return 'text-orange-400';
-      case 'denied': return 'text-red-400';
-      default: return 'text-slate-400';
+      case 'connected':
+        return 'text-green-400';
+      case 'loading':
+        return 'text-yellow-400';
+      case 'error':
+        return 'text-orange-400';
+      case 'denied':
+        return 'text-red-400';
+      default:
+        return 'text-slate-400';
     }
   };
 
   const getGpsStatusText = () => {
     switch (gpsStatus) {
-      case 'connected': return 'GPS CONNECTED';
-      case 'loading': return 'Acquiring GPS...';
-      case 'error': return 'GPS Error - Retry';
-      case 'denied': return 'GPS Denied - Enable in browser';
-      default: return 'GPS Unknown';
+      case 'connected':
+        return 'GPS CONNECTED';
+      case 'loading':
+        return 'Acquiring GPS...';
+      case 'error':
+        return 'GPS Error - Retry';
+      case 'denied':
+        return 'GPS Denied - Enable in browser';
+      default:
+        return 'GPS Unknown';
     }
   };
 
@@ -304,7 +335,14 @@ function AlertPageContent() {
               transition={{ duration: 2, repeat: Infinity }}
               className="text-5xl sm:text-6xl md:text-7xl"
             >
-              <svg className="w-12 h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg>
+              <svg className="w-12 h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
+                />
+              </svg>
             </motion.div>
             <h1 className="text-2xl sm:text-3xl md:text-5xl font-black text-transparent bg-clip-text bg-gradient-to-r from-red-400 via-orange-400 to-red-400">
               EMERGENCY ALERT
@@ -315,18 +353,28 @@ function AlertPageContent() {
           </div>
 
           {/* GPS Status - Real Connection */}
-          <div className={`bg-slate-800/50 backdrop-blur-sm border-2 rounded-2xl p-3 sm:p-4 text-center transition-colors ${
-            gpsStatus === 'connected' ? 'border-green-500/50' :
-            gpsStatus === 'loading' ? 'border-yellow-500/50' :
-            'border-red-500/50'
-          }`}>
+          <div
+            className={`bg-slate-800/50 backdrop-blur-sm border-2 rounded-2xl p-3 sm:p-4 text-center transition-colors ${
+              gpsStatus === 'connected'
+                ? 'border-green-500/50'
+                : gpsStatus === 'loading'
+                  ? 'border-yellow-500/50'
+                  : 'border-red-500/50'
+            }`}
+          >
             <div className="flex items-center justify-center gap-2 mb-2">
-              <div className={`w-3 h-3 rounded-full ${
-                gpsStatus === 'connected' ? 'bg-green-500 animate-pulse' :
-                gpsStatus === 'loading' ? 'bg-yellow-500 animate-spin' :
-                'bg-red-500'
-              }`} />
-              <span className={`text-xs sm:text-sm font-bold uppercase tracking-wider ${getGpsStatusColor()}`}>
+              <div
+                className={`w-3 h-3 rounded-full ${
+                  gpsStatus === 'connected'
+                    ? 'bg-green-500 animate-pulse'
+                    : gpsStatus === 'loading'
+                      ? 'bg-yellow-500 animate-spin'
+                      : 'bg-red-500'
+                }`}
+              />
+              <span
+                className={`text-xs sm:text-sm font-bold uppercase tracking-wider ${getGpsStatusColor()}`}
+              >
                 {getGpsStatusText()}
               </span>
             </div>
@@ -457,12 +505,23 @@ function AlertPageContent() {
                     transition={{ duration: 0.8, repeat: Infinity }}
                     className="text-4xl sm:text-6xl"
                   >
-                    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" /></svg>
+                    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"
+                      />
+                    </svg>
                   </motion.div>
-                  <h2 className="text-xl sm:text-2xl md:text-3xl font-black text-red-400 animate-pulse">ALERT ACTIVE</h2>
+                  <h2 className="text-xl sm:text-2xl md:text-3xl font-black text-red-400 animate-pulse">
+                    ALERT ACTIVE
+                  </h2>
 
                   <div className="bg-yellow-950/50 border border-yellow-500/50 rounded-xl p-3 sm:p-4">
-                    <div className="text-xs sm:text-sm text-yellow-300 mb-1 font-semibold">Auto-cancel in:</div>
+                    <div className="text-xs sm:text-sm text-yellow-300 mb-1 font-semibold">
+                      Auto-cancel in:
+                    </div>
                     <div className="text-3xl sm:text-4xl font-black text-yellow-400 font-mono">
                       {Math.floor(countdown / 60)}:{(countdown % 60).toString().padStart(2, '0')}
                     </div>
@@ -476,7 +535,9 @@ function AlertPageContent() {
                   )}
 
                   <div className="flex items-center justify-center gap-2 text-red-300 text-xs sm:text-sm font-semibold">
-                    <div className={`w-2 h-2 sm:w-3 sm:h-3 rounded-full ${sirenActive ? 'bg-red-500 animate-ping' : 'bg-slate-600'}`} />
+                    <div
+                      className={`w-2 h-2 sm:w-3 sm:h-3 rounded-full ${sirenActive ? 'bg-red-500 animate-ping' : 'bg-slate-600'}`}
+                    />
                     {sirenActive ? 'SIREN ACTIVE' : 'SIREN OFF'}
                   </div>
                 </div>
@@ -491,31 +552,52 @@ function AlertPageContent() {
                     <div className="space-y-2 max-h-60 overflow-y-auto">
                       {results.map((r, i) => (
                         <div key={i} className="bg-slate-900/50 rounded-xl p-2 sm:p-3 space-y-2">
-                          <div className="font-bold text-white text-xs sm:text-sm">{r.name} ({r.phone})</div>
+                          <div className="font-bold text-white text-xs sm:text-sm">
+                            {r.name} ({r.phone})
+                          </div>
                           <div className="grid grid-cols-3 gap-1 sm:gap-2 text-[10px] sm:text-xs">
-                            <div className={`text-center p-1.5 sm:p-2 rounded-lg ${r.sms.success ? 'bg-green-500/20 text-green-400' : 'bg-red-500/20 text-red-400'}`}>
+                            <div
+                              className={`text-center p-1.5 sm:p-2 rounded-lg ${r.sms.success ? 'bg-green-500/20 text-green-400' : 'bg-red-500/20 text-red-400'}`}
+                            >
                               <div className="font-bold">SMS</div>
                               <div>{r.sms.success ? '✓ Sent' : '✗ Failed'}</div>
                               {!r.sms.success && r.sms.error && (
-                                <div className="text-[9px] text-red-300/70 mt-0.5 truncate" title={r.sms.error}>
-                                  {r.sms.error.includes('limit') ? 'Daily limit' : r.sms.error.includes('unverified') ? 'Unverified' : 'Error'}
+                                <div
+                                  className="text-[9px] text-red-300/70 mt-0.5 truncate"
+                                  title={r.sms.error}
+                                >
+                                  {r.sms.error.includes('limit')
+                                    ? 'Daily limit'
+                                    : r.sms.error.includes('unverified')
+                                      ? 'Unverified'
+                                      : 'Error'}
                                 </div>
                               )}
                             </div>
-                            <div className={`text-center p-1.5 sm:p-2 rounded-lg ${r.whatsapp.success ? 'bg-green-500/20 text-green-400' : 'bg-red-500/20 text-red-400'}`}>
+                            <div
+                              className={`text-center p-1.5 sm:p-2 rounded-lg ${r.whatsapp.success ? 'bg-green-500/20 text-green-400' : 'bg-red-500/20 text-red-400'}`}
+                            >
                               <div className="font-bold">WhatsApp</div>
                               <div>{r.whatsapp.success ? '✓ Sent' : '✗ Failed'}</div>
                               {!r.whatsapp.success && r.whatsapp.error && (
-                                <div className="text-[9px] text-red-300/70 mt-0.5 truncate" title={r.whatsapp.error}>
+                                <div
+                                  className="text-[9px] text-red-300/70 mt-0.5 truncate"
+                                  title={r.whatsapp.error}
+                                >
                                   {r.whatsapp.error.includes('limit') ? 'Daily limit' : 'Error'}
                                 </div>
                               )}
                             </div>
-                            <div className={`text-center p-1.5 sm:p-2 rounded-lg ${r.call.success ? 'bg-green-500/20 text-green-400' : 'bg-red-500/20 text-red-400'}`}>
+                            <div
+                              className={`text-center p-1.5 sm:p-2 rounded-lg ${r.call.success ? 'bg-green-500/20 text-green-400' : 'bg-red-500/20 text-red-400'}`}
+                            >
                               <div className="font-bold">Call</div>
                               <div>{r.call.success ? '✓ Ringing' : '✗ Failed'}</div>
                               {!r.call.success && r.call.error && (
-                                <div className="text-[9px] text-red-300/70 mt-0.5 truncate" title={r.call.error}>
+                                <div
+                                  className="text-[9px] text-red-300/70 mt-0.5 truncate"
+                                  title={r.call.error}
+                                >
                                   {r.call.error.includes('unverified') ? 'Unverified' : 'Error'}
                                 </div>
                               )}
@@ -555,14 +637,29 @@ function AlertPageContent() {
             <div className="bg-slate-800/30 backdrop-blur-sm border border-slate-700/50 rounded-2xl p-3 sm:p-4 space-y-2 text-xs sm:text-sm text-slate-400">
               <p className="font-semibold text-slate-300">How it works:</p>
               <ul className="space-y-1 list-disc list-inside">
-                <li>Press <strong className="text-red-400">SAVE ME</strong> to trigger emergency alerts</li>
-                <li>Your <strong className="text-green-400">real GPS location</strong> is sent with alerts</li>
-                <li>SMS, WhatsApp, and Voice Call via <strong className="text-orange-400">Twilio</strong></li>
+                <li>
+                  Press <strong className="text-red-400">SAVE ME</strong> to trigger emergency
+                  alerts
+                </li>
+                <li>
+                  Your <strong className="text-green-400">real GPS location</strong> is sent with
+                  alerts
+                </li>
+                <li>
+                  SMS, WhatsApp, and Voice Call via{' '}
+                  <strong className="text-orange-400">Twilio</strong>
+                </li>
                 <li>A loud siren will play on your device</li>
-                <li>Press <strong className="text-white">I&apos;M SAFE</strong> to cancel and go to Dashboard</li>
+                <li>
+                  Press <strong className="text-white">I&apos;M SAFE</strong> to cancel and go to
+                  Dashboard
+                </li>
               </ul>
               <div className="pt-2 border-t border-slate-700/50">
-                <Link href="/contacts" className="inline-flex items-center gap-2 text-blue-400 hover:text-blue-300 font-medium transition-colors">
+                <Link
+                  href="/contacts"
+                  className="inline-flex items-center gap-2 text-blue-400 hover:text-blue-300 font-medium transition-colors"
+                >
                   👥 Manage Emergency Contacts →
                 </Link>
               </div>

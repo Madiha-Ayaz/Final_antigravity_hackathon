@@ -51,7 +51,9 @@ export class AudioStorageService {
   /**
    * Get audio file by session ID
    */
-  async getAudioBySessionId(sessionId: string): Promise<{ filePath: string; publicUrl: string } | null> {
+  async getAudioBySessionId(
+    sessionId: string
+  ): Promise<{ filePath: string; publicUrl: string } | null> {
     try {
       const files = fs.readdirSync(this.storageDir);
       const audioFile = files.find((file) => file.includes(sessionId));

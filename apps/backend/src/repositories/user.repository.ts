@@ -150,10 +150,7 @@ class UserRepository {
 
   async updateLastLogin(id: string): Promise<void> {
     try {
-      await databaseService.query(
-        'UPDATE users SET last_login_at = NOW() WHERE id = $1',
-        [id]
-      );
+      await databaseService.query('UPDATE users SET last_login_at = NOW() WHERE id = $1', [id]);
     } catch (error) {
       logger.error('Failed to update last login', { error, id });
       throw error;
@@ -162,10 +159,10 @@ class UserRepository {
 
   async updateReputationScore(id: string, score: number): Promise<void> {
     try {
-      await databaseService.query(
-        'UPDATE users SET reputation_score = $1 WHERE id = $2',
-        [score, id]
-      );
+      await databaseService.query('UPDATE users SET reputation_score = $1 WHERE id = $2', [
+        score,
+        id,
+      ]);
     } catch (error) {
       logger.error('Failed to update reputation score', { error, id, score });
       throw error;
@@ -174,10 +171,7 @@ class UserRepository {
 
   async deactivate(id: string): Promise<void> {
     try {
-      await databaseService.query(
-        'UPDATE users SET is_active = false WHERE id = $1',
-        [id]
-      );
+      await databaseService.query('UPDATE users SET is_active = false WHERE id = $1', [id]);
       logger.info('User deactivated', { userId: id });
     } catch (error) {
       logger.error('Failed to deactivate user', { error, id });

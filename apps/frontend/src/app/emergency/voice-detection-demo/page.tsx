@@ -34,24 +34,25 @@ export default function VoiceThreatDetectionDemo() {
               <span className="text-4xl">🎤</span>
             </div>
             <div>
-              <h1 className="text-4xl font-bold text-white mb-2">
-                Voice Threat Detection
-              </h1>
-              <p className="text-blue-200 text-lg">
-                AI-Powered Emergency Detection with Gemini
-              </p>
+              <h1 className="text-4xl font-bold text-white mb-2">Voice Threat Detection</h1>
+              <p className="text-blue-200 text-lg">AI-Powered Emergency Detection with Gemini</p>
             </div>
           </div>
 
           {/* Status Bar */}
           <div className="bg-black/30 rounded-lg p-4 border border-white/10">
             <div className="flex items-center gap-3">
-              <div className={`w-3 h-3 rounded-full ${
-                isRecording ? 'bg-red-500 animate-pulse' :
-                isAnalyzing ? 'bg-blue-500 animate-spin' :
-                threatDetected ? 'bg-red-500 animate-ping' :
-                'bg-green-500'
-              }`}></div>
+              <div
+                className={`w-3 h-3 rounded-full ${
+                  isRecording
+                    ? 'bg-red-500 animate-pulse'
+                    : isAnalyzing
+                      ? 'bg-blue-500 animate-spin'
+                      : threatDetected
+                        ? 'bg-red-500 animate-ping'
+                        : 'bg-green-500'
+                }`}
+              ></div>
               <span className="text-white font-semibold text-lg">{statusMessage}</span>
             </div>
           </div>
@@ -92,9 +93,10 @@ export default function VoiceThreatDetectionDemo() {
               className={`
                 w-40 h-40 rounded-full font-bold text-white text-xl
                 transition-all duration-300 transform hover:scale-110 shadow-2xl
-                ${isRecording
-                  ? 'bg-gradient-to-br from-red-500 to-red-700 animate-pulse'
-                  : 'bg-gradient-to-br from-blue-500 to-purple-600'
+                ${
+                  isRecording
+                    ? 'bg-gradient-to-br from-red-500 to-red-700 animate-pulse'
+                    : 'bg-gradient-to-br from-blue-500 to-purple-600'
                 }
                 ${isAnalyzing ? 'opacity-50 cursor-not-allowed' : 'hover:shadow-3xl'}
               `}
@@ -131,9 +133,7 @@ export default function VoiceThreatDetectionDemo() {
                 <span className="text-3xl">⚠️</span>
               </div>
               <div>
-                <h3 className="text-3xl font-bold text-white mb-1">
-                  THREAT DETECTED!
-                </h3>
+                <h3 className="text-3xl font-bold text-white mb-1">THREAT DETECTED!</h3>
                 <p className="text-red-200 text-lg">Starting emergency countdown...</p>
               </div>
             </div>
@@ -145,12 +145,19 @@ export default function VoiceThreatDetectionDemo() {
               </div>
               <div className="flex justify-between items-center">
                 <span className="text-white font-semibold">Level:</span>
-                <span className={`font-bold text-lg ${
-                  threatData.threatLevel === 'CRITICAL' ? 'text-red-400' :
-                  threatData.threatLevel === 'HIGH' ? 'text-orange-400' :
-                  threatData.threatLevel === 'MEDIUM' ? 'text-yellow-400' :
-                  'text-green-400'
-                }`}>{threatData.threatLevel}</span>
+                <span
+                  className={`font-bold text-lg ${
+                    threatData.threatLevel === 'CRITICAL'
+                      ? 'text-red-400'
+                      : threatData.threatLevel === 'HIGH'
+                        ? 'text-orange-400'
+                        : threatData.threatLevel === 'MEDIUM'
+                          ? 'text-yellow-400'
+                          : 'text-green-400'
+                  }`}
+                >
+                  {threatData.threatLevel}
+                </span>
               </div>
               <div className="flex justify-between items-center">
                 <span className="text-white font-semibold">Confidence:</span>
@@ -229,7 +236,9 @@ export default function VoiceThreatDetectionDemo() {
               </div>
               <div>
                 <p className="text-white font-semibold text-lg">Threat Detection</p>
-                <p className="text-red-200">If threat detected: Siren plays + Emergency alert shown</p>
+                <p className="text-red-200">
+                  If threat detected: Siren plays + Emergency alert shown
+                </p>
               </div>
             </div>
 
@@ -239,7 +248,9 @@ export default function VoiceThreatDetectionDemo() {
               </div>
               <div>
                 <p className="text-white font-semibold text-lg">2-Minute Countdown</p>
-                <p className="text-yellow-200">Click "I am safe" to cancel, or wait for auto-alert</p>
+                <p className="text-yellow-200">
+                  Click "I am safe" to cancel, or wait for auto-alert
+                </p>
               </div>
             </div>
           </div>

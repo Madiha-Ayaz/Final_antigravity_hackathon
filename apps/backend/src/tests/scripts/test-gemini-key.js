@@ -28,7 +28,6 @@ async function testGeminiKey() {
       const response = await result.response;
       console.log('Response:', response.text());
     }
-
   } catch (error) {
     console.log('\n❌ API Key is INVALID or has issues');
     console.log('Error:', error.message);

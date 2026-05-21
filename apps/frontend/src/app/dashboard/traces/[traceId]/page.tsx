@@ -54,7 +54,9 @@ export default function TraceDetailPage() {
   const [trace, setTrace] = useState<TraceSession | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [activeTab, setActiveTab] = useState<'timeline' | 'events' | 'decisions' | 'actions'>('timeline');
+  const [activeTab, setActiveTab] = useState<'timeline' | 'events' | 'decisions' | 'actions'>(
+    'timeline'
+  );
 
   useEffect(() => {
     fetchTrace();
@@ -181,13 +183,16 @@ export default function TraceDetailPage() {
             className="text-blue-600 hover:text-blue-800 mb-4 flex items-center gap-2"
           >
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M15 19l-7-7 7-7"
+              />
             </svg>
             Back to traces
           </button>
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">
-            Trace Details
-          </h1>
+          <h1 className="text-3xl font-bold text-gray-900 mb-2">Trace Details</h1>
           <p className="text-gray-600 font-mono text-sm">{trace.traceId}</p>
         </div>
 
@@ -257,15 +262,27 @@ export default function TraceDetailPage() {
             {/* Timeline Tab */}
             {activeTab === 'timeline' && (
               <div className="space-y-4">
-                {[...trace.events, ...trace.decisionChain.map(d => ({ ...d, type: 'DECISION' })), ...trace.actionHistory.map(a => ({ ...a, type: 'ACTION' }))]
+                {[
+                  ...trace.events,
+                  ...trace.decisionChain.map((d) => ({ ...d, type: 'DECISION' })),
+                  ...trace.actionHistory.map((a) => ({ ...a, type: 'ACTION' })),
+                ]
                   .sort((a, b) => new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime())
                   .map((item: any, idx) => (
                     <div key={idx} className="flex gap-4">
                       <div className="flex flex-col items-center">
-                        <div className={`w-10 h-10 rounded-full flex items-center justify-center text-lg ${
-                          item.severity ? getSeverityColor(item.severity) : 'bg-blue-100 text-blue-800'
-                        }`}>
-                          {item.eventType ? getEventIcon(item.eventType) : item.type === 'DECISION' ? '🎯' : '⚡'}
+                        <div
+                          className={`w-10 h-10 rounded-full flex items-center justify-center text-lg ${
+                            item.severity
+                              ? getSeverityColor(item.severity)
+                              : 'bg-blue-100 text-blue-800'
+                          }`}
+                        >
+                          {item.eventType
+                            ? getEventIcon(item.eventType)
+                            : item.type === 'DECISION'
+                              ? '🎯'
+                              : '⚡'}
                         </div>
                         {idx < trace.events.length - 1 && (
                           <div className="w-0.5 h-full bg-gray-200 mt-2"></div>
@@ -307,7 +324,10 @@ export default function TraceDetailPage() {
             {activeTab === 'events' && (
               <div className="space-y-3">
                 {trace.events.map((event) => (
-                  <div key={event.eventId} className={`border rounded-lg p-4 ${getSeverityColor(event.severity)}`}>
+                  <div
+                    key={event.eventId}
+                    className={`border rounded-lg p-4 ${getSeverityColor(event.severity)}`}
+                  >
                     <div className="flex items-start justify-between mb-2">
                       <div className="flex items-center gap-2">
                         <span className="text-xl">{getEventIcon(event.eventType)}</span>
@@ -334,7 +354,10 @@ export default function TraceDetailPage() {
             {activeTab === 'decisions' && (
               <div className="space-y-4">
                 {trace.decisionChain.map((decision, idx) => (
-                  <div key={decision.nodeId} className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                  <div
+                    key={decision.nodeId}
+                    className="bg-blue-50 border border-blue-200 rounded-lg p-4"
+                  >
                     <div className="flex items-start justify-between mb-2">
                       <div>
                         <div className="text-sm text-blue-600 font-medium mb-1">
@@ -366,7 +389,10 @@ export default function TraceDetailPage() {
             {activeTab === 'actions' && (
               <div className="space-y-3">
                 {trace.actionHistory.map((action) => (
-                  <div key={action.actionId} className="bg-gray-50 border border-gray-200 rounded-lg p-4">
+                  <div
+                    key={action.actionId}
+                    className="bg-gray-50 border border-gray-200 rounded-lg p-4"
+                  >
                     <div className="flex items-start justify-between">
                       <div className="flex-1">
                         <div className="font-semibold text-gray-900">{action.action}</div>
@@ -384,7 +410,9 @@ export default function TraceDetailPage() {
                           </div>
                         )}
                       </div>
-                      <span className={`px-3 py-1 rounded text-xs font-medium ${getStatusColor(action.status)}`}>
+                      <span
+                        className={`px-3 py-1 rounded text-xs font-medium ${getStatusColor(action.status)}`}
+                      >
                         {action.status}
                       </span>
                     </div>

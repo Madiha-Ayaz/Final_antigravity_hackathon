@@ -8,7 +8,10 @@ interface NotificationSetupProps {
   onTokenGenerated?: (token: string) => void;
 }
 
-export const NotificationSetup: React.FC<NotificationSetupProps> = ({ authToken, onTokenGenerated }) => {
+export const NotificationSetup: React.FC<NotificationSetupProps> = ({
+  authToken,
+  onTokenGenerated,
+}) => {
   const { token, permission, isSupported, isLoading, error, requestPermission } = useFCM({
     authToken,
     autoRequest: false,
@@ -43,7 +46,8 @@ export const NotificationSetup: React.FC<NotificationSetupProps> = ({ authToken,
     return (
       <div className="bg-red-50 border border-red-200 rounded-lg p-4">
         <p className="text-sm text-red-800">
-          🚫 Notification permission denied. Please enable notifications in your browser settings to receive emergency alerts.
+          🚫 Notification permission denied. Please enable notifications in your browser settings to
+          receive emergency alerts.
         </p>
       </div>
     );
@@ -73,7 +77,8 @@ export const NotificationSetup: React.FC<NotificationSetupProps> = ({ authToken,
           <div className="flex-1">
             <h3 className="font-semibold text-blue-900 mb-1">Enable Emergency Alerts</h3>
             <p className="text-sm text-blue-800 mb-3">
-              Get instant notifications when emergencies are reported near you or when your help is needed for community validation.
+              Get instant notifications when emergencies are reported near you or when your help is
+              needed for community validation.
             </p>
             <button
               onClick={requestPermission}
@@ -90,11 +95,7 @@ export const NotificationSetup: React.FC<NotificationSetupProps> = ({ authToken,
             </button>
           </div>
         </div>
-        {error && (
-          <p className="text-sm text-red-600 mt-2">
-            Error: {error}
-          </p>
-        )}
+        {error && <p className="text-sm text-red-600 mt-2">Error: {error}</p>}
       </div>
     );
   }

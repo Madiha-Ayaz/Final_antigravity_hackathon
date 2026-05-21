@@ -22,6 +22,7 @@ This is a production-grade monorepo containing:
 SilentSiren AI has been evolved into an **Agentic Crisis Management Engine** meeting all hackathon requirements:
 
 ### 1. Advanced Multi-Agent Workflow
+
 - **Multi-Source Input**: `SignalFusionAgent` aggregates data from ambient voice, GPS coordinates, simulated weather APIs, and traffic/sensor data.
 - **Detected Crisis**: `CrisisVerificationAgent` and `SeverityPredictionAgent` analyze fused signals to confirm incidents and predict spatial-temporal impact (severity, radius).
 - **Action Planning**: `ResourceAllocationAgent` optimizes the dispatch of emergency units (ambulances, police) and `RecoveryAgent` drafts infrastructure restoration plans.
@@ -29,24 +30,26 @@ SilentSiren AI has been evolved into an **Agentic Crisis Management Engine** mee
 - **Outcome**: The `CrisisOrchestrator` centralizes the multi-agent results into a unified outcome sent to the dashboard in real-time.
 
 ### 2. Agent Trace / Logs (Antigravity Trace)
+
 A dedicated `TraceService` captures the full reasoning chain of the AI models:
+
 - **Reasoning Steps**: Agent "Thoughts" (e.g., "Analyzing incoming audio transcript for distress indicators").
 - **Agent Decisions**: Agent "Actions" and "Observations" (e.g., "Fusing multi-modal signals: Confidence 0.88").
 - **Action Execution**: Agent "Conclusions" (e.g., "Allocated 3 units to incident location").
-*These are visualized live on the frontend Dashboard via the `TraceTimeline` component.*
+  _These are visualized live on the frontend Dashboard via the `TraceTimeline` component._
 
 ### 3. Documentation Requirements
+
 - **System Architecture**: Centralized Orchestrator Pattern. A main `CrisisOrchestrator` delegates tasks to specialized agents (SignalFusion, SeverityPrediction, Allocation, etc.), waiting for their JSON-structured output.
 - **Antigravity Usage**: The multi-agent workflow acts as the "brain" of the Command Center, transforming unstructured crisis data (voice panics, weather anomalies) into structured, actionable response plans.
-- **Tools/APIs Used**: 
+- **Tools/APIs Used**:
   - **OpenRouter (Gemini 1.5 Flash, Claude 3, DeepSeek)**: Used as the core AI reasoning mesh with automatic fallbacks.
   - **PositionStack (Geocoding)**: Translates raw GPS into actionable street addresses.
   - **Twilio Voice & SMS**: Automated emergency dispatch.
   - **Google Maps JS API**: Real-time incident visualization.
-- **Assumptions**: 
+- **Assumptions**:
   - Real-world sensor APIs (weather, traffic) are mocked via `fusion.service.ts` for demo purposes.
   - Simulated units (ambulances, police) act instantly within the simulation logic.
-
 
 ## 📁 Project Structure
 
@@ -217,23 +220,26 @@ npm run test:coverage     # Coverage report
 
 ### Live URLs
 
-| Service  | URL |
-|----------|-----|
-| Frontend | https://hackathon-main-flax.vercel.app |
+| Service  | URL                                                             |
+| -------- | --------------------------------------------------------------- |
+| Frontend | https://hackathon-main-flax.vercel.app                          |
 | Backend  | https://duaahusaainhussain-final-antigravity-hackathon.hf.space |
 
 ### Vercel Deployment (Frontend)
 
 #### Prerequisites
+
 - Vercel CLI installed: `npm i -g vercel`
 - Vercel account: https://vercel.com
 
 #### Step 1: Login to Vercel
+
 ```bash
 vercel login
 ```
 
 #### Step 2: Set Environment Variables
+
 ```bash
 # Backend API URL (Hugging Face Spaces)
 vercel env add NEXT_PUBLIC_API_URL production
@@ -274,12 +280,15 @@ vercel env add TEXTMEBOT_RECIPIENT_PHONE production
 ```
 
 #### Step 3: Deploy
+
 ```bash
 vercel --prod
 ```
 
 #### Step 4: Fix Build Issues (if needed)
+
 For monorepo with Windows-only packages, ensure `package.json` has:
+
 ```json
 {
   "optionalDependencies": {
@@ -289,6 +298,7 @@ For monorepo with Windows-only packages, ensure `package.json` has:
 ```
 
 And `vercel.json` in root:
+
 ```json
 {
   "buildCommand": "npm run build --workspace=apps/frontend",
@@ -301,11 +311,13 @@ And `vercel.json` in root:
 ### Google OAuth Setup
 
 #### Step 1: Get OAuth Credentials
+
 1. Go to Firebase Console: https://console.firebase.google.com
 2. Select your project → Authentication → Sign-in method → Google
 3. Note the **Web client ID** and **Web secret**
 
 #### Step 2: Configure Google Cloud Console
+
 1. Go to: https://console.cloud.google.com/apis/credentials
 2. Click on your OAuth 2.0 Client ID
 3. Add to **Authorized JavaScript origins**:
@@ -315,6 +327,7 @@ And `vercel.json` in root:
 5. Save
 
 #### Step 3: Configure Firebase
+
 1. Go to Firebase Console → Authentication → Settings → Authorized domains
 2. Add your Vercel domain: `your-vercel-domain.vercel.app`
 
@@ -424,11 +437,12 @@ These proactive measures ensure rapid dissemination of critical information to d
 
 ### Visual Proof
 
+| WhatsApp Alert 1                                                        | WhatsApp Alert 2                                                        |
+| ----------------------------------------------------------------------- | ----------------------------------------------------------------------- |
+| ![WhatsApp Alert 1](WhatsApp%20Image%202026-05-21%20at%2010.59.57.jpeg) | ![WhatsApp Alert 2](WhatsApp%20Image%202026-05-21%20at%2011.00.17.jpeg) |
 
-
-
-|  WhatsApp Copy | Call Alert  |
-|------------|---------------|
+| Call Alert                    | WhatsApp Copy                                                                        |
+| ----------------------------- | ------------------------------------------------------------------------------------ |
 | ![Call Alert](pics/call.jpeg) | ![WhatsApp Copy](pics/WhatsApp%20Image%202026-05-21%20at%2010.59.57%20copy%202.jpeg) |
 
 ### DevOps

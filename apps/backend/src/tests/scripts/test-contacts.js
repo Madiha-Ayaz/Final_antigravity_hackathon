@@ -94,14 +94,11 @@ async function testDeleteContact(contactId) {
   try {
     log(`Deleting contact ${contactId}...`, 'cyan');
 
-    const response = await axios.delete(
-      `${API_BASE_URL}/emergency-contacts/${contactId}`,
-      {
-        headers: {
-          Authorization: `Bearer ${TEST_TOKEN}`,
-        },
-      }
-    );
+    const response = await axios.delete(`${API_BASE_URL}/emergency-contacts/${contactId}`, {
+      headers: {
+        Authorization: `Bearer ${TEST_TOKEN}`,
+      },
+    });
 
     log('✓ Contact deleted', 'green');
     console.log('Message:', response.data.message);

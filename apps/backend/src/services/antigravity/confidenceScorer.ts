@@ -34,10 +34,7 @@ class ConfidenceScorer {
     }));
 
     // Calculate weighted average
-    const overallScore = normalizedFactors.reduce(
-      (sum, f) => sum + f.value * f.weight,
-      0
-    );
+    const overallScore = normalizedFactors.reduce((sum, f) => sum + f.value * f.weight, 0);
 
     // Determine reliability based on number of factors and variance
     const reliability = this.determineReliability(normalizedFactors, overallScore);
@@ -132,11 +129,7 @@ class ConfidenceScorer {
   /**
    * Score location accuracy
    */
-  scoreLocationAccuracy(
-    accuracy: number,
-    hasAddress: boolean,
-    timestamp: Date
-  ): ConfidenceScore {
+  scoreLocationAccuracy(accuracy: number, hasAddress: boolean, timestamp: Date): ConfidenceScore {
     const ageMinutes = (Date.now() - timestamp.getTime()) / 1000 / 60;
     const freshnessScore = Math.max(0, 1 - ageMinutes / 10); // Decay over 10 minutes
 
@@ -266,8 +259,7 @@ class ConfidenceScorer {
   ): 'LOW' | 'MEDIUM' | 'HIGH' | 'VERY_HIGH' {
     // Calculate variance to measure consistency
     const variance =
-      factors.reduce((sum, f) => sum + Math.pow(f.value - overallScore, 2), 0) /
-      factors.length;
+      factors.reduce((sum, f) => sum + Math.pow(f.value - overallScore, 2), 0) / factors.length;
 
     const standardDeviation = Math.sqrt(variance);
 
@@ -286,13 +278,8 @@ class ConfidenceScorer {
   /**
    * Generate reasoning text
    */
-  private generateReasoning(
-    factors: ConfidenceFactor[],
-    overallScore: number
-  ): string {
-    const topFactors = factors
-      .sort((a, b) => b.value * b.weight - a.value * a.weight)
-      .slice(0, 3);
+  private generateReasoning(factors: ConfidenceFactor[], overallScore: number): string {
+    const topFactors = factors.sort((a, b) => b.value * b.weight - a.value * a.weight).slice(0, 3);
 
     const reasoningParts = [
       `Overall confidence: ${(overallScore * 100).toFixed(1)}%`,
@@ -330,9 +317,7 @@ class ConfidenceScorer {
     // Check for weak factors
     const weakFactors = factors.filter((f) => f.value < 0.5);
     if (weakFactors.length > 0) {
-      recommendations.push(
-        `Improve: ${weakFactors.map((f) => f.name).join(', ')}`
-      );
+      recommendations.push(`Improve: ${weakFactors.map((f) => f.name).join(', ')}`);
     }
 
     return recommendations;
@@ -362,9 +347,7 @@ class ConfidenceScorer {
   /**
    * Get threat level from confidence score
    */
-  getThreatLevel(
-    confidenceScore: number
-  ): 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL' {
+  getThreatLevel(confidenceScore: number): 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL' {
     if (confidenceScore >= 0.9) return 'CRITICAL';
     if (confidenceScore >= 0.7) return 'HIGH';
     if (confidenceScore >= 0.5) return 'MEDIUM';

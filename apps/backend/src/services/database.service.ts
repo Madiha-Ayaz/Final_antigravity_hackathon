@@ -76,7 +76,10 @@ class DatabaseService {
     }
   }
 
-  async query<T extends Record<string, any> = any>(text: string, params?: any[]): Promise<QueryResult<T>> {
+  async query<T extends Record<string, any> = any>(
+    text: string,
+    params?: any[]
+  ): Promise<QueryResult<T>> {
     if (!this.pool) {
       throw new Error('Database pool not initialized');
     }

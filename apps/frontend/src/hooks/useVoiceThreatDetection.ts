@@ -73,7 +73,7 @@ export function useVoiceThreatDetection() {
 
       return true;
     } catch (error) {
-      setState(prev => ({
+      setState((prev) => ({
         ...prev,
         error: 'Failed to access microphone',
       }));
@@ -87,7 +87,7 @@ export function useVoiceThreatDetection() {
   const stopRecordingAndAnalyze = useCallback(
     async (contacts: EmergencyContact[], location?: LocationData) => {
       if (!audioRecorderRef.current) {
-        setState(prev => ({
+        setState((prev) => ({
           ...prev,
           error: 'No active recording',
         }));
@@ -96,7 +96,7 @@ export function useVoiceThreatDetection() {
 
       return new Promise<void>((resolve) => {
         audioRecorderRef.current!.onstop = async () => {
-          setState(prev => ({ ...prev, isAnalyzing: true, error: null }));
+          setState((prev) => ({ ...prev, isAnalyzing: true, error: null }));
 
           try {
             // Create audio blob
@@ -117,7 +117,7 @@ export function useVoiceThreatDetection() {
               {
                 headers: {
                   'Content-Type': 'multipart/form-data',
-                  ...(token ? { 'Authorization': `Bearer ${token}` } : {}),
+                  ...(token ? { Authorization: `Bearer ${token}` } : {}),
                 },
               }
             );
@@ -136,21 +136,21 @@ export function useVoiceThreatDetection() {
 
               console.log('🤖 Voice analysis result:', threat);
 
-              setState(prev => ({
+              setState((prev) => ({
                 ...prev,
                 isAnalyzing: false,
                 threat,
                 sirenActive: threat.shouldTriggerSiren,
               }));
             } else {
-              setState(prev => ({
+              setState((prev) => ({
                 ...prev,
                 isAnalyzing: false,
                 error: response.data.error || 'Analysis failed',
               }));
             }
           } catch (error) {
-            setState(prev => ({
+            setState((prev) => ({
               ...prev,
               isAnalyzing: false,
               error: 'Failed to analyze voice',
@@ -163,7 +163,7 @@ export function useVoiceThreatDetection() {
         };
 
         audioRecorderRef.current!.stop();
-        audioRecorderRef.current!.stream.getTracks().forEach(track => track.stop());
+        audioRecorderRef.current!.stream.getTracks().forEach((track) => track.stop());
       });
     },
     []
@@ -192,7 +192,7 @@ export function useVoiceThreatDetection() {
         );
 
         if (response.data.success) {
-          setState(prev => ({
+          setState((prev) => ({
             ...prev,
             threat: null,
             countdown: null,
@@ -200,7 +200,7 @@ export function useVoiceThreatDetection() {
           }));
         }
       } catch (error) {
-        setState(prev => ({
+        setState((prev) => ({
           ...prev,
           error: 'Failed to cancel emergency',
         }));
@@ -222,12 +222,12 @@ export function useVoiceThreatDetection() {
         }
       );
 
-      setState(prev => ({
+      setState((prev) => ({
         ...prev,
         sirenActive: false,
       }));
     } catch (error) {
-      setState(prev => ({
+      setState((prev) => ({
         ...prev,
         error: 'Failed to stop siren',
       }));
@@ -247,7 +247,7 @@ export function useVoiceThreatDetection() {
       );
 
       if (response.data.success) {
-        setState(prev => ({
+        setState((prev) => ({
           ...prev,
           sirenActive: response.data.data.sirenActive,
           countdown: response.data.data.activeCountdown

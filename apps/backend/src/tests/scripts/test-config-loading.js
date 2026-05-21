@@ -3,8 +3,18 @@ require('dotenv').config({ path: '.env' });
 
 console.log('Environment variables check:');
 console.log('================================');
-console.log('GEMINI_API_KEY:', process.env.GEMINI_API_KEY ? `${process.env.GEMINI_API_KEY.substring(0, 15)}... (length: ${process.env.GEMINI_API_KEY.length})` : 'NOT FOUND');
-console.log('OPENROUTER_API_KEY:', process.env.OPENROUTER_API_KEY ? `${process.env.OPENROUTER_API_KEY.substring(0, 15)}... (length: ${process.env.OPENROUTER_API_KEY.length})` : 'NOT FOUND');
+console.log(
+  'GEMINI_API_KEY:',
+  process.env.GEMINI_API_KEY
+    ? `${process.env.GEMINI_API_KEY.substring(0, 15)}... (length: ${process.env.GEMINI_API_KEY.length})`
+    : 'NOT FOUND'
+);
+console.log(
+  'OPENROUTER_API_KEY:',
+  process.env.OPENROUTER_API_KEY
+    ? `${process.env.OPENROUTER_API_KEY.substring(0, 15)}... (length: ${process.env.OPENROUTER_API_KEY.length})`
+    : 'NOT FOUND'
+);
 console.log('GEMINI_MODEL:', process.env.GEMINI_MODEL || 'NOT SET');
 console.log('================================');
 
@@ -33,7 +43,9 @@ async function testWithLoadedConfig() {
     console.log('Error:', error.message);
 
     if (error.message.includes('API key not valid')) {
-      console.log('\n🔑 Solution: Generate a new API key from https://aistudio.google.com/app/apikey');
+      console.log(
+        '\n🔑 Solution: Generate a new API key from https://aistudio.google.com/app/apikey'
+      );
     }
   }
 }

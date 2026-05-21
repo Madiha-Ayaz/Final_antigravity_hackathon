@@ -124,7 +124,11 @@ export const onMessageListener = async (
   }
 };
 
-export const saveFCMToken = async (token: string, apiUrl: string, authToken: string): Promise<boolean> => {
+export const saveFCMToken = async (
+  token: string,
+  apiUrl: string,
+  authToken: string
+): Promise<boolean> => {
   try {
     const response = await fetch(`${apiUrl}/api/fcm/save-token`, {
       method: 'POST',

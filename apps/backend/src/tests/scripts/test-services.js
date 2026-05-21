@@ -17,7 +17,7 @@ async function testDatabase() {
   console.log('2. Testing Neon Database Connection...');
   const pool = new Pool({
     connectionString: process.env.DATABASE_URL,
-    ssl: { rejectUnauthorized: false }
+    ssl: { rejectUnauthorized: false },
   });
 
   try {
@@ -25,7 +25,10 @@ async function testDatabase() {
     const result = await client.query('SELECT NOW(), version()');
     console.log('   ✓ Database connected successfully');
     console.log('   Server time:', result.rows[0].now);
-    console.log('   PostgreSQL version:', result.rows[0].version.split(' ')[0] + ' ' + result.rows[0].version.split(' ')[1]);
+    console.log(
+      '   PostgreSQL version:',
+      result.rows[0].version.split(' ')[0] + ' ' + result.rows[0].version.split(' ')[1]
+    );
 
     // Check if tables exist
     const tablesResult = await client.query(`
@@ -36,7 +39,7 @@ async function testDatabase() {
     `);
     console.log('   Tables found:', tablesResult.rows.length);
     if (tablesResult.rows.length > 0) {
-      console.log('   Table names:', tablesResult.rows.map(r => r.table_name).join(', '));
+      console.log('   Table names:', tablesResult.rows.map((r) => r.table_name).join(', '));
     } else {
       console.log('   ⚠ No tables found - migration needed');
     }
@@ -60,10 +63,12 @@ async function testGemini() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          contents: [{
-            parts: [{ text: 'Say "API working" in 2 words' }]
-          }]
-        })
+          contents: [
+            {
+              parts: [{ text: 'Say "API working" in 2 words' }],
+            },
+          ],
+        }),
       }
     );
 
@@ -88,16 +93,16 @@ async function testOpenRouter() {
     const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
       method: 'POST',
       headers: {
-        'Authorization': `Bearer ${process.env.OPENROUTER_API_KEY}`,
+        Authorization: `Bearer ${process.env.OPENROUTER_API_KEY}`,
         'Content-Type': 'application/json',
         'HTTP-Referer': 'http://localhost:3000',
-        'X-Title': 'SilentSiren Test'
+        'X-Title': 'SilentSiren Test',
       },
       body: JSON.stringify({
         model: 'meta-llama/llama-3.2-3b-instruct:free',
         messages: [{ role: 'user', content: 'Say "API working" in 2 words' }],
-        max_tokens: 20
-      })
+        max_tokens: 20,
+      }),
     });
 
     if (response.ok) {
