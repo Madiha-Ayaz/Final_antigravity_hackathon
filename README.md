@@ -430,7 +430,7 @@ These proactive measures ensure rapid dissemination of critical information to d
 
 | Call Alert | WhatsApp Copy |
 |------------|---------------|
-| ![Call Alert](call.jpeg) | ![WhatsApp Copy](WhatsApp%20Image%202026-05-21%20at%2010.59.57%20copy.jpeg) |
+| ![Call Alert](pics/call.jpeg) | ![WhatsApp Copy](pics/WhatsApp%20Image%202026-05-21%20at%2010.59.57%20copy%202.jpeg) |
 
 ### DevOps
 
