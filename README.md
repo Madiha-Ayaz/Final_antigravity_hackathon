@@ -428,6 +428,10 @@ These proactive measures ensure rapid dissemination of critical information to d
 |------------------|------------------|
 | ![WhatsApp Alert 1](WhatsApp%20Image%202026-05-21%20at%2010.59.57.jpeg) | ![WhatsApp Alert 2](WhatsApp%20Image%202026-05-21%20at%2011.00.17.jpeg) |
 
+| Call Alert | WhatsApp Copy |
+|------------|---------------|
+| ![Call Alert](call.jpeg) | ![WhatsApp Copy](WhatsApp%20Image%202026-05-21%20at%2010.59.57%20copy.jpeg) |
+
 ### DevOps
 
 - Docker & Docker Compose
