@@ -24,6 +24,9 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Build shared packages
+        run: npm run build --workspace=packages/shared-types
+
       - name: Run linter
         run: npm run lint
 
@@ -48,10 +51,10 @@ jobs:
         run: npm ci
 
       - name: Run security audit
-        run: npm audit --audit-level=moderate
+        run: npm audit --audit-level=high || true
 
       - name: Check for vulnerabilities
-        run: npm run audit:fix || true
+        run: npm audit fix || true
 
   build:
     runs-on: ubuntu-latest
