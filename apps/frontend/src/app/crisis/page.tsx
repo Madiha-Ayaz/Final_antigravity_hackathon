@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, Suspense } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
@@ -30,6 +30,14 @@ interface EmergencyResource {
 }
 
 export default function CrisisDashboard() {
+  return (
+    <Suspense fallback={<div className="min-h-screen bg-slate-900 flex items-center justify-center"><div className="text-white">Loading...</div></div>}>
+      <CrisisDashboardContent />
+    </Suspense>
+  );
+}
+
+function CrisisDashboardContent() {
   const { location: gpsLocation, getCurrentLocation } = useGPSLocation();
   const searchParams = useSearchParams();
   const [activeScenario, setActiveScenario] = useState<string | null>(null);

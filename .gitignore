@@ -17,6 +17,7 @@ out/
 .env
 .env*.local
 .env.production
+.env.vercel
 
 # IDE
 .vscode/
@@ -42,3 +43,4 @@ docker-compose.override.yml
 .turbo
 .cache
 *.tsbuildinfo
+.vercel

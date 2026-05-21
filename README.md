@@ -215,6 +215,109 @@ npm run test:coverage     # Coverage report
 
 ## 🚢 Deployment
 
+### Live URLs
+
+| Service  | URL |
+|----------|-----|
+| Frontend | https://hackathon-main-flax.vercel.app |
+| Backend  | https://duaahusaainhussain-final-antigravity-hackathon.hf.space |
+
+### Vercel Deployment (Frontend)
+
+#### Prerequisites
+- Vercel CLI installed: `npm i -g vercel`
+- Vercel account: https://vercel.com
+
+#### Step 1: Login to Vercel
+```bash
+vercel login
+```
+
+#### Step 2: Set Environment Variables
+```bash
+# Backend API URL (Hugging Face Spaces)
+vercel env add NEXT_PUBLIC_API_URL production
+# Enter: https://duaahusaainhussain-final-antigravity-hackathon.hf.space
+
+# App URL
+vercel env add NEXT_PUBLIC_APP_URL production
+# Enter: https://hackathon-main-flax.vercel.app
+
+# NextAuth
+vercel env add NEXTAUTH_URL production
+# Enter: https://hackathon-main-flax.vercel.app
+vercel env add NEXTAUTH_SECRET production
+
+# Google OAuth
+vercel env add GOOGLE_CLIENT_ID production
+vercel env add GOOGLE_CLIENT_SECRET production
+
+# Firebase (NEXT_PUBLIC_ vars)
+vercel env add NEXT_PUBLIC_FIREBASE_API_KEY production
+vercel env add NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN production
+vercel env add NEXT_PUBLIC_FIREBASE_PROJECT_ID production
+vercel env add NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET production
+vercel env add NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID production
+vercel env add NEXT_PUBLIC_FIREBASE_APP_ID production
+
+# AI Services
+vercel env add GEMINI_API_KEY production
+vercel env add GEMINI_MODEL production
+vercel env add OPENROUTER_API_KEY production
+
+# Database
+vercel env add DATABASE_URL production
+
+# TextMeBot
+vercel env add TEXTMEBOT_API_KEY production
+vercel env add TEXTMEBOT_RECIPIENT_PHONE production
+```
+
+#### Step 3: Deploy
+```bash
+vercel --prod
+```
+
+#### Step 4: Fix Build Issues (if needed)
+For monorepo with Windows-only packages, ensure `package.json` has:
+```json
+{
+  "optionalDependencies": {
+    "@next/swc-win32-x64-msvc": "^16.2.6"
+  }
+}
+```
+
+And `vercel.json` in root:
+```json
+{
+  "buildCommand": "npm run build --workspace=apps/frontend",
+  "outputDirectory": "apps/frontend/.next",
+  "installCommand": "npm install --ignore-optional",
+  "framework": "nextjs"
+}
+```
+
+### Google OAuth Setup
+
+#### Step 1: Get OAuth Credentials
+1. Go to Firebase Console: https://console.firebase.google.com
+2. Select your project → Authentication → Sign-in method → Google
+3. Note the **Web client ID** and **Web secret**
+
+#### Step 2: Configure Google Cloud Console
+1. Go to: https://console.cloud.google.com/apis/credentials
+2. Click on your OAuth 2.0 Client ID
+3. Add to **Authorized JavaScript origins**:
+   - `https://your-vercel-domain.vercel.app`
+4. Add to **Authorized redirect URIs**:
+   - `https://your-vercel-domain.vercel.app/api/auth/callback/google`
+5. Save
+
+#### Step 3: Configure Firebase
+1. Go to Firebase Console → Authentication → Settings → Authorized domains
+2. Add your Vercel domain: `your-vercel-domain.vercel.app`
+
 ### Railway Deployment
 
 1. **Install Railway CLI**

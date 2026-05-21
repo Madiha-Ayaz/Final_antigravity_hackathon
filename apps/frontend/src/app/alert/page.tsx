@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, Suspense } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
@@ -19,6 +19,14 @@ interface AlertResult {
 }
 
 export default function AlertPage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen bg-slate-900 flex items-center justify-center"><div className="text-white">Loading...</div></div>}>
+      <AlertPageContent />
+    </Suspense>
+  );
+}
+
+function AlertPageContent() {
   const router = useRouter();
   const { location: gpsLocation, error: gpsError, loading: gpsLoading, getCurrentLocation, watchLocation, clearWatch } = useGPSLocation();
   const searchParams = useSearchParams();
