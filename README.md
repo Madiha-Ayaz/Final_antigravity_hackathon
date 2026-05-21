@@ -413,6 +413,21 @@ docker-compose -f docker-compose.yml -f docker-compose.prod.yml up -d
 - Web Audio API
 - MediaRecorder API
 
+## 🚨 Emergency Communication Flow
+
+Upon activation of the siren and successful voice threat detection, the system initiates a critical emergency communication protocol using Twilio. This involves:
+
+1.  **Automated Voice Calls:** Placing immediate voice calls to pre-configured emergency contacts, alerting them to the detected threat and providing critical incident details.
+2.  **SMS Notifications:** Sending detailed SMS messages to emergency contacts, including a link to the incident monitoring page and relevant instructions.
+
+These proactive measures ensure rapid dissemination of critical information to designated contacts, significantly enhancing the speed and effectiveness of emergency response.
+
+### Visual Proof
+
+| WhatsApp Alert 1 | WhatsApp Alert 2 |
+|------------------|------------------|
+| ![WhatsApp Alert 1](WhatsApp%20Image%202026-05-21%20at%2010.59.57.jpeg) | ![WhatsApp Alert 2](WhatsApp%20Image%202026-05-21%20at%2011.00.17.jpeg) |
+
 ### DevOps
 
 - Docker & Docker Compose
