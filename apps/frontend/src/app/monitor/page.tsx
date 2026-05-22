@@ -55,7 +55,7 @@ export default function AudioMonitorPage() {
     startListening,
     stopListening,
   } = useAudioMonitor();
-  const { isDetecting, lastDetection, detectionCount, startDetection, stopDetection } =
+  const { isDetecting, lastDetection, detectionCount, startDetection, stopDetection, error: wakeError } =
     useWakePhraseDetection();
   const {
     startRecording,
@@ -120,9 +120,16 @@ export default function AudioMonitorPage() {
     }
   };
 
-  // Auto-start monitoring on page load
+  // Detect if running as PWA on mobile
+  const isMobileDevice = typeof window !== 'undefined' && typeof navigator !== 'undefined' && (
+    /Android|iPhone|iPad|iPod/i.test(navigator.userAgent) ||
+    window.matchMedia('(display-mode: standalone)').matches ||
+    (window.navigator as any).standalone === true
+  );
+
+  // Auto-start monitoring on page load — but NOT on mobile (requires user gesture for mic)
   useEffect(() => {
-    if (!autoStarted && isSupported) {
+    if (!autoStarted && isSupported && !isMobileDevice) {
       handleStart();
       setAutoStarted(true);
     }
@@ -384,12 +391,14 @@ export default function AudioMonitorPage() {
 
   const handleStart = async () => {
     try {
-      await startListening();
-      const mediaStream = await navigator.mediaDevices.getUserMedia({ audio: true });
-      setStream(mediaStream);
-      await startRecording(mediaStream);
-      requestPosition();
-      setIsActive(true);
+      const mediaStream = await startListening();
+      if (mediaStream) {
+        setStream(mediaStream);
+        await startRecording(mediaStream);
+        requestPosition();
+        setIsActive(true);
+      }
+      // If mediaStream is null, startListening already set the error state
     } catch (error) {
       console.error('Failed to start monitoring:', error);
     }
@@ -654,6 +663,26 @@ export default function AudioMonitorPage() {
               <div className="mt-3 sm:mt-4 p-3 sm:p-4 bg-red-500/20 border-2 border-red-500/50 rounded-xl sm:rounded-2xl backdrop-blur-sm">
                 <p className="text-red-300 font-semibold text-xs sm:text-sm">
                   ⚠️ Audio Error: {audioError}
+                </p>
+              </div>
+            )}
+
+            {wakeError && (
+              <div className="mt-3 sm:mt-4 p-3 sm:p-4 bg-yellow-500/20 border-2 border-yellow-500/50 rounded-xl sm:rounded-2xl backdrop-blur-sm">
+                <p className="text-yellow-300 font-semibold text-xs sm:text-sm">
+                  ⚠️ Voice Detection: {wakeError}
+                </p>
+              </div>
+            )}
+
+            {/* Mobile: show tap-to-start prompt instead of auto-starting */}
+            {!isActive && isMobileDevice && (
+              <div className="mt-3 sm:mt-4 p-4 sm:p-5 bg-purple-500/20 border-2 border-purple-500/50 rounded-xl sm:rounded-2xl backdrop-blur-sm text-center">
+                <p className="text-purple-200 font-bold text-sm sm:text-base mb-2">
+                  Tap "Start Protection" to begin voice monitoring
+                </p>
+                <p className="text-purple-300 text-xs">
+                  Mobile requires user interaction to access microphone
                 </p>
               </div>
             )}

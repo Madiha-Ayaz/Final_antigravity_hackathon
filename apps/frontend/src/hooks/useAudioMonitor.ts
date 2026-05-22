@@ -49,13 +49,13 @@ export function useAudioMonitor(config: Partial<AudioConfig> = {}) {
     };
   }, []);
 
-  const startListening = useCallback(async () => {
+  const startListening = useCallback(async (): Promise<MediaStream | null> => {
     if (!state.isSupported) {
       setState((prev) => ({
         ...prev,
         error: 'Audio monitoring not supported in this browser',
       }));
-      return;
+      return null;
     }
 
     try {
@@ -71,6 +71,12 @@ export function useAudioMonitor(config: Partial<AudioConfig> = {}) {
 
       const AudioContextClass = window.AudioContext || (window as any).webkitAudioContext;
       const audioContext = new AudioContextClass({ sampleRate: fullConfig.sampleRate });
+
+      // Mobile browsers suspend AudioContext — resume it
+      if (audioContext.state === 'suspended') {
+        await audioContext.resume();
+      }
+
       const analyser = audioContext.createAnalyser();
       const source = audioContext.createMediaStreamSource(stream);
 
@@ -89,6 +95,7 @@ export function useAudioMonitor(config: Partial<AudioConfig> = {}) {
       }));
 
       monitorAudioLevel();
+      return stream;
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'Failed to access microphone';
       setState((prev) => ({
@@ -96,6 +103,7 @@ export function useAudioMonitor(config: Partial<AudioConfig> = {}) {
         error: errorMessage,
         isListening: false,
       }));
+      return null;
     }
   }, [state.isSupported, fullConfig.sampleRate, fullConfig.channels]);
 

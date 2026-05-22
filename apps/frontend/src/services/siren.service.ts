@@ -18,10 +18,15 @@ export class SirenService {
   /**
    * Play emergency siren sound
    */
-  playSiren(): void {
+  async playSiren(): Promise<void> {
     if (!this.audioContext || this.isPlaying) return;
 
     try {
+      // Mobile browsers suspend AudioContext — resume it first
+      if (this.audioContext.state === 'suspended') {
+        await this.audioContext.resume();
+      }
+
       // Create oscillator for siren sound
       this.oscillator = this.audioContext.createOscillator();
       this.gainNode = this.audioContext.createGain();
@@ -41,8 +46,8 @@ export class SirenService {
         this.oscillator.frequency.setValueAtTime(i % 2 === 0 ? 800 : 1000, time);
       }
 
-      // Set volume
-      this.gainNode.gain.setValueAtTime(0.5, this.audioContext.currentTime);
+      // Set volume — higher for mobile audibility
+      this.gainNode.gain.setValueAtTime(0.8, this.audioContext.currentTime);
 
       // Start playing
       this.oscillator.start();
@@ -53,7 +58,7 @@ export class SirenService {
         this.stopSiren();
       }, 5000);
 
-      console.log('🚨 Siren started playing');
+      console.log('🚨 Siren started playing (AudioContext state:', this.audioContext.state, ')');
     } catch (error) {
       console.error('Failed to play siren:', error);
     }

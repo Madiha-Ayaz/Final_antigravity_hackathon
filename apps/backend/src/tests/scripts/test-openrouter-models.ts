@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { config } from '../packages/config/src';
+import { config } from '@silentsiren/config';
 
 async function listModels() {
   try {

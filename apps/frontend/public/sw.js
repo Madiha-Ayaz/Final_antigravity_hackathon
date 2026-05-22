@@ -3,17 +3,13 @@ const CACHE_NAME = 'silentsiren-v2';
 const STATIC_CACHE = 'silentsiren-static-v2';
 const DYNAMIC_CACHE = 'silentsiren-dynamic-v2';
 
+// Only cache static assets and the shell — dynamic Next.js pages are cached on first visit
 const urlsToCache = [
   '/',
   '/manifest.json',
   '/icon.svg',
   '/icon-192.png',
   '/icon-512.png',
-  '/dashboard',
-  '/monitor',
-  '/contacts',
-  '/alert',
-  '/crisis',
 ];
 
 // Install event - cache static resources

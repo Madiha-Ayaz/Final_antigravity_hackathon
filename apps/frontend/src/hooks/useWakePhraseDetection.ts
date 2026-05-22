@@ -13,10 +13,22 @@ interface WakePhraseState {
   isDetecting: boolean;
   lastDetection: WakePhraseDetection | null;
   detectionCount: number;
+  error: string | null;
 }
 
 const DETECTION_THRESHOLD = 0.6;
 const COOLDOWN_MS = 2000;
+const MOBILE_RESTART_DELAY = 300;
+
+// Detect if running as installed PWA on mobile (safe for SSR)
+function isMobilePWA(): boolean {
+  if (typeof window === 'undefined' || typeof navigator === 'undefined') return false;
+  const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+  const isStandalone =
+    window.matchMedia('(display-mode: standalone)').matches ||
+    (window.navigator as any).standalone === true;
+  return isMobile || isStandalone;
+}
 
 // Centralized category mapping — matches backend/src/prompts/index.ts
 function classifyPhrase(phrase: string): EmergencyCategory {
@@ -88,11 +100,14 @@ export function useWakePhraseDetection() {
     isDetecting: false,
     lastDetection: null,
     detectionCount: 0,
+    error: null,
   });
 
   const lastDetectionTimeRef = useRef<number>(0);
   const recognitionRef = useRef<any>(null);
   const isDetectingRef = useRef<boolean>(false);
+  const restartCountRef = useRef<number>(0);
+  const maxRestarts = isMobilePWA() ? 10 : 5;
 
   // Create SpeechRecognition ONCE on mount
   useEffect(() => {
@@ -101,14 +116,27 @@ export function useWakePhraseDetection() {
 
     if (!SpeechRecognition) {
       console.warn('Speech recognition not supported in this browser');
+      setState((prev) => ({
+        ...prev,
+        error: 'Speech recognition not supported. Use Chrome or Edge.',
+      }));
       return;
     }
 
     const recognition = new SpeechRecognition();
-    recognition.continuous = true;
-    recognition.interimResults = true;
-    recognition.lang = 'en-US';
-    recognition.maxAlternatives = 3;
+
+    // Mobile PWA: use slightly different settings for reliability
+    if (isMobilePWA()) {
+      recognition.continuous = true;
+      recognition.interimResults = true;
+      recognition.lang = 'en-US';
+      recognition.maxAlternatives = 3;
+    } else {
+      recognition.continuous = true;
+      recognition.interimResults = true;
+      recognition.lang = 'en-US';
+      recognition.maxAlternatives = 3;
+    }
 
     recognition.onresult = (event: any) => {
       const now = Date.now();
@@ -143,6 +171,7 @@ export function useWakePhraseDetection() {
                 ...prev,
                 lastDetection: detection,
                 detectionCount: prev.detectionCount + 1,
+                error: null,
               }));
 
               return;
@@ -154,23 +183,74 @@ export function useWakePhraseDetection() {
 
     recognition.onerror = (event: any) => {
       console.error('Speech recognition error:', event.error);
+
+      // On mobile, 'not-allowed' means mic permission denied
+      if (event.error === 'not-allowed') {
+        setState((prev) => ({
+          ...prev,
+          error: 'Microphone permission denied. Please allow microphone access.',
+        }));
+        isDetectingRef.current = false;
+        return;
+      }
+
+      // 'network' error common on mobile — restart after delay
+      if (event.error === 'network') {
+        setState((prev) => ({
+          ...prev,
+          error: 'Network error. Speech recognition needs internet.',
+        }));
+        return;
+      }
+
+      // These errors are non-fatal, just continue
       if (event.error === 'no-speech' || event.error === 'aborted') {
         return;
       }
     };
 
     recognition.onend = () => {
-      // Use ref to avoid stale closure
+      // Auto-restart if still detecting — with mobile retry logic
       if (isDetectingRef.current) {
-        try {
-          recognition.start();
-        } catch (error) {
-          console.error('Failed to restart recognition:', error);
+        restartCountRef.current++;
+
+        if (restartCountRef.current > maxRestarts) {
+          console.warn('Speech recognition restart limit reached');
+          setState((prev) => ({
+            ...prev,
+            error: 'Speech recognition stopped. Tap "Start" to restart.',
+          }));
+          isDetectingRef.current = false;
+          setState((prev) => ({ ...prev, isDetecting: false }));
+          return;
         }
+
+        // Mobile needs a small delay before restart
+        const delay = isMobilePWA() ? MOBILE_RESTART_DELAY : 100;
+        setTimeout(() => {
+          if (isDetectingRef.current) {
+            try {
+              recognition.start();
+              console.log('🎤 Speech recognition restarted (attempt', restartCountRef.current, ')');
+            } catch (error) {
+              console.error('Failed to restart recognition:', error);
+              // On mobile, try creating a new instance
+              if (isMobilePWA()) {
+                isDetectingRef.current = false;
+                setState((prev) => ({ ...prev, isDetecting: false }));
+              }
+            }
+          }
+        }, delay);
       }
     };
 
+    recognition.onspeechstart = () => {
+      console.log('🎤 Speech detected, listening...');
+    };
+
     recognitionRef.current = recognition;
+    console.log('🎤 SpeechRecognition initialized, mobile:', isMobilePWA());
 
     return () => {
       isDetectingRef.current = false;
@@ -183,21 +263,47 @@ export function useWakePhraseDetection() {
   const startDetection = useCallback(() => {
     if (!recognitionRef.current) {
       console.error('Speech recognition not initialized');
+      setState((prev) => ({
+        ...prev,
+        error: 'Speech recognition not available in this browser.',
+      }));
       return;
     }
+
+    // Reset restart counter
+    restartCountRef.current = 0;
 
     try {
       recognitionRef.current.start();
       isDetectingRef.current = true;
-      setState((prev) => ({ ...prev, isDetecting: true }));
+      setState((prev) => ({ ...prev, isDetecting: true, error: null }));
       console.log('🎤 Wake phrase detection started');
-    } catch (error) {
-      console.error('Failed to start wake phrase detection:', error);
+    } catch (error: any) {
+      // If already started, stop and restart
+      if (error.message?.includes('already started')) {
+        try {
+          recognitionRef.current.stop();
+          setTimeout(() => {
+            try {
+              recognitionRef.current?.start();
+              isDetectingRef.current = true;
+              setState((prev) => ({ ...prev, isDetecting: true, error: null }));
+            } catch {}
+          }, 200);
+        } catch {}
+      } else {
+        console.error('Failed to start wake phrase detection:', error);
+        setState((prev) => ({
+          ...prev,
+          error: `Failed to start: ${error.message}`,
+        }));
+      }
     }
   }, []);
 
   const stopDetection = useCallback(() => {
     isDetectingRef.current = false;
+    restartCountRef.current = 0;
     if (recognitionRef.current) {
       try {
         recognitionRef.current.stop();
@@ -210,10 +316,12 @@ export function useWakePhraseDetection() {
 
   const resetDetection = useCallback(() => {
     isDetectingRef.current = false;
+    restartCountRef.current = 0;
     setState({
       isDetecting: false,
       lastDetection: null,
       detectionCount: 0,
+      error: null,
     });
     lastDetectionTimeRef.current = 0;
   }, []);

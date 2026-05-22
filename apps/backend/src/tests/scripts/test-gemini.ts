@@ -1,5 +1,5 @@
 import { GoogleGenerativeAI } from '@google/generative-ai';
-import { config } from '../packages/config/src';
+import { config } from '@silentsiren/config';
 
 async function testGemini() {
   console.log('Testing Gemini with key length:', config.GEMINI_API_KEY?.length);

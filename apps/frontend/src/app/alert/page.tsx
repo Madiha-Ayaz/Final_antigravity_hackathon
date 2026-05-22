@@ -162,17 +162,23 @@ function AlertPageContent() {
     }
   }, [isAlertActive, countdown]);
 
-  const startSiren = () => {
+  const startSiren = async () => {
     try {
-      const ctx = new AudioContext();
+      const AudioContextClass = window.AudioContext || (window as any).webkitAudioContext;
+      const ctx = new AudioContextClass();
       audioContextRef.current = ctx;
+
+      // Mobile browsers suspend AudioContext — resume it first
+      if (ctx.state === 'suspended') {
+        await ctx.resume();
+      }
 
       const oscillator = ctx.createOscillator();
       const gainNode = ctx.createGain();
 
       oscillator.type = 'sawtooth';
       oscillator.frequency.setValueAtTime(600, ctx.currentTime);
-      gainNode.gain.setValueAtTime(0.5, ctx.currentTime);
+      gainNode.gain.setValueAtTime(0.8, ctx.currentTime);
 
       oscillator.connect(gainNode);
       gainNode.connect(ctx.destination);

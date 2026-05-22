@@ -488,7 +488,12 @@ router.post(
 
       for (const contact of contactsResult.rows) {
         try {
-          await twilioService.sendEmergencySMS(contact.phone_number, safeMessage, contact.name);
+          await twilioService.sendEmergencySMS({
+            recipientPhone: contact.phone_number,
+            recipientName: contact.name,
+            threatLevel: 'SAFE',
+            transcript: safeMessage,
+          });
           logger.info({ contactName: contact.name }, '✅ Safe message sent');
         } catch (error) {
           logger.error({ error, contactName: contact.name }, '❌ Failed to send safe message');

@@ -6,51 +6,62 @@ export function useSiren() {
   const gainNodeRef = useRef<GainNode | null>(null);
   const intervalRef = useRef<any>(null);
 
-  const startSiren = useCallback(() => {
+  const startSiren = useCallback(async () => {
     if (audioCtxRef.current) return; // Already running
 
-    // Create audio context
-    const AudioContextClass = window.AudioContext || (window as any).webkitAudioContext;
-    const ctx = new AudioContextClass();
-    audioCtxRef.current = ctx;
+    try {
+      // Create audio context
+      const AudioContextClass = window.AudioContext || (window as any).webkitAudioContext;
+      const ctx = new AudioContextClass();
+      audioCtxRef.current = ctx;
 
-    // Create oscillator and gain node
-    const osc = ctx.createOscillator();
-    const gain = ctx.createGain();
-
-    osc.type = 'sine';
-    osc.frequency.setValueAtTime(440, ctx.currentTime); // start frequency
-
-    // Connect nodes
-    osc.connect(gain);
-    gain.connect(ctx.destination);
-
-    // Initial settings
-    gain.gain.setValueAtTime(0.5, ctx.currentTime);
-
-    // Start oscillator
-    osc.start(0);
-
-    oscillatorRef.current = osc;
-    gainNodeRef.current = gain;
-
-    // Siren sweep effect: cycle frequency between 600Hz and 1200Hz
-    let rising = true;
-    let freq = 600;
-
-    intervalRef.current = setInterval(() => {
-      if (!oscillatorRef.current || !audioCtxRef.current) return;
-
-      if (rising) {
-        freq += 50;
-        if (freq >= 1200) rising = false;
-      } else {
-        freq -= 50;
-        if (freq <= 600) rising = true;
+      // Mobile browsers suspend AudioContext until user gesture — resume it
+      if (ctx.state === 'suspended') {
+        await ctx.resume();
       }
 
-      oscillatorRef.current.frequency.setValueAtTime(freq, audioCtxRef.current.currentTime);
-    }, 30); // update every 30ms
+      // Create oscillator and gain node
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(440, ctx.currentTime); // start frequency
+
+      // Connect nodes
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+
+      // Initial settings — use 0.8 volume for mobile audibility
+      gain.gain.setValueAtTime(0.8, ctx.currentTime);
+
+      // Start oscillator
+      osc.start(0);
+
+      oscillatorRef.current = osc;
+      gainNodeRef.current = gain;
+
+      // Siren sweep effect: cycle frequency between 600Hz and 1200Hz
+      let rising = true;
+      let freq = 600;
+
+      intervalRef.current = setInterval(() => {
+        if (!oscillatorRef.current || !audioCtxRef.current) return;
+
+        if (rising) {
+          freq += 50;
+          if (freq >= 1200) rising = false;
+        } else {
+          freq -= 50;
+          if (freq <= 600) rising = true;
+        }
+
+        oscillatorRef.current.frequency.setValueAtTime(freq, audioCtxRef.current.currentTime);
+      }, 30); // update every 30ms
+
+      console.log('🚨 Siren started (AudioContext state:', ctx.state, ')');
+    } catch (error) {
+      console.error('Failed to start siren:', error);
+    }
   }, []);
 
   const stopSiren = useCallback(() => {

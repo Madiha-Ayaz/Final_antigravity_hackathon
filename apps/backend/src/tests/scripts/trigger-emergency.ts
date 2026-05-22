@@ -1,8 +1,8 @@
 import jwt from 'jsonwebtoken';
 import axios from 'axios';
-import { config } from '../packages/config/src';
-import { databaseService } from '../apps/backend/src/services/database.service';
-import { userRepository } from '../apps/backend/src/repositories/user.repository';
+import { config } from '@silentsiren/config';
+import { databaseService } from '../../services/database.service';
+import { userRepository } from '../../repositories/user.repository';
 
 async function triggerEmergency() {
   console.log('Connecting to database...');

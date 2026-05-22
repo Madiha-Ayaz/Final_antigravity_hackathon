@@ -1,4 +1,4 @@
-import { config } from '../packages/config/src';
+import { config } from '@silentsiren/config';
 
 console.log('--- Config Test ---');
 console.log('NODE_ENV:', config.NODE_ENV);
